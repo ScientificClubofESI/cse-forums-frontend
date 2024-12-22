@@ -71,6 +71,7 @@ npm run dev
 - Tailwind CSS is already set up. You can start using its utility classes directly in your components.
 - For example, to create a button with some styling:
   ```html
+<<<<<<< HEAD
   <button
     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
   >
@@ -85,6 +86,12 @@ npm run dev
   ```html
   <p className="font-serif">hey</p>
   ```
+=======
+  <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+    Click Me
+  </button>
+  ```
+>>>>>>> dea6a83ecf18205c6d44b713a92ad9420dab63db
 
 10. **Committing Your Changes**
 
@@ -101,4 +108,9 @@ npm run dev
 
 1. **Create a Pull Request**
    Go to your GitHub repository, navigate to the `your-github-name/page-name/section-name`
+<<<<<<< HEAD
    branch, and click on the "New pull request" button and request a merge.
+=======
+   branch, and click on the "New pull request" button.
+   Add a detailed description of what you’ve done and request a merge.
+>>>>>>> dea6a83ecf18205c6d44b713a92ad9420dab63db
