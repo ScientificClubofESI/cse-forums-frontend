@@ -1,6 +1,6 @@
-export const x = () => {
+export const About = () => {
   return (
     <div>about</div>
   )
 }
-export default x
+export default About

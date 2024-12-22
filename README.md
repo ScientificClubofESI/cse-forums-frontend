@@ -102,4 +102,3 @@ npm run dev
 1. **Create a Pull Request**
    Go to your GitHub repository, navigate to the `your-github-name/page-name/section-name`
    branch, and click on the "New pull request" button and request a merge.
-
