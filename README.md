@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# **CSE Forum Frontend**
 
-## Getting Started
+Welcome to the **CSE Forum Frontend** repository! This project is built using **Next.js** and styled with **Tailwind CSS**.
 
-First, run the development server:
+This README will guide you through setting up the project locally, working on your branch, and running it in development mode.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## **Getting Started**
+
+Follow these steps to set up and work on the project locally:
+
+---
+
+1. **Clone the Repository**
+
+Open your terminal and run the following command to clone the repository:
+`git clone https://github.com/your-username/cse-project-frontend.git`
+
+2. **Navigate to the Project Directory:**
+
+for exemple: `cd CSE-FORUMS-FRONTEND`
+then open the folder in vs code (you can use this command on terminal: `code .`)
+
+3. **Install Dependencies:**
+
+Open terminal on vs code and execute : `npm install`
+
+4. **Create a New Branch:**
+
+`git branch your-github-name/page-name/section-name` (don't put section name if you're working on the whole page)
+
+5. **Verify Branch Creation:**
+
+`git branch`
+
+# Ensure that the list contains:
+
+```
+* main
+your-github-name/page-name/section-name
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6. **Switch to Your Branch:**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+   ```
+   git checkout your-github-name/page-name/section-name
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+7. **Verify Branch Switch:**
 
-## Learn More
+   ```
+   git branch
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   # Ensure that the list contains:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```
+   main
+   *your-github-name/page-name/section-name
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+8. **Start and run in developement mode**
 
-## Deploy on Vercel
+```
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+9. **Working with Tailwind CSS**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Tailwind CSS is already set up. You can start using its utility classes directly in your components.
+- For example, to create a button with some styling:
+  ```html
+  <button
+    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+  >
+    Click Me
+  </button>
+  ```
+- The colors you need are already defined, use them directly, for exemple:
+  ```html
+  <p className="bg-primary-900">hey</p>
+  ```
+- There are 2 fonts, the default one is Oswald, to use the second one:
+  ```html
+  <p className="font-serif">hey</p>
+  ```
+
+10. **Committing Your Changes**
+
+1. Add your changes to the staging area:
+   ```bash
+   git add .
+   ```
+1. Commit your changes with a descriptive message:
+   `git commit -m "Add hero section for landing page"`
+
+1. **Pushing Your Changes**
+   Push your branch to the remote repository:
+   `git push origin your-github-name/page-name/section-name`
+
+1. **Create a Pull Request**
+   Go to your GitHub repository, navigate to the `your-github-name/page-name/section-name`
+   branch, and click on the "New pull request" button and request a merge.
