@@ -5,19 +5,14 @@ import Offers from "./landing/offers";
 import About from "./landing/about";
 import Feedback from "./landing/feedback";
 import Footer from "./landing/footer";
-
+import SignUp from "./auth/signup/page";
+import LogIn from "./auth/login/page";
 
 
 export default function Home() {
   return (
     <div>
-      <div className="bg-primary-100 font-serif text-xl">hey</div>
-      <Navbar />
-      <Hero />
-      <Offers />
-      <About />
-      <Feedback />
-      <Footer />
+      <LogIn/>
     </div>
   );
 }
