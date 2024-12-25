@@ -1,8 +1,8 @@
 import Image from "next/image";
-import image1 from "../../../public/About_image1.png";
-import image2 from "../../../public/About_image2.png";
-import image1S from "../../../public/About_Image1_small.png";
-import image2S from "../../../public/About_Image2_small.png";
+import image2 from "../../../public/1svg.svg";
+import image1 from "../../../public/2svg.svg";
+import image1S from "../../../public/1svgS.svg";
+import image2S from "../../../public/2svgS.svg";
 import lines1 from "../../../public/lines1.svg";
 import lines2 from "../../../public/lines2.svg";
 
@@ -11,10 +11,10 @@ import lines2 from "../../../public/lines2.svg";
 
 const About = () => {
   return (
-    <section className="h-fit w-full m-0 p-0 flex flex-col justify-between items-center gap-12 lg:gap-20">
+    <section className="h-[500px] w-full m-0 p-0 flex flex-col justify-between items-center gap-12 lg:gap-20">
       <h1 className="font-sans font-semibold text-4xl lg:text-7xl lg:text-center leading-10 text-primary-900">About</h1>     
-      <div className="bg-primary-700 h-fit lg:h-[800px] w-full flex flex-col lg:flex-row justify-between items-center gap-8 lg:gap-16 px-8 lg:px-12 py-6 lg:py-4">
-        <div className=" w-full lg:w-1/2 flex flex-row lg:flex-col justify-between items-center gap-4 lg:gap-8">
+      <div className="bg-primary-700 w-full flex flex-col lg:flex-row justify-between items-center gap-8 lg:gap-16 px-8 lg:px-12 py-6 lg:py-8">
+        <div className="relative w-full lg:w-1/2 flex flex-row lg:flex-col justify-between items-center gap-4 lg:gap-8">
             <div className="hidden lg:block relative mb-16"> 
               <Image src={image1} alt="HackIn2023-image1" width={430} />
             </div>
@@ -27,11 +27,11 @@ const About = () => {
             <div className="block lg:hidden"> 
               <Image src={image1S} alt="HackIn2023-image1" width={800} />
             </div>
-            {/*<Image src={lines1} alt="lines-svg" width="430"/>*/}
+            <Image src={lines1} alt="lines-svg" className="absolute lg:-top-16 -top-8 lg:-right-[99.99%] w-1/2 lg:w-full"/>
         </div>
 
-        <div className="w-full lg:w-1/2 flex flex-row lg:flex-col justify-between items-center gap-4 lg:gap-8">
-            {/*<Image src={lines2} alt="lines-svg" width="430"/>*/}
+        <div className="relative w-full lg:w-1/2 flex flex-row lg:flex-col justify-between items-center gap-4 lg:gap-8 pb-8">
+            <Image src={lines2} alt="lines-svg" className="absolute lg:-bottom-12 -bottom-8 right-0 lg:-left-[99.99%] w-1/2 lg:w-full"/>
             <div className="block lg:hidden"> 
               <Image src={image2S} alt="image1" width={800} />
             </div>
@@ -44,8 +44,8 @@ const About = () => {
             <div className="hidden lg:block relative mt-16"> 
               <Image src={image2} alt="image2" width={430} />
             </div>
-        </div>
-         
+
+        </div>  
       </div>
 
     </section>
