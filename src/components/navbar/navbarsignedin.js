@@ -4,12 +4,12 @@ import Image from "next/image";
 export const Navbarsignedin = () => {
   return (
     <div className="bg-gray-100">
-      <nav className="bg-primary-700 flex items-center justify-between px-10 py-3 border-b-2 rounded-b-lg">
+      <nav className="bg-primary-700 flex items-center justify-between px-6 py-3 border-b-2 rounded-b-lg">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/footer/subtract.svg"
+              src="/nav-bar/logo.svg"
               alt="Logo"
               width={64}
               height={64}
@@ -19,8 +19,8 @@ export const Navbarsignedin = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-8 hidden md:block">
-          <div className="relative max-w-2xl mx-auto">
+        <div className="flex-1 mx-4 md:block">
+          <div className="relative max-w-full md:max-w-2xl mx-auto">
             {/* Search Icon */}
             <Image
               src={"/nav-bar/Icon.svg"}
@@ -33,20 +33,21 @@ export const Navbarsignedin = () => {
             <input
               type="text"
               placeholder="Search CSE Forums ..."
-              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
+              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif text-sm md:text-base md:w-full sm:w-[75%]"
             />
           </div>
         </div>
 
         {/* User Icon */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
+          {/* "All Questions" hidden on small screens */}
           <Link
-            href="/questions"
-            className="text-white hover:text-gray-200 mr-6 sm:mr-14 ml-4"
+            href="/questionPage/asker"
+            className="text-white hover:text-gray-200 hidden md:block"
           >
             All Questions
           </Link>
-          <Link href="/profile">
+          <Link href="">
             <Image
               src={"/nav-bar/User.svg"}
               alt="User"
@@ -66,7 +67,7 @@ export const Navbarsignedin = () => {
             />
           </Link>
 
-          <Link href="/settings">
+          <Link href="/profile/settings">
             <Image
               src={"/nav-bar/Frame 33604.svg"}
               alt="Frame 33604"

@@ -9,7 +9,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/footer/subtract.svg"
+              src="/nav-bar/logo.svg"
               alt="Logo"
               width={64}
               height={64}
@@ -23,7 +23,7 @@ const Navbar = () => {
           <div className="relative max-w-2xl mx-auto">
             {/* Search Icon */}
             <Image
-              src={'/nav-bar/Icon.svg'}
+              src={"/nav-bar/Icon.svg"}
               alt="search"
               width={20}
               height={20}
@@ -40,20 +40,20 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
-          <Link 
-            href="/questions"
+          <Link
+            href="/questionPage/asker"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
           >
             All Questions
           </Link>
-          <Link 
-            href="/login"
+          <Link
+            href="/auth/login"
             className="px-4 py-2 bg-primary-300 hover:bg-primary-500 text-white rounded"
           >
             Log in
           </Link>
-          <Link 
-            href="/signup"
+          <Link
+            href="/auth/signup"
             className="px-4 py-2 bg-secondary-500 hover:bg-orange-600 text-white rounded"
           >
             Sign In

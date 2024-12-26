@@ -14,8 +14,8 @@ export default function Home() {
   return (
     <div>
       <div className="bg-primary-100 font-serif text-xl">hey</div>
-      <Navbar />
-      {/* <Navbarsignedin /> */}
+      {/* <Navbar /> */}
+      <Navbarsignedin />
       <Hero />
       <Offers />
       <About />
