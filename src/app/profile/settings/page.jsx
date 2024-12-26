@@ -63,6 +63,16 @@ export const Settings = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    // Logic for handling file upload (e.g., updating state or uploading to server)
+    console.log("Selected file:", e.target.files[0]);
+  };
+
+  const handleSave = () => {
+    // Logic for saving form data (e.g., API call)
+    console.log("Saving form data:", formData);
+  };
+
 
 
   return (
