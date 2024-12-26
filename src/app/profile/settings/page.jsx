@@ -10,7 +10,7 @@ const UserPicture = ({ handleFileChange }) => (
     <Image
       src={userpicture}
       alt="User Picture"
-      className="h-[12.5rem] w-[12.5rem] rounded-full"
+      className="h-[11rem] w-[11rem] rounded-full"
     />
     <input
       type="file"
@@ -22,14 +22,17 @@ const UserPicture = ({ handleFileChange }) => (
     {/* Change Picture Button */}
     <label
       htmlFor="upload-picture"
-      className="text-[#2E75AD] cursor-pointer mt-4 sm:mt-4 text-center sm:text-left sm:ml-[3.5rem] sm:mt-0 font-serif"
+      className="text-[#2E75AD] cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif"
     >
       Change Picture
     </label>
     {/* Space under the button only in mobile version */}
-    <div className="sm:hidden mt-6"></div>
+    <div className="sm:hidden mt-4 w-[30rem] mb-[1rem]">
+      <hr className="border-t border-gray-300" />
+    </div>
   </div>
 );
+
 
 // Subcomponent: Form Input
 const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
@@ -41,8 +44,8 @@ const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
       value={value}
       onChange={onChange}
       name={name} // Pass name here
-      className="border border-gray-300 rounded px-4 py-2 text-sm placeholder:text-[#262626] placeholder:font-serif flex-grow focus:ring-2 focus:ring-[#2E75AD]"
-      style={{ backgroundColor: "#FFFBFE" }}
+      className="opacity-100 placeholder-opacity-100 border border-gray-100 shadow-sm rounded px-4 py-2 text-sm placeholder:text-[#262626] placeholder:font-light flex-grow focus:ring-2 focus:ring-[#2E75AD]"
+      style={{ backgroundColor: "#fffbfe" }}
     />
   </div>
 );
@@ -60,38 +63,27 @@ export const Settings = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    // Logic for handling file upload (e.g., updating state or uploading to server)
-    console.log("Selected file:", e.target.files[0]);
-  };
 
-  const handleSave = () => {
-    // Logic for saving form data (e.g., API call)
-    console.log("Saving form data:", formData);
-  };
 
   return (
-    <div className="bg-[#FFFBFE] min-h-screen flex flex-col items-center justify-center">
+    <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center">
       {/* Title */}
-      <div className="text-5xl text-[#262626] mb-8 w-full max-w-[67.375rem] text-left sm:text-3xl sm:ml-4">
+      <div className="text-5xl text-[#262626] mb-8 mr-[17.8rem] sm:w-full max-w-[51%] text-left sm:text-4xl">
         My Information
       </div>
 
       {/* Main Content */}
-      <div className="bg-white w-full max-w-[67.375rem] p-8 rounded-lg shadow-md flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4">
+      <div className="bg-white sm:w-full max-w-[67.375rem] p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4 sm:mx-[2rem]">
         {/* User Picture Section */}
         <UserPicture handleFileChange={handleFileChange} />
-
-        {/* Vertical Divider */}
-        <div
-          className="bg-gray-400 sm:hidden"
-          style={{ width: "2px", height: "100%", margin: "0 2rem" }}
-        ></div>
+        
+        {/* Vertical Line for Desktop */}
+        <div className="hidden sm:block border-l border-gray-300 h-[16rem] mx-8"></div> {/* Vertical line for desktop */}
 
         {/* Form Section */}
         <div className="flex flex-col gap-6 flex-grow sm:w-[50%]">
           <FormInput
-            label="Full name:"
+            label="Full name :"
             type="text"
             placeholder="Enter your full name"
             value={formData.fullName}
@@ -99,7 +91,7 @@ export const Settings = () => {
             name="fullName"
           />
           <FormInput
-            label="User name:"
+            label="User name :"
             type="text"
             placeholder="Enter your user name"
             value={formData.userName}
@@ -107,7 +99,7 @@ export const Settings = () => {
             name="userName"
           />
           <FormInput
-            label="Email:"
+            label="Email :"
             type="email"
             placeholder="Enter your email"
             value={formData.email}
@@ -118,14 +110,14 @@ export const Settings = () => {
           {/* Buttons Section */}
           <div className="flex justify-between items-center gap-4 sm:gap-8 mt-6">
             {/* Change Password Button */}
-            <button className="bg-[#2E75AD] rounded text-white w-[10rem] h-10 sm:w-[12rem] sm:h-12">
+            <button className="bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12">
               Change Password
             </button>
 
             {/* Save & Go Back Button for Mobile */}
             <button
               onClick={handleSave}
-              className="bg-[#FF902E] rounded text-white w-[10rem] h-10 sm:hidden"
+              className="bg-[#FF902E] rounded text-white w-[12rem] h-10 sm:hidden"
             >
               Save & Go Back
             </button>
@@ -137,7 +129,7 @@ export const Settings = () => {
       <div className="hidden sm:flex justify-center mt-10 sm:mt-14">
         <button
           onClick={handleSave}
-          className="bg-[#FF902E] rounded text-white w-60 h-12 sm:w-72 sm:h-14"
+          className="bg-[#FF902E] rounded text-white w-60 h-12 sm:w-72 sm:h-14 text-xl"
         >
           Save & Go Back
         </button>
