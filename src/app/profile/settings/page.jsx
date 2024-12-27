@@ -6,7 +6,7 @@ import userpicture from "./userpicture.svg"; // Importing a user picture (SVG fi
 
 // Subcomponent: User Picture Section
 const UserPicture = ({ handleFileChange }) => (
-  <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:mb-10">
+  <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
     <Image
       src={userpicture}
       alt="User Picture"
@@ -22,7 +22,7 @@ const UserPicture = ({ handleFileChange }) => (
     {/* Change Picture Button */}
     <label
       htmlFor="upload-picture"
-      className="text-[#2E75AD] cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif"
+      className="text-[#2E75AD] sm:font-bold	 cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif font-medium"
     >
       Change Picture
     </label>
@@ -37,14 +37,14 @@ const UserPicture = ({ handleFileChange }) => (
 // Subcomponent: Form Input
 const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
   <div className="flex items-center gap-4 w-full">
-    <label className="text-[#262626] w-[8rem] text-left font-serif">{label}</label>
+    <label className="text-[#262626] w-[8rem] text-left font-serif font-medium sm:font-bold		">{label}</label>
     <input
       type={type}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
       name={name} // Pass name here
-      className="opacity-100 placeholder-opacity-100 border border-gray-100 shadow-sm rounded px-4 py-2 text-sm placeholder:text-[#262626] placeholder:font-light flex-grow focus:ring-2 focus:ring-[#2E75AD]"
+      className="opacity-100 placeholder-opacity-100 border border-gray-100 shadow-sm rounded px-4 py-2 text-sm placeholder:text-[#262626] placeholder:font-light sm:placeholder:font-light placeholder:font-serif  flex-grow focus:ring-2 focus:ring-[#2E75AD]"
       style={{ backgroundColor: "#fffbfe" }}
     />
   </div>
@@ -78,8 +78,8 @@ export const Settings = () => {
   return (
     <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center">
       {/* Title */}
-      <div className="text-5xl text-[#262626] mb-8 mr-[17.8rem] sm:w-full max-w-[51%] text-left sm:text-4xl">
-        My Information
+      <div className="font-sans sm:font-semibold mr-[22rem] sm:ml-[49rem] sm:font-sans text-3xl text-[#262626] mb-8 sm:w-full sm:text-5xl font-medium p-2">
+      My Informations
       </div>
 
       {/* Main Content */}
@@ -91,7 +91,7 @@ export const Settings = () => {
         <div className="hidden sm:block border-l border-gray-300 h-[16rem] mx-8"></div> {/* Vertical line for desktop */}
 
         {/* Form Section */}
-        <div className="flex flex-col gap-6 flex-grow sm:w-[50%]">
+        <div className="flex flex-col gap-6 flex-grow sm:w-[50%] ">
           <FormInput
             label="Full name :"
             type="text"
@@ -120,14 +120,14 @@ export const Settings = () => {
           {/* Buttons Section */}
           <div className="flex justify-between items-center gap-4 sm:gap-8 mt-6">
             {/* Change Password Button */}
-            <button className="bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12">
+            <button className="font-sans sm:font-normal	 bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12 font-medium	">
               Change Password
             </button>
 
             {/* Save & Go Back Button for Mobile */}
             <button
               onClick={handleSave}
-              className="bg-[#FF902E] rounded text-white w-[12rem] h-10 sm:hidden"
+              className="bg-[#FF902E] rounded text-white w-[12rem] h-10 sm:hidden font-medium	font-sans"
             >
               Save & Go Back
             </button>
@@ -139,7 +139,7 @@ export const Settings = () => {
       <div className="hidden sm:flex justify-center mt-10 sm:mt-14">
         <button
           onClick={handleSave}
-          className="bg-[#FF902E] rounded text-white w-60 h-12 sm:w-72 sm:h-14 text-xl"
+          className="bg-[#FF902E] font-normal	 rounded text-white w-60 h-12 sm:w-72 sm:h-14 text-xl"
         >
           Save & Go Back
         </button>
