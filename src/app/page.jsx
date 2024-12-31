@@ -5,19 +5,16 @@ import Offers from "./landing/offers";
 import About from "./landing/about";
 import Feedback from "./landing/feedback";
 import Footer from "./landing/footer";
+import Profil from "./profile/page"
 
 
 
 export default function Home() {
   return (
     <div>
-      <div className="bg-primary-100 font-serif text-xl">hey</div>
-      <Navbar />
-      <Hero />
-      <Offers />
-      <About />
-      <Feedback />
-      <Footer />
+
+      <Profil/>
+
     </div>
   );
 }
