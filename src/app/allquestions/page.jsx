@@ -1,6 +1,8 @@
 export const AllQuestions = () => {
   return (
-    <div>AllQuestions</div>
+    <div>
+      <div className="">All Questions</div>
+    </div>
   )
 }
 export default AllQuestions
