@@ -1,7 +1,9 @@
 'use client';
-import React, { useState, useCallback } from 'react';
-import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react';
+import { useState, useCallback, useRef } from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Image from '@tiptap/extension-image';
@@ -9,6 +11,9 @@ import Dropcursor from '@tiptap/extension-dropcursor';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
+import FileHandler from '@tiptap-pro/extension-file-handler';
+import Import from '@tiptap-pro/extension-import';
+import DragHandle from '@tiptap-pro/extension-drag-handle-react';
 import { common, createLowlight } from 'lowlight';
 import {
   FiBold,
@@ -25,6 +30,7 @@ import {
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
 import { IoIosClose } from 'react-icons/io';
 import './page.css';
+import ListItem from '@tiptap/extension-list-item';
 const iconSize = 25;
 const styles = {
   container:
@@ -55,10 +61,14 @@ const styles = {
 };
 
 const AskQuestion = () => {
+  const APP_ID = process.env.TIP_TAP_PROJECT_ID;
+  const JWT = process.env.TIP_TAP_JWT;
   const [isLoading, setIsLoading] = useState(false);
   const [questionTitle, setQuestionTitle] = useState('');
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
+  const importRef = useRef(null);
+  const [error, setError] = useState(null);
   const editor = useEditor({
     editorProps: {
       attributes: {
@@ -69,13 +79,18 @@ const AskQuestion = () => {
       StarterKit.configure({
         codeBlock: false,
       }),
+      BulletList,
+      OrderedList,
+      ListItem,
       Placeholder.configure({
         placeholder: 'Give us more details about your question …',
         emptyEditorClass:
           'is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none',
       }),
       Underline,
-      Image,
+      Image.configure({
+        inline: true,
+      }),
       Dropcursor,
       TextAlign.configure({
         types: ['heading', 'paragraph', 'input'],
@@ -85,6 +100,72 @@ const AskQuestion = () => {
         lowlight: createLowlight(common),
       }),
       Highlight,
+      FileHandler.configure({
+        allowedMimeTypes: [
+          'image/png',
+          'image/jpeg',
+          'image/gif',
+          'image/webp',
+        ],
+        onDrop: (currentEditor, files, pos) => {
+          files.forEach((file) => {
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              currentEditor
+                .chain()
+                .insertContentAt(pos, {
+                  type: 'image',
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run();
+            };
+          });
+        },
+        onPaste: (currentEditor, files, htmlContent) => {
+          files.forEach((file) => {
+            if (htmlContent) {
+              // if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
+              // you could extract the pasted file from this url string and upload it to a server for example
+              console.log(htmlContent); // eslint-disable-line no-console
+              return false;
+            }
+
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              currentEditor
+                .chain()
+                .insertContentAt(currentEditor.state.selection.anchor, {
+                  type: 'image',
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run();
+            };
+          });
+        },
+      }), // ...
+      Import.configure({
+        // The Convert App-ID from the Convert settings page: https://cloud.tiptap.dev/convert-settings
+        appId: APP_ID,
+
+        // The JWT token you generated in the previous step
+        token: JWT,
+
+        // The URL to upload images to, if not provided, images will be stripped from the document
+        imageUploadCallbackUrl: 'https://your-image-upload-url.com',
+
+        // Enables the experimental DOCX import which should better preserve content styling
+        experimentalDocxImport: true,
+      }),
     ],
     onBeforeCreate: ({ editor }) => {
       setIsLoading(true);
@@ -92,6 +173,8 @@ const AskQuestion = () => {
     onCreate: ({ editor }) => {
       setIsLoading(false);
     },
+    immediatelyRender: false,
+    shouldRerenderOnTransaction: false,
     content: `
      
   `,
@@ -111,6 +194,50 @@ const AskQuestion = () => {
       editor.chain().focus().setImage({ src: url }).run();
     }
   }, [editor]);
+
+  const handleImportClick = useCallback(() => {
+    importRef.current.click();
+  }, []);
+
+  const handleImportFilePick = useCallback(
+    (e) => {
+      const file = e.target.files[0];
+
+      importRef.current.value = '';
+
+      if (!file) {
+        return;
+      }
+
+      setIsLoading(true);
+      setError(null);
+      editor
+        .chain()
+        .import({
+          file,
+          onImport(context) {
+            if (context.error) {
+              setError(context.error);
+              setIsLoading(false);
+              return;
+            }
+            context.setEditorContent(context.content);
+            setError(null);
+            setIsLoading(false);
+          },
+        })
+        .run();
+    },
+    [editor]
+  );
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <main
@@ -195,7 +322,16 @@ const AskQuestion = () => {
           <div className={styles.params}>
             <h3 className={styles.paramsTitle}>Inserts</h3>
             <div className={styles.paramsIcons}>
-              <FiFile size={iconSize} />
+              <button onClick={handleImportClick}>
+                <FiFile size={iconSize} />
+                <input
+                  onChange={handleImportFilePick}
+                  type="file"
+                  ref={importRef}
+                  style={{ display: 'none' }}
+                />
+              </button>
+
               <FiImage size={iconSize} onClick={addImage} />
               <FiTerminal
                 size={iconSize}
@@ -204,6 +340,21 @@ const AskQuestion = () => {
             </div>
           </div>
         </div>
+        <DragHandle editor={editor}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3.75 9h16.5m-16.5 6.75h16.5"
+            />
+          </svg>
+        </DragHandle>
         <EditorContent
           className={styles.bigInput}
           placeholder="Give us more details about your question"
