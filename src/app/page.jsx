@@ -6,8 +6,6 @@ import About from "./landing/about";
 import Feedback from "./landing/feedback";
 import Footer from "./landing/footer";
 
-
-
 export default function Home() {
   return (
     <div>
