@@ -3,11 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 export const EmptySearchPage = ({ search }) => {
   const capitalizeSearch = (str) => {
-    if (!str) return str; // Return if string is empty
+    if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  const capitalizedSearch = capitalizeSearch(search.trim()); // Trim whitespace from the start and end before capitalizing
+  const capitalizedSearch = search ? capitalizeSearch(search.trim()) : "";
 
   return (
     <div className="bg-background-light">
