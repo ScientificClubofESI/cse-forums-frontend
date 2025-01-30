@@ -38,7 +38,7 @@ export default {
           500: "#CD2929",
         },
         background : {
-          light : "#FFFBFE",
+          light : "rgba(46, 117, 173, 0.05)",
         },
       },
       fontFamily: {
