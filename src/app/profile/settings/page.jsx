@@ -27,8 +27,8 @@ const UserPicture = ({ handleFileChange }) => (
       Change Picture
     </label>
     {/* Space under the button only in mobile version */}
-    <div className="sm:hidden mt-4 w-[30rem] mb-[1rem]">
-      <hr className="border-t border-gray-300" />
+    <div className="sm:hidden mt-4 w-[20.2rem] mb-[1rem]">
+      <hr className="border-t border-neutral-500" />
     </div>
   </div>
 );
@@ -78,20 +78,20 @@ export const Settings = () => {
   return (
     <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center">
       {/* Title */}
-      <div className="font-sans sm:font-semibold mr-[22rem] sm:ml-[49rem] sm:font-sans text-3xl text-[#262626] mb-8 sm:w-full sm:text-5xl font-medium p-2">
+      <div className="font-sans sm:font-semibold md:ml-[38rem] mr-[11rem] sm:font-sans text-3xl text-[#262626] mb-8 sm:w-full sm:text-5xl font-medium p-2">
       My Informations
       </div>
 
       {/* Main Content */}
-      <div className="bg-white sm:w-full max-w-[67.375rem] p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4 sm:mx-[2rem]">
+      <div className="bg-white md:w-[67.375rem] w-[23rem] p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4 sm:mx-[2rem]">
         {/* User Picture Section */}
         <UserPicture handleFileChange={handleFileChange} />
         
         {/* Vertical Line for Desktop */}
-        <div className="hidden sm:block border-l border-gray-300 h-[16rem] mx-8"></div> {/* Vertical line for desktop */}
+        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] mx-8"></div> {/* Vertical line for desktop */}
 
         {/* Form Section */}
-        <div className="flex flex-col gap-6 flex-grow sm:w-[50%] ">
+        <div className="flex flex-col gap-6 flex-grow w-[19.875rem]">
           <FormInput
             label="Full name :"
             type="text"
@@ -120,14 +120,14 @@ export const Settings = () => {
           {/* Buttons Section */}
           <div className="flex justify-between items-center gap-4 sm:gap-8 mt-6">
             {/* Change Password Button */}
-            <button className="font-sans sm:font-normal	 bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12 font-medium	">
+            <button className="font-sans sm:font-normal	text-sm md:text-xl bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12 font-medium	">
               Change Password
             </button>
 
             {/* Save & Go Back Button for Mobile */}
             <button
               onClick={handleSave}
-              className="bg-[#FF902E] rounded text-white w-[12rem] h-10 sm:hidden font-medium	font-sans"
+              className="bg-[#FF902E] text-sm rounded text-white w-[12rem] h-10 sm:hidden font-medium	font-sans"
             >
               Save & Go Back
             </button>
