@@ -104,7 +104,7 @@ export const QuestionViewer = () => {
           <div className="text-neutral-900 mt-2 pb-4 md:font-light md:text-2xl font-normal text-base font-serif">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </div>
-          <div className="bg-neutral-50 p-3 md:font-light md:text-base font-light text-xs">
+          <div className="bg-neutral-50 p-3 md:font-light md:text-2xl font-light text-xs">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque assumenda officia eligendi ratione nostrum vitae at, molestias necessitatibus maxime magni officiis error ullam tempore?
           </div>
         </div>
@@ -123,7 +123,3 @@ export const QuestionViewer = () => {
 };
 
 export default QuestionViewer;
-
-
-
-
