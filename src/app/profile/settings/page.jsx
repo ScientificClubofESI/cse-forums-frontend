@@ -10,7 +10,7 @@ const UserPicture = ({ handleFileChange }) => (
     <Image
       src={userpicture}
       alt="User Picture"
-      className="h-[11rem] w-[11rem] rounded-full"
+      className="md:h-[11rem] md:w-[11rem] w-[113px] h-[113px]  rounded-full"
     />
     <input
       type="file"
@@ -22,7 +22,7 @@ const UserPicture = ({ handleFileChange }) => (
     {/* Change Picture Button */}
     <label
       htmlFor="upload-picture"
-      className="text-[#2E75AD] sm:font-bold	 cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif font-medium"
+      className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
     >
       Change Picture
     </label>
@@ -37,7 +37,7 @@ const UserPicture = ({ handleFileChange }) => (
 // Subcomponent: Form Input
 const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
   <div className="flex items-center gap-4 w-full">
-    <label className="text-[#262626] w-[8rem] text-left font-serif font-medium sm:font-bold		">{label}</label>
+    <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold		">{label}</label>
     <input
       type={type}
       placeholder={placeholder}
@@ -88,7 +88,7 @@ export const Settings = () => {
         <UserPicture handleFileChange={handleFileChange} />
         
         {/* Vertical Line for Desktop */}
-        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] mx-8"></div> {/* Vertical line for desktop */}
+        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] p-[1.5rem] ml-[0.6rem]"></div> {/* Vertical line for desktop */}
 
         {/* Form Section */}
         <div className="flex flex-col gap-6 flex-grow w-[19.875rem]">
@@ -120,7 +120,7 @@ export const Settings = () => {
           {/* Buttons Section */}
           <div className="flex justify-between items-center gap-4 sm:gap-8 mt-6">
             {/* Change Password Button */}
-            <button className="font-sans sm:font-normal	text-sm md:text-xl bg-[#2E75AD] rounded text-white w-[9rem] h-10 sm:w-[12rem] sm:h-12 font-medium	">
+            <button className="font-sans sm:font-normal	text-sm md:text-xl bg-[#2E75AD] rounded text-white w-[9rem] h-10 md:w-[16.125rem] sm:h-12 font-medium	">
               Change Password
             </button>
 
@@ -139,7 +139,7 @@ export const Settings = () => {
       <div className="hidden sm:flex justify-center mt-10 sm:mt-14">
         <button
           onClick={handleSave}
-          className="bg-[#FF902E] font-normal	 rounded text-white w-60 h-12 sm:w-72 sm:h-14 text-xl"
+          className="bg-[#FF902E] font-normal	 rounded text-white w-60 h-[3rem] sm:w-[15.125rem] text-xl"
         >
           Save & Go Back
         </button>
