@@ -85,6 +85,8 @@ export const QuestionViewer = () => {
           </div>
         </div>
       </div>
+      <div className="md:pb-[1rem] pb-[0.2rem]"></div>
+
 <div className="flex justify-between items-center space-x-[1rem] ml-[4rem] md:space-x-[9rem] md:ml-[7rem]">
 <button className="mt-[2rem] ml-[rem] md:mr-[rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]">
         Edit question
@@ -93,10 +95,11 @@ export const QuestionViewer = () => {
         Delete question <Trash/>
       </button>
 </div>
-      
+<div className="md:pb-[1rem]"></div>
+
 
       <div className="md:w-[70rem] w-[18.875rem] mt-[2rem] space-y-6 ml-[4rem] md:ml-[7rem]">
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-6 rounded-lg shadow md:pb-[61px]">
           <div className="flex justify-between items-center md:pb-8">
             <div className="text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center gap-2 md:font-serif">
               <Userpic /> user_name
@@ -109,6 +112,7 @@ export const QuestionViewer = () => {
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </p>
         </div>
+        <div className="md:pb-[0.6rem] "></div>
 
         <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center md:pb-8">
@@ -126,7 +130,7 @@ export const QuestionViewer = () => {
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque assumenda officia eligendi ratione nostrum vitae at, molestias necessitatibus maxime magni officiis error ullam tempore?
           </div>
         </div>
-
+<div className="md:pb-[0.6rem] "></div>
         <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex justify-between items-center md:pb-8">
             <div className="text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center gap-2 md:font-serif">
@@ -141,7 +145,10 @@ export const QuestionViewer = () => {
           </p>
         </div>
       </div>
+      <div className="md:pb-[91px] pb-[2rem]"></div>
+
     </div>
+    
   );
 };
 

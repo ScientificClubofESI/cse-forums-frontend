@@ -77,10 +77,12 @@ export const QuestionViewer = () => {
           </div>
         </div>
       </div>
+      <div className="md:pb-[1rem] pb-[0.2rem]"></div>
 
       <button className="mt-[2rem] ml-[4rem] md:ml-[7rem] bg-secondary-500 rounded-lg flex items-center justify-center text-white text-base md:text-3xl font-semibold md:font-medium h-[2rem] md:h-[4rem] w-[18.875rem] md:w-[70rem]">
         + Drop an answer
       </button>
+      <div className="md:pb-[1rem]"></div>
 
       <div className="md:w-[70rem] w-[18.875rem] mt-[2rem] space-y-6 ml-[4rem] md:ml-[7rem]">
         <div className="bg-white p-6 rounded-lg shadow">
@@ -96,6 +98,7 @@ export const QuestionViewer = () => {
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </p>
         </div>
+        <div className="md:pb-[0.6rem] "></div>
 
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="gap-2 text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center md:pb-8 font-serif">
@@ -108,6 +111,7 @@ export const QuestionViewer = () => {
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque assumenda officia eligendi ratione nostrum vitae at, molestias necessitatibus maxime magni officiis error ullam tempore?
           </div>
         </div>
+        <div className="md:pb-[0.6rem] "></div>
 
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="gap-2 text-secondary-500 md:pb-8 md:text-3xl text-base font-medium md:font-bold flex items-center font-serif">
@@ -118,6 +122,8 @@ export const QuestionViewer = () => {
           </p>
         </div>
       </div>
+      <div className="md:pb-[91px] pb-[2rem]"></div>
+
     </div>
   );
 };
