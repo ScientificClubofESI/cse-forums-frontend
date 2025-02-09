@@ -52,7 +52,7 @@ export const AllQuestions = () => {
       <Navbar />
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-8 w-full">
+          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
             <h1 className="text-2xl lg:text-5xl text-neutral-900 font-sans">
               All Questions
             </h1>
@@ -64,8 +64,8 @@ export const AllQuestions = () => {
             </Link>
           </div>
 
-          <div className="flex flex-col lg:flex-row justify-between items-center gap-8 w-full">
-            <div className="flex flex-row justify-between items-start gap-4 font-sans text-xl text-neutral-900 ">
+          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
+            <div className="flex flex-row justify-between items-start gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4 ${
