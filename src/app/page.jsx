@@ -10,8 +10,6 @@ import LogIn from "./auth/login/page";
 import  { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 
 
-
-
 export default function Home() {
   return (
     <div>
