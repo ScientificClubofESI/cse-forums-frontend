@@ -37,20 +37,24 @@ export const AllQuestions = () => {
     }
   };
 
+
   const handlePrevPage = () => {
-    handlePageChange(currentPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
-
+  
   const handleNextPage = () => {
-    handlePageChange(currentPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
-
   
 
   return (
     <div className="w-screen bg-neutral-50">
       <Navbar />
-      <div className="flex flex-col justify-between items-center gap-8 py-10 px-32">
+      <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
             <h1 className="text-2xl lg:text-5xl text-neutral-900 font-sans">
@@ -65,7 +69,7 @@ export const AllQuestions = () => {
           </div>
 
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
-            <div className="flex flex-row justify-between items-start gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
+            <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4 ${
@@ -120,8 +124,7 @@ export const AllQuestions = () => {
                 <Image
                   src={filtre}
                   alt="Filtre icon"
-                  width={24}
-                  className="p-1 lg:mr-2"
+                  className="p-1 lg:mr-2 lg:w-8 w-5"
                 />
                 <span className="hidden sm:inline">Filter</span>
               </Link>
@@ -131,17 +134,17 @@ export const AllQuestions = () => {
           {/*white card */}
           {questions.map((question, index) => (
             <div key={index} className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg">
-              <div className="flex flex-row items-center justify-start gap-8">
+              <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
                 <div className="flex flex-row items-center justify-between gap-1"> 
-                    <Image src={UpDown} alt="Lines" width={32} className="w-full h-full" />
-                    <div className="font-sans text-3xl text-neutral-900"> 64 </div>
+                    <Image src={UpDown} alt="Lines" className="h-full w-4 lg:w-8" />
+                    <div className="font-sans text-sm lg:text-3xl text-neutral-900"> 64 </div>
                 </div>    
-                <h1 className="text-5xl font-sans text-neutral-900">{question.question}</h1>
+                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">{question.question}</h1>
               </div>
 
-              <div className="w-full flex flex-row justify-between items-center gap-1">
-                <div className="w-2/3 h-2 text-neutral-900"></div> 
-                <div className="font-serif lg:text-lg text-sm text-neutral-300">Posted less than 1 day</div>
+              <div className="w-full flex flex-row justify-between items-center gap-0">
+                <div className="lg:w-3/4 w-1/2 h-[0.1px] bg-neutral-300 rounded-full"></div> 
+                <div className="font-serif lg:text-lg text-xs text-neutral-300">Posted less than 1 day</div>
               </div>  
 
               <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
@@ -149,25 +152,24 @@ export const AllQuestions = () => {
               </div>
 
 
-              <div className="w-full flex flex-row justify-between items-center gap-8">
+              <div className="w-full flex flex-row justify-between items-center gap-6">
                 {/*drop answer + number of answer buttons */}  
-                <div className="flex flex-row justify-between items-center gap-6">
+                <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
                   <Link 
                     href="/" 
-                    className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg py-2 px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                    className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                   >
                     <Image
                       src={plus}
                       alt="Add answer"
-                      width={26}
-                      className="p-1 lg:mr-2"
+                      className="lg:p-1 w-5"
                     />
                     <span>Drop an Answer</span>
                   </Link>
 
                   <Link 
                     href="/" 
-                    className="bg-primary-300 rounded-md lg:rounded-lg py-2 px-4 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                    className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                   >
                     {question.responses} answer
                   </Link>
@@ -177,26 +179,26 @@ export const AllQuestions = () => {
                 <div className="flex flex-row items-end justify-end gap-4">
                   {/*share button */}
                   <Link
-                    className="text-lg text-neutral-500 font-serif flex items-center gap-2"
+                    className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center  gap-1 lg:gap-2"
                     href="#"
                   >
                     <Image
                       src={share}
                       alt="share icon"
-                      width={24}
+                      className="w-[13px] lg:w-[24px] "
                     />
                      Share
                   </Link>
 
                    {/*save button */}
                   <Link
-                    className="text-lg text-neutral-500 font-serif flex items-center gap-2"
+                    className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
                     href="#"
                   >
                     <Image
                       src={save}
                       alt="save icon"
-                      width={24}
+                      className="w-[13px] lg:w-[24px]"
                     />
                      Save
                   </Link>
@@ -238,7 +240,8 @@ export const AllQuestions = () => {
               onClick={handleNextPage}
               className="disabled:opacity-100"
             >
-              <Image src={right} alt="right icon" width={24} height={24} />
+              <Image src={right} alt="right icon" width={24} height={24}  />
+
             </button>
           </div>
 
