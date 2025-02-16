@@ -4,7 +4,11 @@ import Image from "next/image";
 const Navbar = () => {
   return (
     <div className="bg-gray-100">
+<<<<<<< HEAD
       <nav className="bg-primary-700 flex items-center justify-between px-5 sm:px-12 py-3 border-b-2 rounded-b-lg">
+=======
+      <nav className="bg-primary-700 flex items-center justify-between px-5 sm:12 py-3 border-b-2 rounded-b-lg">
+>>>>>>> ab8d455813993b2085b5ced100eaa99dac789189
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
@@ -64,4 +68,8 @@ const Navbar = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Navbar;
+=======
+export default Navbar;
+>>>>>>> ab8d455813993b2085b5ced100eaa99dac789189
