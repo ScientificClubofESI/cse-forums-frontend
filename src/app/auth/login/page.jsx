@@ -15,25 +15,25 @@ export const LogIn = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);}
   return (
-    <div className="flex flex-col w-full sm:flex-row h-screen  sm:min-h-screen">
+    <div className="flex flex-col w-full sm:flex-row h-full bg-background-light sm:min-h-full">
 
-      <div className="flex flex-col items-center sm:items-stretch bg-background-light  w-full sm:w-1/2 h-full sm:h-screen px-8 sm:px-36  pt-4 pb-4 sm:pb-36 rounded-tr-none sm:rounded-tr-[80px]  ">
+      <div className="flex flex-col items-center sm:items-stretch  w-full sm:w-1/2 h-full sm:h-full px-8 sm:px-36  pt-4 rounded-tr-none sm:rounded-tr-[80px]  ">
 
         <h1 className="text-primary-900 font-sans font-bold mb-12 sm:mb-16 text-2xl  sm:text-5xl ">Log In</h1>
         <form className="w-full">
 
-          <div className=" relative mb-10 sm:mb-16 w-full">
+          <div className="relative mb-10 sm:mb-16 w-full">
             <label className="block text-l font-sans font-bold text-primary-900 sm:text-2xl">Email</label>
             <input
               name="email"
               placeholder="Enter your email"
               className=" mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
               type="text"
-            />
+            ></input>
             <Image
               src={emailIcone}
               alt="Email Icon"
-              className="absolute top-1/2 right-3 w-5 h-5"
+              className="absolute top-1/2 md:top-[45px] right-3 w-5 h-5"
             />
           </div>
 
@@ -48,23 +48,17 @@ export const LogIn = () => {
             <Image
               src={eyeclosed}
               alt="Email Icon"
-              className="absolute top-1/2 right-3 w-5 h-5"
+              className="absolute top-[45px] md:top-1/2 right-3 w-5 h-5"
             />
-            <a href="dfghj" className="font-serif text-neutral-200 text-sm"> Forget your password?</a>
+            <a href="dfghj" className="font-serif text-neutral-200 text-sm w-fit"> Forget your password?</a>
           </div>
 
-<<<<<<< HEAD
-          <div className="text-neutral-900 py-2 ">
-            <label className="flex items-center text-l font-serif text-primary-900 ">
-              <input type="checkbox" className="appearance-none w-4 h-4 mr-2 border-2 border-orange-300 bg-white rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white " />
-=======
           <div className="text-neutral-900 py-2">
-            <label className="flex items-center block text-l font-serif text-primary-900">
+            <label className="flex items-center text-l font-serif text-primary-900">
               <input type="checkbox" className="hidden peer" />
-              <span className="text-white w-4 h-4 mr-2 border-2 p-2 border-orange-300 rounded-sm cursor-pointer flex items-center justify-center peer-checked:bg-orange-300 peer-checked:bg-orange-300">
+              <span className="text-white w-4 h-4 mr-2 border-2 p-2 border-orange-300 rounded-sm cursor-pointer flex items-center justify-center peer-checked:bg-orange-300 ">
                 ✔
               </span>
->>>>>>> 5f5c7f9eac50fc19f7c68ad1077e40a703837c0d
               Remember me next time
           </label>
           </div>
@@ -80,7 +74,8 @@ export const LogIn = () => {
           <a href="dfghj" className="font-serif ml-2 text-secondary-500">Sign Up</a>
         </div>
       </div>
-      <div className="w-screen sm:w-1/2  h-full sm:h-screen px-8 sm:px-36 pt-4 pb-16 sm:pb-36 bg-primary-900 rounded-tr-[40px] rounded-tl-[40px] sm:rounded-tr-none ">
+
+      <div className="w-full sm:w-1/2  h-full sm:h-full px-8 sm:px-36 pt-4 pb-16 sm:pb-36 bg-primary-900 rounded-tr-[40px] rounded-tl-[40px] sm:rounded-tr-none ">
         <div className="flex flex-row items-center">
           <Image src={logo} alt="logo" className="w-8 sm:w-12h-10 sm:h-12 mr-6" />
           <h1 className=" text-white font-sans text-2xl sm:text-4xl">CSE Forums</h1>

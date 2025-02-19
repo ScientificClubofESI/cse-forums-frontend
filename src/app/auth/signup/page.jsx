@@ -31,9 +31,9 @@ export const SignUp = () => {
         </div>
       </div>
 
-      <div className=" w-full sm:w-1/2 h-full sm:h-full px-8 sm:px-36  pt-4 pb-4 sm:pb-36    ">
+      <div className="w-full sm:w-1/2 h-full sm:h-full px-8 sm:px-36 py-4 sm:pb-36">
 
-        <h1 className="text-primary-900 font-sans font-bold my-16 text-2xl  sm:text-5xl">Create New Account</h1>
+        <h1 className="w-full text-primary-900 font-sans font-bold my-16 text-2xl  sm:text-5xl">Create New Account</h1>
         <form>
 
           <div className="mb-4 sm:mb-6">
@@ -87,16 +87,11 @@ export const SignUp = () => {
           </div>
 
           <div className="text-neutral-900 py-2">
-<<<<<<< HEAD
-            <label className="items-center text-l font-serif text-neutral-900 ">
-              <input type="checkbox" className="bg-white appearance-none w-4 h-4 mr-2 border-2 border-orange-300 rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white " />
-=======
-          <label className="flex items-center block text-l font-serif text-primary-900">
+          <label className="flex items-center text-l font-serif text-primary-900">
               <input type="checkbox" className="hidden peer" />
-              <span className="text-white w-4 h-4 mr-2 border-2 p-2 border-orange-300 rounded-sm cursor-pointer flex items-center justify-center peer-checked:bg-orange-300 peer-checked:bg-orange-300">
+              <span className="text-white w-4 h-4 mr-2 border-2 p-2 border-orange-300 rounded-sm cursor-pointer flex items-center justify-center peer-checked:bg-orange-300">
                 ✔
               </span>
->>>>>>> 5f5c7f9eac50fc19f7c68ad1077e40a703837c0d
               I agree all statements in <a href="trm" className="ml-1 text-secondary-500"> Terms of service</a>
           </label>
           </div>
