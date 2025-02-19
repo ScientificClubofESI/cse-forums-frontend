@@ -76,14 +76,14 @@ export const Settings = () => {
 
 
   return (
-    <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center">
+    <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center px-[5%] justify-center gap-y-14 py-14">
       {/* Title */}
-      <div className="font-sans sm:font-semibold md:ml-[38rem] mr-[11rem] sm:font-sans text-3xl text-[#262626] mb-8 sm:w-full sm:text-5xl font-medium p-2">
+      <div className="font-sans sm:font-semiboldsm:font-sans text-3xl text-[#262626] sm:w-full sm:text-5xl font-medium">
       My Informations
       </div>
 
       {/* Main Content */}
-      <div className="bg-white md:w-[67.375rem] w-[23rem] p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4 sm:mx-[2rem]">
+      <div className="bg-white w-full p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4">
         {/* User Picture Section */}
         <UserPicture handleFileChange={handleFileChange} />
         
@@ -136,7 +136,7 @@ export const Settings = () => {
       </div>
 
       {/* Save & Go Back Button for Desktop */}
-      <div className="hidden sm:flex justify-center mt-10 sm:mt-14">
+      <div className="hidden sm:flex justify-center">
         <button
           onClick={handleSave}
           className="bg-[#FF902E] font-normal	 rounded text-white w-60 h-[3rem] sm:w-[15.125rem] text-xl"

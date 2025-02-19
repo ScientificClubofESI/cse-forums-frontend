@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
+import user from "../../../public/nav-bar/User.svg";
+import notification from "../../../public/nav-bar/Frame 33603.svg";;
+import settings from "../../../public/nav-bar/Frame 33604.svg"
 
-export const Navbarsignedin = () => {
+const Navbarsignedin = () => {
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-6 py-3 border-b-2 rounded-b-lg">
@@ -47,9 +50,9 @@ export const Navbarsignedin = () => {
           >
             All Questions
           </Link>
-          <Link href="">
+          <Link href="/profile/settings">
             <Image
-              src={"/nav-bar/User.svg"}
+              src={user}
               alt="User"
               width={40}
               height={40}
@@ -59,7 +62,7 @@ export const Navbarsignedin = () => {
 
           <Link href="/notifications">
             <Image
-              src={"/nav-bar/Frame 33603.svg"}
+              src={notification}
               alt="Frame 33603"
               width={40}
               height={40}
@@ -69,7 +72,7 @@ export const Navbarsignedin = () => {
 
           <Link href="/profile/settings">
             <Image
-              src={"/nav-bar/Frame 33604.svg"}
+              src={settings}
               alt="Frame 33604"
               width={40}
               height={40}
@@ -81,3 +84,4 @@ export const Navbarsignedin = () => {
     </div>
   );
 };
+export default Navbarsignedin;

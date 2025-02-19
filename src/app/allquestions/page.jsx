@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "@/components/navbar/navbar";
+import Navbar from "@/components/navbar/navbarnotsignedin";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";

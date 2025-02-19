@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Navbar from "@/components/navbar/navbar";
+import Navbar from "@/components/navbar/navbarnotsignedin";
 import Hero from "./landing/hero";
 import Offers from "./landing/offers";
 import About from "./landing/about";
@@ -16,7 +16,6 @@ import AllQuestions from "./allquestions/page";
 export default function Home() {
   return (
     <div>
-      <Navbar />
       <Hero />
       <Offers />
       <About />
