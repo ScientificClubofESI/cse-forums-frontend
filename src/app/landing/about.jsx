@@ -27,7 +27,7 @@ const About = () => {
                 consectetur adipiscing elit.Urna aenean consequat pretium, tempus ullamcorper placerat vitae.
                 Proin urna ac nunc, vulputate cras velit lacus. </p>
             </div>
-            <div className="flex lg:hidden bg-red-600 h-full"> 
+            <div className="flex lg:hidden h-full"> 
               <Image src={image1S} alt="HackIn2023-image1" width={800} />
             </div>
             
