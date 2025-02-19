@@ -87,11 +87,20 @@ export const SignUp = () => {
           </div>
 
           <div className="text-neutral-900 py-2">
+<<<<<<< HEAD
             <label className="items-center text-l font-serif text-neutral-900 ">
               <input type="checkbox" className="bg-white appearance-none w-4 h-4 mr-2 border-2 border-orange-300 rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white " />
+=======
+          <label className="flex items-center block text-l font-serif text-primary-900">
+              <input type="checkbox" className="hidden peer" />
+              <span className="text-white w-4 h-4 mr-2 border-2 p-2 border-orange-300 rounded-sm cursor-pointer flex items-center justify-center peer-checked:bg-orange-300 peer-checked:bg-orange-300">
+                ✔
+              </span>
+>>>>>>> 5f5c7f9eac50fc19f7c68ad1077e40a703837c0d
               I agree all statements in <a href="trm" className="ml-1 text-secondary-500"> Terms of service</a>
-            </label>
+          </label>
           </div>
+ 
 
           <button className="w-full my-3 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
             Sign Up
