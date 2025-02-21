@@ -50,7 +50,7 @@ const Navbarsignedin = () => {
           >
             All Questions
           </Link>
-          <Link href="/profile/settings">
+          <Link href="/profile/myquestions">
             <Image
               src={user}
               alt="User"

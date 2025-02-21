@@ -2,6 +2,7 @@
 
 import React from "react";
 
+import Link from "next/link";
 import BackIcon from "./back.svg";
 import ApprovedIcon from "./Approved.svg";
 import ApproveIcon from "./Approve.svg";
@@ -13,7 +14,9 @@ import UserpicIcon from "./userpic.svg";
 import TrashIcon from "./trash.svg";
 
 const Back = () => (
+  <Link href={"/allquestions"}>
   <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
+  </Link>
 );
 
 const Approved = () => (

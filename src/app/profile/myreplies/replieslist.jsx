@@ -6,7 +6,7 @@ import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
 
 export const MyReplies = () => {
-  const [activeTab, setActiveTab] = useState("All"); // State for active tab
+  const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 6;
@@ -22,18 +22,22 @@ export const MyReplies = () => {
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    // Add logic to filter data based on tab if needed
+    // Add filtering logic for cardData based on selected tab if needed
+  };
+
+  const handleDelete = () => {
+    alert("Delete clicked!");
   };
 
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
-      <div className="flex flex-row gap-[7px] md:gap-[14px]">
+      <div className="flex flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
         {["All", "Approved"].map((tab) => (
           <div
             key={tab}
             onClick={() => handleTabClick(tab)}
-            className={`py-[4px] md:py-[8px] px-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
+            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
               activeTab === tab
                 ? "bg-primary-500 text-white"
                 : "bg-neutral-100 text-neutral-900"
@@ -60,7 +64,7 @@ export const MyReplies = () => {
               title={card.title}
               content={card.content}
               approved={card.approved}
-              onDelete={() => alert("Delete clicked!")}
+              onDelete={handleDelete}
             />
           ))}
         </div>
@@ -92,4 +96,3 @@ export const MyReplies = () => {
 };
 
 export default MyReplies;
-

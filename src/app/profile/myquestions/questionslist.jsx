@@ -28,12 +28,12 @@ export const MyQuestionsList = () =>  {
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
-      <div className="flex flex-row gap-[7px] md:gap-[14px]">
+      <div className="flex flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
         {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map((tab) => (
           <div
             key={tab}
             onClick={() => handleTabClick(tab)}
-            className={`py-[4px] md:py-[8px] px-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
+            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
               activeTab === tab
                 ? "bg-primary-500 text-white"
                 : "bg-neutral-100 text-neutral-900"
