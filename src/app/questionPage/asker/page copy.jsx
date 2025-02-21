@@ -4,13 +4,11 @@ import React from "react";
 
 import BackIcon from "./back.svg";
 import ApprovedIcon from "./Approved.svg";
-import ApproveIcon from "./Approve.svg";
 import UpIcon from "./up.svg";
 import DownIcon from "./down.svg";
 import ShareIcon from "./share.svg";
 import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
-import TrashIcon from "./trash.svg";
 
 const Back = () => (
   <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
@@ -18,9 +16,6 @@ const Back = () => (
 
 const Approved = () => (
   <img src={ApprovedIcon.src} alt="approved" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
-);
-const Approve = () => (
-  <img src={ApproveIcon.src} alt="approve" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
 );
 
 const Up = () => (
@@ -36,9 +31,6 @@ const Share = () => (
 
 const Save = () => (
   <img src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
-);
-const Trash = () => (
-  <img src={TrashIcon.src} alt="trash" className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]" />
 );
 
 const Userpic = () => (
@@ -85,21 +77,13 @@ export const QuestionViewer = () => {
           </div>
         </div>
       </div>
-      <div className="md:pb-[1rem] pb-[0.2rem]"></div>
 
-<div className="flex justify-between items-center space-x-[1rem] ml-[4rem] md:space-x-[9rem] md:ml-[7rem]">
-<button className="mt-[2rem] ml-[rem] md:mr-[rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]">
-        Edit question
+      <button className="mt-[2rem] ml-[4rem] md:ml-[7rem] bg-secondary-500 rounded-lg flex items-center justify-center text-white text-base md:text-3xl font-semibold md:font-medium h-[2rem] md:h-[4rem] w-[18.875rem] md:w-[70rem]">
+        + Drop an answer
       </button>
-<button className="mt-[2rem] ml-[4rem] md:ml-[7rem] bg-warning-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem] gap-[4px]">
-        Delete question <Trash/>
-      </button>
-</div>
-<div className="md:pb-[1rem]"></div>
-
 
       <div className="md:w-[70rem] w-[18.875rem] mt-[2rem] space-y-6 ml-[4rem] md:ml-[7rem]">
-        <div className="bg-white p-6 rounded-lg shadow md:pb-[61px]">
+        <div className="bg-white p-6 rounded-lg shadow">
           <div className="flex justify-between items-center md:pb-8">
             <div className="text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center gap-2 md:font-serif">
               <Userpic /> user_name
@@ -112,43 +96,29 @@ export const QuestionViewer = () => {
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </p>
         </div>
-        <div className="md:pb-[0.6rem] "></div>
 
         <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center md:pb-8">
-            <div className="text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center gap-2 md:font-serif">
-              <Userpic /> user_name
-            </div>
-            <div className="text-neutral-900 text-xs font-medium md:font-bold md:text-lg md:mr-[2rem] flex items-center gap-2 font-serif">
-            Approve <Approve />
-            </div>
+          <div className="gap-2 text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center md:pb-8 font-serif">
+            <Userpic /> user_name
           </div>
           <div className="text-neutral-900 mt-2 pb-4 md:font-light md:text-2xl font-normal text-base font-serif">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </div>
-          <div className="bg-neutral-50 p-3 md:font-light md:text-base font-light text-xs">
+          <div className="bg-neutral-50 p-3 md:font-light md:text-2xl font-light text-xs">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque assumenda officia eligendi ratione nostrum vitae at, molestias necessitatibus maxime magni officiis error ullam tempore?
           </div>
         </div>
-<div className="md:pb-[0.6rem] "></div>
+
         <div className="bg-white p-6 rounded-lg shadow">
-        <div className="flex justify-between items-center md:pb-8">
-            <div className="text-secondary-500 md:text-3xl text-base font-medium md:font-bold flex items-center gap-2 md:font-serif">
-              <Userpic /> user_name
-            </div>
-            <div className="text-neutral-900 text-xs font-medium md:font-bold md:text-lg md:mr-[2rem] flex items-center gap-2 font-serif">
-            Approve <Approve />
-            </div>
+          <div className="gap-2 text-secondary-500 md:pb-8 md:text-3xl text-base font-medium md:font-bold flex items-center font-serif">
+            <Userpic /> user_name
           </div>
           <p className="text-neutral-900 mt-2 md:font-light md:text-2xl font-normal text-base font-serif">
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
           </p>
         </div>
       </div>
-      <div className="md:pb-[91px] pb-[2rem]"></div>
-
     </div>
-    
   );
 };
 
