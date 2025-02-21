@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function FooterPage() {
   return (
-    <div className="min-h-full flex flex-col bg-background-light">
+    <div className="min-h-full flex flex-col bg-background-light pt-[5%]">
       <div className="flex-grow"></div>
 
       <footer className="py-6 px-3 sm:py-10 sm:px-4 relative bg-light">

@@ -1,6 +1,4 @@
 "use client";
-
-import Navbar from "@/components/navbar/navbarnotsignedin";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -53,7 +51,6 @@ export const AllQuestions = () => {
 
   return (
     <div className="w-screen bg-neutral-50">
-      <Navbar />
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">

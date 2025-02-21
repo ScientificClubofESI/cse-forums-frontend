@@ -45,7 +45,7 @@ const Navbarsignedin = () => {
         <div className="flex items-center gap-4 md:gap-6">
           {/* "All Questions" hidden on small screens */}
           <Link
-            href="/questionPage/asker"
+            href="/allquestions"
             className="text-white hover:text-gray-200 hidden md:block"
           >
             All Questions
