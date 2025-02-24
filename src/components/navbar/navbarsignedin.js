@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import user from "../../../public/nav-bar/User.svg";
-import notification from "../../../public/nav-bar/Frame 33603.svg";;
-import settings from "../../../public/nav-bar/Frame 33604.svg"
+import notification from "../../../public/nav-bar/Frame33603.svg";;
+import settings from "../../../public/nav-bar/Frame33604.svg"
 
 const Navbarsignedin = () => {
   return (
@@ -16,6 +16,7 @@ const Navbarsignedin = () => {
               alt="Logo"
               width={64}
               height={64}
+              style={{ width: "auto", height: "auto" }}
               className="w-16 h-16"
             />
           </div>
@@ -30,6 +31,7 @@ const Navbarsignedin = () => {
               alt="search"
               width={20}
               height={20}
+              style={{ width: "auto", height: "auto" }}
               className="absolute left-3 top-1/2 transform -translate-y-1/2"
             />
             {/* Input Field */}
@@ -56,6 +58,7 @@ const Navbarsignedin = () => {
               alt="User"
               width={40}
               height={40}
+              style={{ width: "auto", height: "auto" }}
               className="hover:opacity-80"
             />
           </Link>
@@ -66,6 +69,7 @@ const Navbarsignedin = () => {
               alt="Frame 33603"
               width={40}
               height={40}
+              style={{ width: "auto", height: "auto" }}
               className="hover:opacity-80"
             />
           </Link>
@@ -76,6 +80,7 @@ const Navbarsignedin = () => {
               alt="Frame 33604"
               width={40}
               height={40}
+              style={{ width: "auto", height: "auto" }}
               className="hover:opacity-80"
             />
           </Link>

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Cookies from "js-cookie";
 import Image from "next/image";
 import logo from "../../../../public/images/Subtract.png";
 import pic from "../../../../public/images/Coding workshop-pana.png";
@@ -8,9 +9,54 @@ import linkedin from "../../../../public/images/linkedin icone.png";
 import emailIcone from "../../../../public/images/emailIcone.png";
 import userIcone from "../../../../public/images/userIcone.png";
 import eyeclosed from "../../../../public/images/eye-closed.png";
+import { useRouter } from "next/navigation"; // Correct import for App Router
+
 
 export const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const userData = {
+      email,
+      password,
+    };
+
+    console.log("Sending userData:", userData);
+  
+    try {
+      const response = await fetch('http://127.0.0.1:5000/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Handle successful login, e.g., redirect to dashboard
+        console.log('Login successful:', data);
+        Cookies.set("token", data.token, { expires: 1, path: "/" });
+        console.log("Stored token:", Cookies.get("token"));
+
+        // You can redirect the user or set some global state here
+        router.push("/"); // Redirect to home page
+      } else {
+        // Handle errors, e.g., show error message
+        console.error('Login failed:', data.message);
+      }
+    } catch (error) {
+      console.error('There was an error:', error);
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);}
@@ -20,16 +66,18 @@ export const LogIn = () => {
       <div className="flex flex-col items-center sm:items-stretch  w-full sm:w-1/2 h-full sm:h-full px-8 sm:px-36  pt-4 rounded-tr-none sm:rounded-tr-[80px]  ">
 
         <h1 className="text-primary-900 font-sans font-bold mb-12 sm:mb-16 text-2xl  sm:text-5xl ">Log In</h1>
-        <form className="w-full">
+        <form className="w-full" onSubmit={handleSubmit}>
 
           <div className="relative mb-10 sm:mb-16 w-full">
             <label className="block text-l font-sans font-bold text-primary-900 sm:text-2xl">Email</label>
             <input
               name="email"
               placeholder="Enter your email"
-              className=" mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
+              className="mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
               type="text"
-            ></input>
+              value={email} // Added: Bind to email state
+              onChange={(e) => setEmail(e.target.value)} // Added: Update email state
+            />
             <Image
               src={emailIcone}
               alt="Email Icon"
@@ -44,6 +92,8 @@ export const LogIn = () => {
               placeholder="Enter your password"
               className="mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 font-serif focus:outline-none rounded-md"
               type={showPassword ? "text" : "password"}
+              value={password} // Added: Bind to password state
+              onChange={(e) => setPassword(e.target.value)} // Added: Update password state
             />
             <Image
               src={eyeclosed}

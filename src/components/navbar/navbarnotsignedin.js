@@ -13,6 +13,7 @@ const Navbarnotsignedin = () => {
               alt="Logo"
               width={64}
               height={64}
+              style={{ width: "auto", height: "auto" }}
               className="w-16 h-16"
             />
           </div>
@@ -27,6 +28,7 @@ const Navbarnotsignedin = () => {
               alt="search"
               width={20}
               height={20}
+              style={{ width: "auto", height: "auto" }}
               className="absolute left-3 top-1/2 transform -translate-y-1/2"
             />
             {/* Input Field */}

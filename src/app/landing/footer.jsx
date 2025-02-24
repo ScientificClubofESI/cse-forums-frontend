@@ -13,10 +13,11 @@ export default function FooterPage() {
           </h2>
           <div className="flex justify-center items-center gap-8 sm:gap-16 mb-10">
             <Image
-              src="/footer/logo cse.svg"
+              src="/footer/logocse.svg"
               alt="CSE"
               width={100}
               height={140}
+              style={{ width: "auto", height: "auto" }}
               className="sm:w-[143.02px] sm:h-[197.05px]"
             />
             <div className="relative">
@@ -25,14 +26,16 @@ export default function FooterPage() {
                 alt="Subtract"
                 width={120}
                 height={140}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[174.8px] sm:h-[188.25px]"
               />
               <div className="absolute -right-9 sm:-right-20 -top-16 sm:-top-24">
                 <Image
-                  src="/footer/Arrow 13.svg"
+                  src="/footer/Arrow13.svg"
                   alt="Arrow"
                   width={36.73}
                   height={112.1}
+                  style={{ width: "auto", height: "auto" }}
                   className="sm:w-[73.45px] sm:h-[204.21px]"
                 />
               </div>
@@ -60,6 +63,7 @@ export default function FooterPage() {
                 alt="Facebook"
                 width={45}
                 height={45}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[63px] sm:h-[63px]"
               />
             </a>
@@ -73,6 +77,7 @@ export default function FooterPage() {
                 alt="Instagram"
                 width={45}
                 height={45}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[63px] sm:h-[63px]"
               />
             </a>
@@ -86,6 +91,7 @@ export default function FooterPage() {
                 alt="Twitter"
                 width={45}
                 height={45}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[63px] sm:h-[63px]"
               />
             </a>
@@ -99,6 +105,7 @@ export default function FooterPage() {
                 alt="YouTube"
                 width={45}
                 height={45}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[63px] sm:h-[63px]"
               />
             </a>
@@ -112,6 +119,7 @@ export default function FooterPage() {
                 alt="LinkedIn"
                 width={45}
                 height={45}
+                style={{ width: "auto", height: "auto" }}
                 className="sm:w-[63px] sm:h-[63px]"
               />
             </a>
