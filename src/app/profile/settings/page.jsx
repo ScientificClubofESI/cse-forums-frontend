@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import userpicture from "./userpicture.svg"; // Importing a user picture (SVG file)
+import axios from "axios";
 
 // Subcomponent: User Picture Section
 const UserPicture = ({ handleFileChange }) => (
@@ -33,11 +34,12 @@ const UserPicture = ({ handleFileChange }) => (
   </div>
 );
 
-
 // Subcomponent: Form Input
 const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
   <div className="flex items-center gap-4 w-full">
-    <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold		">{label}</label>
+    <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold		">
+      {label}
+    </label>
     <input
       type={type}
       placeholder={placeholder}
@@ -67,29 +69,42 @@ export const Settings = () => {
     // Logic for handling file upload (e.g., updating state or uploading to server)
     console.log("Selected file:", e.target.files[0]);
   };
-
+  const updateProfile = async () => {
+    const UserId = localStorage.getItem("userId");
+    const response = await axios.put(
+      `http://localhost:5000/user/${UserId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include the access token
+        },
+      },
+      {
+        fullName: formData.fullName,
+        userName: formData.userName,
+        email: formData.email,
+      }// it may change based on the backend
+    );
+  };
   const handleSave = () => {
     // Logic for saving form data (e.g., API call)
+    // updateProfile();
     console.log("Saving form data:", formData);
   };
-
-
 
   return (
     <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center">
       {/* Title */}
       <div className="font-sans sm:font-semibold md:ml-[38rem] mr-[11rem] sm:font-sans text-3xl text-[#262626] mb-8 sm:w-full sm:text-5xl font-medium p-2">
-      My Informations
+        My Informations
       </div>
 
       {/* Main Content */}
       <div className="bg-white md:w-[67.375rem] w-[23rem] p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4 sm:mx-[2rem]">
         {/* User Picture Section */}
         <UserPicture handleFileChange={handleFileChange} />
-        
         {/* Vertical Line for Desktop */}
-        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] p-[1.5rem] ml-[0.6rem]"></div> {/* Vertical line for desktop */}
-
+        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] p-[1.5rem] ml-[0.6rem]"></div>{" "}
+        {/* Vertical line for desktop */}
         {/* Form Section */}
         <div className="flex flex-col gap-6 flex-grow w-[19.875rem]">
           <FormInput
