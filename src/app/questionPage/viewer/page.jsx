@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-
+import React, { useState } from "react";
 import BackIcon from "./back.svg";
 import ApprovedIcon from "./Approved.svg";
 import UpIcon from "./up.svg";
@@ -10,55 +9,131 @@ import ShareIcon from "./share.svg";
 import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
 
-const Back = () => (
-  <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
-);
+const QuestionViewer = () => {
+  //Need to get the actual vote count
+  const [voteCount, setVoteCount] = useState(0);
+  const [userVote, setUserVote] = useState(null);
 
-const Approved = () => (
-  <img src={ApprovedIcon.src} alt="approved" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
-);
+  const handleVote = async (type) => {
+    //Static user_id & thread_id
+    const user_id = 1;
+    const thread_id = 1;
+    const voteEndpoint = `http://127.0.0.1:5000/threads/${thread_id}/vote`;
 
-const Up = () => (
-  <img src={UpIcon.src} alt="up" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
-);
-const Down = () => (
-  <img src={DownIcon.src} alt="down" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
-);
+    if (userVote === type) {
+      try {
+        const response = await fetch(voteEndpoint, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id }),
+        });
 
-const Share = () => (
-  <img src={ShareIcon.src} alt="share" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
-);
+        if (!response.ok) {
+          throw new Error("Failed to unvote");
+        }
 
-const Save = () => (
-  <img src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
-);
+        setVoteCount((prevCount) =>
+          type === "upvote" ? prevCount - 1 : prevCount + 1
+        );
+        setUserVote(null);
+      } catch (error) {
+        console.error("Error during unvote:", error);
+      }
+    } else {
+      let voteAdjustment = 0;
+      if (userVote === null) {
+        voteAdjustment = type === "upvote" ? 1 : -1;
+      } else if (userVote === "upvote" && type === "downvote") {
+        voteAdjustment = -2;
+      } else if (userVote === "downvote" && type === "upvote") {
+        voteAdjustment = 2;
+      }
 
-const Userpic = () => (
-  <img src={UserpicIcon.src} alt="userpic" className="w-[27px] h-[27px] md:w-[48px] md:h-[48px]" />
-);
+      try {
+        const response = await fetch(voteEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id, type }),
+        });
 
-export const QuestionViewer = () => {
+        if (!response.ok) {
+          throw new Error(`Failed to ${type}`);
+        }
+
+        setVoteCount((prevCount) => prevCount + voteAdjustment);
+        setUserVote(type);
+      } catch (error) {
+        console.error(`Error during ${type}:`, error);
+      }
+    }
+  };
+
+  const handleUpvote = () => handleVote("upvote");
+  const handleDownvote = () => handleVote("downvote");
+
   return (
-    <div className="bg-background-light min-h-screen flex flex-col items-center p-6">
+    <div className="bg-background-light min-h-screen flex flex-col items-center p-5">
       <div className="font-semibold text-2xl text-neutral-900 self-start md:ml-[5rem] md:mt-[5rem] mt-[3rem] pb-8 flex items-center gap-4 md:text-6xl">
         <Back />
         Back to questions
       </div>
 
       <div className="bg-white w-[23rem] md:w-[77rem] flex flex-col items-start font-medium text-xl md:font-semibold md:text-5xl py-8 rounded-lg p-6 gap-4 shadow-lg">
-        <div className="text-neutral-900 md:ml-[1.8rem] flex items-center"><div className="flex flex-col"><Up/> <Down/></div> <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">64</div><div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">Title of the question ?</div></div>
+        <div className="text-neutral-900 md:ml-[1.8rem] flex items-center">
+          <div className="flex flex-col">
+            <img
+              src={UpIcon.src}
+              alt="up"
+              onClick={handleUpvote}
+              className={`w-[16px] h-[16px] md:w-[32px] md:h-[32px] cursor-pointer transition-transform duration-200 ease-in-out ${
+                userVote === "upvote"
+                  ? "scale-125 text-primary-500"
+                  : "hover:scale-110"
+              }`}
+            />
+
+            <img
+              src={DownIcon.src}
+              alt="down"
+              onClick={handleDownvote}
+              className={`w-[16px] h-[16px] md:w-[32px] md:h-[32px] cursor-pointer transition-transform duration-200 ease-in-out ${
+                userVote === "downvote"
+                  ? "scale-125 text-primary-500"
+                  : "hover:scale-110"
+              }`}
+            />
+          </div>{" "}
+          <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">
+            {voteCount}
+          </div>
+          <div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">
+            Title of the question ?
+          </div>
+        </div>
 
         <div className="flex md:w-[99%] md:ml-[2rem] w-[21rem] md:space-x-3 space-x-2">
           <div className="border-t border-neutral-300 md:border-neutral-100 mt-[0.5rem] w-[12.3rem] md:w-[59rem] md:mt-[0.9rem]"></div>
-          <div className="md:text-neutral-500 text-neutral-300 text-xs md:text-lg font-light font-serif">Posted less than 1 day</div>
+          <div className="md:text-neutral-500 text-neutral-300 text-xs md:text-lg font-light font-serif">
+            Posted less than 1 day
+          </div>
         </div>
 
         <div className="text-neutral-900 font-light text-sm md:text-2xl md:ml-[2rem] md:w-[71rem] w-[20rem] font-serif">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus, sit. Eligendi quidem enim ex officiis illum, voluptas commodi, omnis esse dolor illo, incidunt eos. Et neque tempore doloremque provident. Facere!
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus,
+          sit. Eligendi quidem enim ex officiis illum, voluptas commodi, omnis
+          esse dolor illo, incidunt eos. Et neque tempore doloremque provident.
+          Facere!
         </div>
 
         <div className="bg-neutral-50 md:w-[71rem] w-[20rem] text-neutral-900 text-sm md:p-4 p-2 md:ml-[2rem] font-light md:text-base">
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat earum quisquam in! Dolorem, dolor veniam soluta sapiente ipsum debitis? Eveniet, non? Corrupti, harum itaque. Aut dolorum eveniet recusandae temporibus sed!
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat earum
+          quisquam in! Dolorem, dolor veniam soluta sapiente ipsum debitis?
+          Eveniet, non? Corrupti, harum itaque. Aut dolorum eveniet recusandae
+          temporibus sed!
         </div>
 
         <div className="border-t border-neutral-100 w-[20rem] md:w-[71rem] md:ml-[2rem]"></div>
@@ -91,11 +166,14 @@ export const QuestionViewer = () => {
               <Userpic /> user_name
             </div>
             <div className="text-success-500 text-xs font-medium md:font-bold md:text-lg md:mr-[2rem] flex items-center gap-2 font-serif">
-            Approved <Approved />
+              Approved <Approved />
             </div>
           </div>
           <p className="text-neutral-900 mt-2 md:font-light md:text-2xl font-normal text-base font-serif">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore
+            laudantium quod beatae commodi aperiam, et quae officia odit
+            suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam
+            molestias aspernatur sapiente.
           </p>
         </div>
         <div className="md:pb-[0.6rem] "></div>
@@ -105,10 +183,16 @@ export const QuestionViewer = () => {
             <Userpic /> user_name
           </div>
           <div className="text-neutral-900 mt-2 pb-4 md:font-light md:text-2xl font-normal text-base font-serif">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore
+            laudantium quod beatae commodi aperiam, et quae officia odit
+            suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam
+            molestias aspernatur sapiente.
           </div>
           <div className="bg-neutral-50 p-3 md:font-light md:text-base font-light text-xs">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque assumenda officia eligendi ratione nostrum vitae at, molestias necessitatibus maxime magni officiis error ullam tempore?
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+            Voluptates, obcaecati ipsum animi voluptatibus quisquam itaque
+            assumenda officia eligendi ratione nostrum vitae at, molestias
+            necessitatibus maxime magni officiis error ullam tempore?
           </div>
         </div>
         <div className="md:pb-[0.6rem] "></div>
@@ -118,18 +202,56 @@ export const QuestionViewer = () => {
             <Userpic /> user_name
           </div>
           <p className="text-neutral-900 mt-2 md:font-light md:text-2xl font-normal text-base font-serif">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore laudantium quod beatae commodi aperiam, et quae officia odit suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam molestias aspernatur sapiente.
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Labore
+            laudantium quod beatae commodi aperiam, et quae officia odit
+            suscipit mollitia! Laborum a placeat blanditiis ab dolores quibusdam
+            molestias aspernatur sapiente.
           </p>
         </div>
       </div>
       <div className="md:pb-[91px] pb-[2rem]"></div>
-
     </div>
   );
 };
 
+const Back = () => (
+  <img
+    src={BackIcon.src}
+    alt="back"
+    className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]"
+  />
+);
+
+const Approved = () => (
+  <img
+    src={ApprovedIcon.src}
+    alt="approved"
+    className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]"
+  />
+);
+
+const Share = () => (
+  <img
+    src={ShareIcon.src}
+    alt="share"
+    className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]"
+  />
+);
+
+const Save = () => (
+  <img
+    src={SaveIcon.src}
+    alt="save"
+    className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]"
+  />
+);
+
+const Userpic = () => (
+  <img
+    src={UserpicIcon.src}
+    alt="userpic"
+    className="w-[27px] h-[27px] md:w-[48px] md:h-[48px]"
+  />
+);
+
 export default QuestionViewer;
-
-
-
-
