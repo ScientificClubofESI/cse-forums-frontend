@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import BulletList from '@tiptap/extension-bullet-list';
@@ -11,68 +11,86 @@ import Dropcursor from '@tiptap/extension-dropcursor';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
-import FileHandler from '@tiptap-pro/extension-file-handler';
-import Import from '@tiptap-pro/extension-import';
-import DragHandle from '@tiptap-pro/extension-drag-handle-react';
+import ListItem from '@tiptap/extension-list-item';
+import {GalleryImport, Code1, TextBold, TextUnderline,
+  TextItalic, TextalignLeft, TextalignCenter, TextalignRight, Document,
+  Send } from 'iconsax-react';
 import { common, createLowlight } from 'lowlight';
-import {
-  FiBold,
-  FiUnderline,
-  FiItalic,
-  FiAlignLeft,
-  FiAlignCenter,
-  FiAlignRight,
-  FiList,
-  FiFile,
-  FiImage,
-  FiTerminal,
-} from 'react-icons/fi';
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
 import { IoIosClose } from 'react-icons/io';
-import './page.css';
-import ListItem from '@tiptap/extension-list-item';
-const iconSize = 25;
-const styles = {
-  container:
-    'w-full min-h-[100vh] px-32 py-14 flex content-start justify-start flex-col flex-wrap gap-5',
-  titleContainer: 'flex content-center justify-start',
-  title: 'font-sans font-semibold text-5xl leading-[84px] ',
-  subPartContainer:
-    'w-full flex content-start justify-start flex-col gap-0.5  flex-wrap',
-  subtitle: 'font-serif font-bold text-xl leading-[40px] ',
-  asterix: 'text-secondary-500',
-  subsubtitle: 'font-serif font-light text-l leading-[24px] ',
-  smallInput: 'w-full h-10 bg-white rounded-sm p-4 font-serif',
-  paramsContainer: 'w-full flex content-center justify-evenly ',
-  params:
-    'w-1/8  flex content-center justify-center flex-col gap-1 flex-wrap mb-2',
-  paramsTitle: 'font-serif font-bold text-m leading-[20px] text-center',
-  paramsIcons: 'w-full flex content-center justify-center gap-3',
-  bigInput:
-    'w-full h-42 bg-white rounded-sm p-4 font-serif resize-none focus:outline-none',
-  tagContainer:
-    'w-full h-min-10 bg-white rounded-sm p-2 font-serif flex content-start justify-start flex-wrap flex-row gap-3',
-  tag: 'h-6 w-fit bg-black rounded-sm p-1 font-serif flex content-center justify-center flex-wrap gap-0.5',
-  tagText: 'text-white text-sans font-bold',
-  tagInput: 'min-w-max h-full bg-white  font-serif focus:outline-none',
-  closeTag: 'cursor-pointer',
-  button:
-    'bg-secondary-500 w-full h-10 text-center font-sans text-white rounded-sm',
-};
+
 
 const AskQuestion = () => {
-  const APP_ID = process.env.TIP_TAP_PROJECT_ID;
-  const JWT = process.env.TIP_TAP_JWT;
   const [isLoading, setIsLoading] = useState(false);
   const [questionTitle, setQuestionTitle] = useState('');
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
-  const importRef = useRef(null);
+  const fileInputRef = useRef(null);
   const [error, setError] = useState(null);
+  const [iconSize, setIconSize] = useState(25);
+ 
+  // Update icon size on mount and window resize
+  useEffect(() => {
+    const updateIconSize = () => {
+      setIconSize(window.innerWidth < 768 ? 20 : 25);
+    };
+   
+    // Set initial size
+    updateIconSize();
+   
+    // Add event listener
+    window.addEventListener('resize', updateIconSize);
+   
+    // Clean up
+    return () => window.removeEventListener('resize', updateIconSize);
+  }, []);
+
+  // Custom image handler function
+  const handleImageUpload = useCallback((file) => {
+    if (!file || !editor) return;
+   
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+    fileReader.onload = () => {
+      editor
+        .chain()
+        .focus()
+        .setImage({ src: fileReader.result })
+        .run();
+    };
+  }, []);
+
   const editor = useEditor({
     editorProps: {
       attributes: {
-        class: 'focus:outline-none ',
+        class: 'focus:outline-none',
+      },
+      handlePaste: (view, event) => {
+        // Simple paste handler for images
+        const items = Array.from(event.clipboardData?.items || []);
+        const imageItems = items.filter(item => /image/.test(item.type));
+       
+        if (imageItems.length > 0) {
+          event.preventDefault();
+          imageItems.forEach(item => {
+            const file = item.getAsFile();
+            if (file) handleImageUpload(file);
+          });
+          return true;
+        }
+        return false;
+      },
+      handleDrop: (view, event) => {
+        // Simple drop handler for images
+        const files = Array.from(event.dataTransfer?.files || []);
+        const imageFiles = files.filter(file => /image/.test(file.type));
+       
+        if (imageFiles.length > 0) {
+          event.preventDefault();
+          imageFiles.forEach(file => handleImageUpload(file));
+          return true;
+        }
+        return false;
       },
     },
     extensions: [
@@ -83,7 +101,7 @@ const AskQuestion = () => {
       OrderedList,
       ListItem,
       Placeholder.configure({
-        placeholder: 'Give us more details about your question …',
+        placeholder: 'Give us more details about your question…',
         emptyEditorClass:
           'is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none',
       }),
@@ -100,84 +118,13 @@ const AskQuestion = () => {
         lowlight: createLowlight(common),
       }),
       Highlight,
-      FileHandler.configure({
-        allowedMimeTypes: [
-          'image/png',
-          'image/jpeg',
-          'image/gif',
-          'image/webp',
-        ],
-        onDrop: (currentEditor, files, pos) => {
-          files.forEach((file) => {
-            const fileReader = new FileReader();
-
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-              currentEditor
-                .chain()
-                .insertContentAt(pos, {
-                  type: 'image',
-                  attrs: {
-                    src: fileReader.result,
-                  },
-                })
-                .focus()
-                .run();
-            };
-          });
-        },
-        onPaste: (currentEditor, files, htmlContent) => {
-          files.forEach((file) => {
-            if (htmlContent) {
-              // if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
-              // you could extract the pasted file from this url string and upload it to a server for example
-              console.log(htmlContent); // eslint-disable-line no-console
-              return false;
-            }
-
-            const fileReader = new FileReader();
-
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-              currentEditor
-                .chain()
-                .insertContentAt(currentEditor.state.selection.anchor, {
-                  type: 'image',
-                  attrs: {
-                    src: fileReader.result,
-                  },
-                })
-                .focus()
-                .run();
-            };
-          });
-        },
-      }), // ...
-      Import.configure({
-        // The Convert App-ID from the Convert settings page: https://cloud.tiptap.dev/convert-settings
-        appId: APP_ID,
-
-        // The JWT token you generated in the previous step
-        token: JWT,
-
-        // The URL to upload images to, if not provided, images will be stripped from the document
-        imageUploadCallbackUrl: 'https://your-image-upload-url.com',
-
-        // Enables the experimental DOCX import which should better preserve content styling
-        experimentalDocxImport: true,
-      }),
     ],
-    onBeforeCreate: ({ editor }) => {
+    onBeforeCreate: () => {
       setIsLoading(true);
     },
-    onCreate: ({ editor }) => {
+    onCreate: () => {
       setIsLoading(false);
     },
-    immediatelyRender: false,
-    shouldRerenderOnTransaction: false,
-    content: `
-     
-  `,
   });
 
   const handleKeyEvent = (e) => {
@@ -188,51 +135,47 @@ const AskQuestion = () => {
   };
 
   const addImage = useCallback(() => {
+    if (!editor) return;
+   
     const url = window.prompt('Insert an Image Link');
-
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   }, [editor]);
 
-  const handleImportClick = useCallback(() => {
-    importRef.current.click();
+  const handleFileInputClick = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   }, []);
 
-  const handleImportFilePick = useCallback(
-    (e) => {
-      const file = e.target.files[0];
+  const handleFileSelection = useCallback((e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+   
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
 
-      importRef.current.value = '';
+    // Simple handling for image files
+    if (file.type.startsWith('image/')) {
+      handleImageUpload(file);
+    } else {
+      // For other document types, you could implement a simple parser
+      // or just notify user that this functionality is limited
+      setError('Only image uploads are supported in this version');
+    }
+  }, [handleImageUpload]);
 
-      if (!file) {
-        return;
-      }
-
-      setIsLoading(true);
-      setError(null);
-      editor
-        .chain()
-        .import({
-          file,
-          onImport(context) {
-            if (context.error) {
-              setError(context.error);
-              setIsLoading(false);
-              return;
-            }
-            context.setEditorContent(context.content);
-            setError(null);
-            setIsLoading(false);
-          },
-        })
-        .run();
-    },
-    [editor]
-  );
+  // Add code block function
+  const addCodeBlock = useCallback(() => {
+    if (editor) {
+      editor.chain().focus().toggleCodeBlock().run();
+    }
+  }, [editor]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="w-full h-screen flex items-center justify-center">Loading...</div>;
   }
 
   if (!editor) {
@@ -241,147 +184,143 @@ const AskQuestion = () => {
 
   return (
     <main
-      className={styles.container}
+      className="w-full min-h-screen px-4 sm:px-8 md:px-16 lg:px-32 py-6 md:py-14 flex flex-col gap-3 md:gap-5"
       style={{
         background:
           'linear-gradient(0deg, rgba(46, 117, 173, 0.05), rgba(46, 117, 173, 0.05)), #FFFBFE',
       }}
     >
-      <div className={styles.titleContainer}>
-        <h2 className={styles.title}>Few Steps to Ask Your Question</h2>
+      <div className="flex content-center justify-start">
+        <h2 className="font-sans font-semibold text-3xl sm:text-4xl lg:text-5xl leading-tight sm:leading-normal">Few Steps to Ask Your Question</h2>
       </div>
-      <div className={styles.subPartContainer}>
-        <h3 className={styles.subtitle}>
-          Title <span className={styles.asterix}>*</span>
+     
+      <div className="w-full flex flex-col gap-0.5">
+        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+          Title <span className="text-secondary-500">*</span>
         </h3>
-        <p className={styles.subsubtitle}>
-          It’s best to wright short & to the point titles.
+        <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
+          It's best to write short & to the point titles.
         </p>
         <input
           type="text"
           name="question"
-          className={styles.smallInput}
-          placeholder="Enter The title of your question"
+          className="w-full h-10 bg-white rounded-sm p-4 font-serif focus:outline-none"
+          placeholder="Enter the title of your question"
           value={questionTitle}
           onChange={(e) => setQuestionTitle(e.target.value)}
         />
       </div>
-      <div className={styles.subPartContainer}>
-        <h3 className={styles.subtitle}>
-          Details <span className={styles.asterix}>*</span>
+     
+      <div className="w-full flex flex-col gap-0.5">
+        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+          Details <span className="text-secondary-500">*</span>
         </h3>
-        <div className={styles.paramsContainer}>
-          <div className={styles.params}>
-            <h3 className={styles.paramsTitle}>Fonts</h3>
-            <div className={styles.paramsIcons}>
-              <span onClick={() => editor.chain().focus().toggleBold().run()}>
-                <FiBold size={iconSize} />
+       
+        <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0">
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <h3 className="font-serif font-bold text-sm md:text-base text-center">Fonts</h3>
+            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+              <span onClick={() => editor.chain().focus().toggleBold().run()} className="cursor-pointer">
+                <TextBold color="#000000" size={iconSize} />
               </span>
-              <span
-                onClick={() => editor.chain().focus().toggleUnderline().run()}
+              <span onClick={() => editor.chain().focus().toggleUnderline().run()} className="cursor-pointer">
+                <TextUnderline color="#000000" size={iconSize} />
+              </span>
+              <span onClick={() => editor.chain().focus().toggleItalic().run()} className="cursor-pointer">
+                <TextItalic color="#000000" size={iconSize} />
+              </span>
+            </div>
+          </div>
+         
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <h3 className="font-serif font-bold text-sm md:text-base text-center">Alignment</h3>
+            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+              <span onClick={() => editor.chain().focus().setTextAlign('left').run()} className="cursor-pointer">
+                <TextalignLeft color="#000000" size={iconSize} />
+              </span>
+              <span onClick={() => editor.chain().focus().setTextAlign('center').run()} className="cursor-pointer">
+                <TextalignCenter color="#000000" size={iconSize} />
+              </span>
+              <span onClick={() => editor.chain().focus().setTextAlign('right').run()} className="cursor-pointer">
+                <TextalignRight color="#000000" size={iconSize} />
+              </span>
+            </div>
+          </div>
+         
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <h3 className="font-serif font-bold text-sm md:text-base text-center">Indenting/Lists</h3>
+            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+              <TfiAlignLeft size={iconSize} className="cursor-pointer" />
+              <TfiAlignRight size={iconSize} className="cursor-pointer" />
+              <span onClick={() => editor.chain().focus().toggleBulletList().run()} className="cursor-pointer">
+                <TfiListOl size={iconSize} />
+              </span>
+              <span onClick={() => editor.chain().focus().toggleOrderedList().run()} className="cursor-pointer">
+                <TfiListOl size={iconSize} />
+              </span>
+            </div>
+          </div>
+         
+          <div className="flex flex-col items-center gap-1 mb-2">
+            <h3 className="font-serif font-bold text-sm md:text-base text-center">Inserts</h3>
+            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+              <button
+                onClick={handleFileInputClick}
+                className="bg-transparent border-0 p-0 cursor-pointer"
               >
-                <FiUnderline size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().toggleItalic().run()}>
-                <FiItalic size={iconSize} />
-              </span>
-            </div>
-          </div>
-          <div className={styles.params}>
-            <h3 className={styles.paramsTitle}>Alignment</h3>
-            <div className={styles.paramsIcons}>
-              <FiAlignLeft
-                size={iconSize}
-                onClick={() => editor.commands.setTextAlign('left')}
-              />
-              <FiAlignCenter
-                size={iconSize}
-                onClick={() => editor.commands.setTextAlign('center')}
-              />
-              <FiAlignRight
-                size={iconSize}
-                onClick={() => editor.commands.setTextAlign('right')}
-              />
-            </div>
-          </div>
-          <div className={styles.params}>
-            <h3 className={styles.paramsTitle}>Indenting/Lists</h3>
-            <div className={styles.paramsIcons}>
-              <TfiAlignLeft size={iconSize} />
-              <TfiAlignRight size={iconSize} />
-              <FiList
-                size={iconSize}
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-              />
-              <TfiListOl
-                size={iconSize}
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-              />
-            </div>
-          </div>
-          <div className={styles.params}>
-            <h3 className={styles.paramsTitle}>Inserts</h3>
-            <div className={styles.paramsIcons}>
-              <button onClick={handleImportClick}>
-                <FiFile size={iconSize} />
+                <Document color="#000000" size={iconSize} />
                 <input
-                  onChange={handleImportFilePick}
+                  onChange={handleFileSelection}
                   type="file"
-                  ref={importRef}
+                  ref={fileInputRef}
+                  accept="image/*"
                   style={{ display: 'none' }}
                 />
               </button>
-
-              <FiImage size={iconSize} onClick={addImage} />
-              <FiTerminal
-                size={iconSize}
-                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-              />
+              <span onClick={addImage} className="cursor-pointer">
+                <GalleryImport color="#000000" size={iconSize} />
+              </span>
+              <span onClick={addCodeBlock} className="cursor-pointer">
+                <Code1 color="#000000" size={iconSize} />
+              </span>
             </div>
           </div>
         </div>
-        <DragHandle editor={editor}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 9h16.5m-16.5 6.75h16.5"
-            />
-          </svg>
-        </DragHandle>
+       
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+       
         <EditorContent
-          className={styles.bigInput}
-          placeholder="Give us more details about your question"
+          className="w-full h-64 md:h-96 rounded-md p-3 md:p-4 lg:p-6 bg-white resize-none focus:outline-none overflow-auto"
           editor={editor}
         />
       </div>
-      <div className={styles.subPartContainer}>
-        <h3 className={styles.subtitle}>
-          Tags <span className={styles.asterix}>*</span>
+     
+      <div className="w-full flex flex-col gap-0.5">
+        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+          Tags <span className="text-secondary-500">*</span>
         </h3>
-        <p className={styles.subsubtitle}>You can choose up to 10 tags.</p>
-        <div className={styles.tagContainer}>
+        <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
+          You can choose up to 10 tags.
+        </p>
+        <div className="w-full min-h-[50px] bg-white rounded-sm p-2 font-serif flex flex-wrap gap-2 md:gap-3">
           {tags.map((tag, index) => (
-            <div className={styles.tag} key={index}>
+            <div
+              className="h-6 w-fit bg-black rounded-sm p-1 font-serif flex items-center justify-center gap-0.5 mb-2 md:mb-0"
+              key={index}
+            >
               <span
-                className={styles.closeTag}
+                className="cursor-pointer"
                 onClick={() => setTags(tags.filter((t) => t !== tag))}
               >
-                <IoIosClose size={25} color="white" />
+                <IoIosClose size={iconSize} color="white" />
               </span>
-              <p className={styles.tagText}>{tag}</p>
+              <p className="text-white text-xs md:text-sm font-bold">{tag}</p>
             </div>
           ))}
           <input
             type="text"
             name="tag"
-            className={styles.tagInput}
+            className="flex-grow h-10 bg-white font-serif focus:outline-none"
             placeholder="Enter a tag"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
@@ -389,7 +328,13 @@ const AskQuestion = () => {
           />
         </div>
       </div>
-      <button className={styles.button}> Post Your Question</button>
+     
+      <button
+        className="bg-secondary-500 w-full h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300"
+      >
+        <span className="text-sm md:text-base">Post Your Question</span>
+        <Send size={iconSize} color="#d9e3f0" variant="Bold" />
+      </button>
     </main>
   );
 };
