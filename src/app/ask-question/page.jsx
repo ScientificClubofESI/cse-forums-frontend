@@ -12,12 +12,15 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Highlight from '@tiptap/extension-highlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import ListItem from '@tiptap/extension-list-item';
-import {GalleryImport, Code1, TextBold, TextUnderline,
+import {
+  GalleryImport, Code1, TextBold, TextUnderline,
   TextItalic, TextalignLeft, TextalignCenter, TextalignRight, Document,
-  Send } from 'iconsax-react';
+  Send
+} from 'iconsax-react';
 import { common, createLowlight } from 'lowlight';
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
 import { IoIosClose } from 'react-icons/io';
+import PopUp from '../PopUp/page';
 
 
 const AskQuestion = () => {
@@ -28,6 +31,14 @@ const AskQuestion = () => {
   const fileInputRef = useRef(null);
   const [error, setError] = useState(null);
   const [iconSize, setIconSize] = useState(25);
+  const [isAnswerPopupOpen, setIsAnswerPopupOpen] = useState(false);
+
+  const handleAnswerSubmit = (answerHtml) => {
+    console.log('Answer submitted:', answerHtml);
+    // Process the submitted answer
+    setIsAnswerPopupOpen(false);
+  };
+
  
   // Update icon size on mount and window resize
   useEffect(() => {
@@ -330,11 +341,20 @@ const AskQuestion = () => {
       </div>
      
       <button
-        className="bg-secondary-500 w-full h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300"
+        className="bg-secondary-500 w-full h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300" 
+        // onClick={() => setIsAnswerPopupOpen(true)}
       >
+         
         <span className="text-sm md:text-base">Post Your Question</span>
         <Send size={iconSize} color="#d9e3f0" variant="Bold" />
+        
       </button>
+      
+      {/* <PopUp
+        isOpen={isAnswerPopupOpen}
+        onClose={() => setIsAnswerPopupOpen(false)}
+        onSubmit={handleAnswerSubmit}
+      /> */}
     </main>
   );
 };

@@ -6,6 +6,7 @@ import About from "./landing/about";
 import Feedback from "./landing/feedback";
 import Footer from "./landing/footer";
 import Question from "./ask-question/page"
+import PopUp from "./PopUp/page";
 
 
 
@@ -13,7 +14,7 @@ export default function Home() {
   return (
     <div>
       <div className="bg-primary-100 font-serif text-xl">hey</div>
-      <Question />
+      <Question/>
       <Navbar />
       <Hero />
       <Offers />
