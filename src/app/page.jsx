@@ -11,6 +11,8 @@ import LogIn from "./auth/login/page";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Profil from "./profile/page";
 import { useState , useEffect } from "react";
+import Question from "./ask-question/page"
+import PopUp from "./PopUp/page";
 
 import AllQuestions from "./allquestions/page";
 
@@ -24,6 +26,7 @@ export default function Home() {
   }, []);
   return (
     <div>
+      {/* <Question/> */}
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <Hero />
       <Offers />

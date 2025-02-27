@@ -11,26 +11,31 @@ import UpDown from "./../../../public/allQuestion/UpDown.svg";
 import plus from "./../../../public/allQuestion/addAnswer.svg";
 import save from "./../../../public/allQuestion/save.svg";
 import share from "./../../../public/allQuestion/share.svg";
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import axios from "axios";
 import moment from "moment";
+import PopUp from "../PopUp/page";
+import Cookies from "js-cookie";
 
-
-
-import {questions} from "./export.js";
-
+import { questions } from "./export.js";
 
 export const AllQuestions = () => {
   const [activeFilter, setActiveFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1); 
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(10);
   const [threads, setthreads] = useState();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [threadId, setthreadId] = useState(0);
+  const openPopup = () => setIsPopupOpen(true);
+  const closePopup = () => setIsPopupOpen(false);
 
-{/*  const startIndex = (currentPage - 1) * 4;
+  {
+    /*  const startIndex = (currentPage - 1) * 4;
   const endIndex = Math.min(startIndex + 4, questions.length);
-  const displayedQuestions = questions.slice(startIndex, endIndex);*/}
-  
+  const displayedQuestions = questions.slice(startIndex, endIndex);*/
+  }
+
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
   };
@@ -41,19 +46,18 @@ export const AllQuestions = () => {
     }
   };
 
-
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
-  
+
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
-  
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -64,24 +68,46 @@ export const AllQuestions = () => {
   const getQuestions = async () => {
     try {
       const response = await axios.get("http://localhost:5000/threads/all");
-      console.log('threads : ',response.data);
-  //     const date = new Date(isoDate);
-  // const formattedDate = date.toLocaleDateString("en-US", {
-  //   year: "numeric",
-  //   month: "long",
-  //   day: "numeric",
-  // });
+      console.log("threads : ", response.data);
       setthreads(response.data.data);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
   useEffect(() => {
     getQuestions();
   }, []);
+  const handleSaveThread = async (threadId) => {
+    try {
+      const userId = localStorage.getItem("userId"); // Get the user ID from localStorage
+      if (!userId) {
+        alert("You must be logged in to save a thread.");
+        return;
+      }
+  
+      const response = await axios.post(
+        `http://localhost:5000/threads/${threadId}/save`,
+        {
+          user_id: Number(userId), // Send the user_id in the request body
+        },
+        {
+          withCredentials: true, // Include cookies if needed
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
+          },
+        }
+      );
+  
+      console.log("Thread saved successfully:", response.data);
+      alert("Thread saved successfully!"); // Show a success message
+    } catch (error) {
+      console.error("Failed to save thread:", error);
+      alert("Failed to save thread. Please try again."); // Show an error message
+    }
+  };
   return (
     <div className=" bg-neutral-50">
-    {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+      {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
@@ -89,7 +115,7 @@ export const AllQuestions = () => {
               All Questions
             </h1>
             <Link
-              href="/questionPage/asker"
+              href="/ask-question"
               className="bg-secondary-500 rounded-md lg:rounded-lg py-2 px-4 lg:px-12 text-[#FFF] font-sans text-sm lg:text-3xl"
             >
               Ask a Question ?
@@ -145,10 +171,7 @@ export const AllQuestions = () => {
             </div>
 
             <div className="flex justify-between items-center rounded-md bg-primary-500 py-1 px-2 lg:px-4">
-              <Link
-                className="text-xl text-[#FFF] flex items-center"
-                href="#"
-              >
+              <Link className="text-xl text-[#FFF] flex items-center" href="#">
                 <Image
                   src={filtre}
                   alt="Filtre icon"
@@ -161,42 +184,58 @@ export const AllQuestions = () => {
 
           {/*white card */}
           {threads?.map((question, index) => (
-            <div key={index} className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full">
+            <div
+              key={index}
+              className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+            >
               <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
-                <div className="flex flex-row items-center justify-between gap-1"> 
-                    <Image src={UpDown} alt="Lines" className="h-full w-4 lg:w-8" />
-                    <div className="font-sans text-sm lg:text-3xl text-neutral-900"> {question.upvotes} </div>
-                </div>    
-                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">{question.title}</h1>
+                <div className="flex flex-row items-center justify-between gap-1">
+                  <Image
+                    src={UpDown}
+                    alt="Lines"
+                    className="h-full w-4 lg:w-8"
+                  />
+                  <div className="font-sans text-sm lg:text-3xl text-neutral-900">
+                    {" "}
+                    {question.upvotes}{" "}
+                  </div>
+                </div>
+                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                  {question.title}
+                </h1>
               </div>
 
               <div className="w-full flex flex-row justify-between items-center gap-0">
-                <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div> 
-                <div className="font-serif lg:text-lg text-xs text-neutral-300">{moment(question.date).format("MMMM D, YYYY")}</div>
-              </div>  
-
-              <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
-                  <p>{question.content}</p>
+                <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
+                <div className="font-serif lg:text-lg text-xs text-neutral-300">
+                  {moment(question.date).format("MMMM D, YYYY")}
+                </div>
               </div>
 
+              <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
+                <p>{question.content}</p>
+              </div>
 
               <div className="w-full flex flex-row justify-between items-center gap-6">
-                {/*drop answer + number of answer buttons */}  
+                {/*drop answer + number of answer buttons */}
                 <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
-                  <Link 
-                    href="/" 
+                  <button
+                    onClick={()=>{
+                      openPopup()
+                      setthreadId(question.id)
+
+                    }
+                      
+                      }
                     className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                   >
-                    <Image
-                      src={plus}
-                      alt="Add answer"
-                      className="lg:p-1 w-5"
-                    />
+                    <Image src={plus} alt="Add answer" className="lg:p-1 w-5" />
                     <span>Drop an Answer</span>
-                  </Link>
+                  </button>
 
-                  <Link 
-                    href="/" 
+
+                  <Link
+                    href="/"
                     className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                   >
                     {question.answers_count} answer
@@ -215,39 +254,50 @@ export const AllQuestions = () => {
                       alt="share icon"
                       className="w-[13px] lg:w-[24px] "
                     />
-                     Share
+                    Share
                   </Link>
 
-                   {/*save button */}
-                  <Link
+                  {/*save button */}
+                  <button
                     className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                    href="#"
+                    // href="#"
+                    onClick={() => handleSaveThread(question.id)}
                   >
                     <Image
                       src={save}
                       alt="save icon"
                       className="w-[13px] lg:w-[24px]"
                     />
-                     Save
-                  </Link>
-
+                    Save
+                  </button>
                 </div>
               </div>
-
             </div>
           ))}
-          
+          {isPopupOpen && (
+        <PopUp
+          isOpen={isPopupOpen}
+          onClose={closePopup}
+          threadId={threadId}
+          // onSubmit={async(content) => {
+            
+          //   closePopup(); // Close the popup after submission
+          // }}
+          getQuestions={getQuestions}
+        />
+      )}
+
           {/*ask a question button */}
-          <Link 
-             className="w-full bg-secondary-500 font-sans text-xl lg:text-3xl rounded-lg text-[#FFF] text-center py-2"
-             href="/questionPage/asker"
+          <Link
+            className="w-full bg-secondary-500 font-sans text-xl lg:text-3xl rounded-lg text-[#FFF] text-center py-2"
+            href="/ask-question"
           >
-             Ask a Question ?
+            Ask a Question ?
           </Link>
 
           {/*Pages*/}
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-2">
-            <button 
+            <button
               disabled={currentPage === 1}
               onClick={handlePrevPage}
               className="disabled:opacity-50"
@@ -255,24 +305,37 @@ export const AllQuestions = () => {
               <Image src={left} alt="left icon" width={24} height={24} />
             </button>
             <div className="flex items-center text-neutral-700">
-              <Link href="/" className={`mr-2 ${currentPage === 1 && "bg-secondary-500 p-1 rounded-sm"}`}>{currentPage}</Link>
-              <Link href="/" className="mr-2">{currentPage+1}</Link>
-              <Link href="/" className="mr-2">{currentPage+2}</Link>
-              <Link href="/" className="mr-2">{currentPage+3}</Link>
-              <Link href="/" className="mr-2">{currentPage+5}</Link>
-              <Image src={dotes} alt="dotes" width={28} className="mr-2"/>
+              <Link
+                href="/"
+                className={`mr-2 ${
+                  currentPage === 1 && "bg-secondary-500 p-1 rounded-sm"
+                }`}
+              >
+                {currentPage}
+              </Link>
+              <Link href="/" className="mr-2">
+                {currentPage + 1}
+              </Link>
+              <Link href="/" className="mr-2">
+                {currentPage + 2}
+              </Link>
+              <Link href="/" className="mr-2">
+                {currentPage + 3}
+              </Link>
+              <Link href="/" className="mr-2">
+                {currentPage + 5}
+              </Link>
+              <Image src={dotes} alt="dotes" width={28} className="mr-2" />
               <span>{totalPages}</span>
             </div>
-            <button 
+            <button
               disabled={currentPage === totalPages}
               onClick={handleNextPage}
               className="disabled:opacity-100"
             >
-              <Image src={right} alt="right icon" width={24} height={24}  />
-
+              <Image src={right} alt="right icon" width={24} height={24} />
             </button>
           </div>
-
         </div>
       </div>
     </div>

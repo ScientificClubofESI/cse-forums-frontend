@@ -25,9 +25,9 @@ api.interceptors.request.use(
       } catch (error) {
         console.error("Failed to refresh token:", error);
         // Redirect to login if refresh fails
-        // if (typeof window !== "undefined") {
-        //   window.location.href = "/auth/login";
-        // }
+        if (typeof window !== "undefined") {
+          window.location.href = "/auth/login";
+        }
       }
     } else {
       // Add the access token to the request headers

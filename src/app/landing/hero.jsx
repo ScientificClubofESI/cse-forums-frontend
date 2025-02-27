@@ -54,7 +54,7 @@ const Hero = () => {
 
         {/* CTA Button */}
         <Link
-            href="/questionPage/asker"
+            href="/ask-question"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
           >
             <button className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">

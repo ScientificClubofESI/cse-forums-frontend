@@ -7,15 +7,29 @@ import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
+import axios from "axios";
 
 export default function Profil() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [savedQuestions, setsavedQuestions] = useState([]);
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       setIsAuthenticated(true);
+      getSavedQuestions(userId);
     }
   }, []);
+  const getSavedQuestions = async (userId) => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await axios.get(`http://localhost:5000/threads/saved?user=${userId}`);
+      console.log("threads from savedquestions page:", response.data.data);
+      setsavedQuestions(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
     {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
@@ -39,7 +53,7 @@ export default function Profil() {
         </div>
 
         <div>
-        <MySavedList/>
+        <MySavedList savedQuestions={savedQuestions} />
         </div>
       </div>
     </div>

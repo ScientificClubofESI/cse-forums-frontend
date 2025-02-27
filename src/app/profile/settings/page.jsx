@@ -8,6 +8,8 @@ import api from "@/lib/api";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
+import Cookies from "js-cookie";
+import Link from "next/link";
 
 // Subcomponent: User Picture Section
 const UserPicture = ({ handleFileChange }) => (
@@ -58,18 +60,33 @@ const FormInput = ({ label, type, placeholder, value, onChange, name }) => (
 
 export const Settings = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-  // State for form inputs
   const [formData, setFormData] = useState({
     fullName: "",
     userName: "",
     email: "",
   });
+  const getUserProfile = async (userid) => {
+    const response = await api.get(`/user/${userid}`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
+      },
+      withCredentials: true,
+    });
+    setFormData({
+      fullName: response.data.data.fullname,
+      userName: response.data.data.username,
+      email: response.data.data.email,
+    });
+  };
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      setIsAuthenticated(true);
+    }
+
+    getUserProfile(userId);
+  }, []);
+  // State for form inputs
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -156,12 +173,14 @@ export const Settings = () => {
               </button>
 
               {/* Save & Go Back Button */}
-              <button
-                onClick={handleSave}
-                className="bg-[#FF902E] text-white text-sm sm:text-base font-medium rounded py-2 px-4 w-full sm:w-auto"
-              >
-                Save & Go Back
-              </button>
+              <Link href="/profile/myquestions">
+                <button
+                  onClick={handleSave}
+                  className="bg-[#FF902E] text-white text-sm sm:text-base font-medium rounded py-2 px-4 w-full sm:w-auto"
+                >
+                  Save & Go Back
+                </button>
+              </Link>
             </div>
           </div>
         </div>
