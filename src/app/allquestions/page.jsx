@@ -1,5 +1,4 @@
 "use client";
-
 import Navbar from "@/components/navbar/navbar";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,6 +11,10 @@ import UpDown from "./../../../public/allQuestion/UpDown.svg";
 import plus from "./../../../public/allQuestion/addAnswer.svg";
 import save from "./../../../public/allQuestion/save.svg";
 import share from "./../../../public/allQuestion/share.svg";
+import {  useEffect } from "react";
+import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
+import axios from "axios";
+import moment from "moment";
 
 
 
@@ -22,6 +25,7 @@ export const AllQuestions = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1); 
   const [totalPages, setTotalPages] = useState(10);
+  const [threads, setthreads] = useState();
 
 {/*  const startIndex = (currentPage - 1) * 4;
   const endIndex = Math.min(startIndex + 4, questions.length);
@@ -50,10 +54,34 @@ export const AllQuestions = () => {
     }
   };
   
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+  const getQuestions = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/threads/all");
+      console.log('threads : ',response.data);
+  //     const date = new Date(isoDate);
+  // const formattedDate = date.toLocaleDateString("en-US", {
+  //   year: "numeric",
+  //   month: "long",
+  //   day: "numeric",
+  // });
+      setthreads(response.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  useEffect(() => {
+    getQuestions();
+  }, []);
   return (
-    <div className="w-screen bg-neutral-50">
-      <Navbar />
+    <div className=" bg-neutral-50">
+    {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
@@ -132,23 +160,23 @@ export const AllQuestions = () => {
           </div>
 
           {/*white card */}
-          {questions.map((question, index) => (
-            <div key={index} className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg">
+          {threads?.map((question, index) => (
+            <div key={index} className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full">
               <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
                 <div className="flex flex-row items-center justify-between gap-1"> 
                     <Image src={UpDown} alt="Lines" className="h-full w-4 lg:w-8" />
-                    <div className="font-sans text-sm lg:text-3xl text-neutral-900"> 64 </div>
+                    <div className="font-sans text-sm lg:text-3xl text-neutral-900"> {question.upvotes} </div>
                 </div>    
-                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">{question.question}</h1>
+                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">{question.title}</h1>
               </div>
 
               <div className="w-full flex flex-row justify-between items-center gap-0">
-                <div className="lg:w-3/4 w-1/2 h-[0.1px] bg-neutral-300 rounded-full"></div> 
-                <div className="font-serif lg:text-lg text-xs text-neutral-300">Posted less than 1 day</div>
+                <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div> 
+                <div className="font-serif lg:text-lg text-xs text-neutral-300">{moment(question.date).format("MMMM D, YYYY")}</div>
               </div>  
 
               <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
-                  <p>{question.details}</p>
+                  <p>{question.content}</p>
               </div>
 
 
@@ -171,7 +199,7 @@ export const AllQuestions = () => {
                     href="/" 
                     className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                   >
-                    {question.responses} answer
+                    {question.answers_count} answer
                   </Link>
                 </div>
 

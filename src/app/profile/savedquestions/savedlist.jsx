@@ -4,6 +4,7 @@ import Image from "next/image";
 import Card from "./card";
 import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
+import Link from "next/link";
 
 export const SavedQuestions = () => {
   const [activeTab, setActiveTab] = useState("Recent"); // Track active tab
@@ -75,9 +76,13 @@ export const SavedQuestions = () => {
       )}
 
       {/* Ask Question Button */}
-      <div className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+      <Link href="/questionPage/asker">
+      <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
         Ask a new Question?
-      </div>
+      </button>
+      
+      </Link>
+      
 
       {/* Pagination */}
       <div className="flex justify-center gap-[10px] mt-[20px]">

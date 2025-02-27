@@ -19,29 +19,13 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-8 hidden md:block">
-          <div className="relative max-w-2xl mx-auto">
-            {/* Search Icon */}
-            <Image
-              src={"/nav-bar/Icon.svg"}
-              alt="search"
-              width={20}
-              height={20}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            />
-            {/* Input Field */}
-            <input
-              type="text"
-              placeholder="Search CSE Forums ..."
-              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
-            />
-          </div>
-        </div>
+        
 
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
           <Link
-            href="/questionPage/asker"
+            // href="/questionPage/asker"
+              href="/allquestions"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
           >
             All Questions

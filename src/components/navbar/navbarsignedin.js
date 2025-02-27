@@ -19,35 +19,18 @@ export const Navbarsignedin = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-4 md:block">
-          <div className="relative max-w-full md:max-w-2xl mx-auto">
-            {/* Search Icon */}
-            <Image
-              src={"/nav-bar/Icon.svg"}
-              alt="search"
-              width={20}
-              height={20}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            />
-            {/* Input Field */}
-            <input
-              type="text"
-              placeholder="Search CSE Forums ..."
-              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif text-sm md:text-base md:w-full sm:w-[75%]"
-            />
-          </div>
-        </div>
+
 
         {/* User Icon */}
         <div className="flex items-center gap-4 md:gap-6">
           {/* "All Questions" hidden on small screens */}
           <Link
-            href="/questionPage/asker"
+            href="/allquestions"
             className="text-white hover:text-gray-200 hidden md:block"
           >
             All Questions
           </Link>
-          <Link href="">
+          <Link href="/profile/myquestions">
             <Image
               src={"/nav-bar/User.svg"}
               alt="User"

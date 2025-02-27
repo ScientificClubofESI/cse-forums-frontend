@@ -3,47 +3,54 @@ import Link from "next/link";
 import Image from "next/image";
 import user from "../../../../../public/Icon.png";
 import empty from "../../../../../public/emtyProfil.png";
+import Sidebar from "@/components/profile/sidebar";
 
 export default function EmptyState() {
   return (
     <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] m-8 md:m-20">
-      
       {/* Sidebar */}
-      <div className="basis-1/4 flex flex-col items-center text-center bg-slate-100 p-[32px] rounded-[4px]">
-        <div className="flex justify-center items-center rounded-full bg-neutral-900 w-[100px] h-[100px] overflow-hidden">
-          <Image src={user} alt="User profile image" width={100} height={100} />
-        </div>
-        <div className="mt-4">
-          <p className="text-2xl font-bold">Lorem Ipsum</p>
-          <p className="text-lg text-neutral-600">LoremIpsum@gmail.com</p>
-        </div>
-        <button className="mt-4 py-2 px-6 bg-secondary-500 text-white rounded">Edit Profile</button>
-      </div>
+      <Sidebar />
 
       {/* Navigation */}
       <div className="basis-3/4">
         <div className="flex flex-row gap-6 mb-8">
-          <Link href="/profile/myquestions" className="text-white py-2 px-6 bg-secondary-500 rounded hover:bg-secondary-500 hover:text-white">
+          <Link
+            href="/profile/myquestions"
+            className="text-white py-2 px-6 bg-secondary-500 rounded hover:bg-secondary-500 hover:text-white"
+          >
             My Questions
           </Link>
-          <Link href="/profile/myreplies" className="py-2 px-6 bg-neutral-200 rounded hover:bg-secondary-500 hover:text-white">
+          <Link
+            href="/profile/myreplies"
+            className="py-2 px-6 bg-neutral-200 rounded hover:bg-secondary-500 hover:text-white"
+          >
             My Answers
           </Link>
-          <Link href="/profile/savedquestions" className="py-2 px-6 bg-neutral-200 rounded hover:bg-secondary-500 hover:text-white">
+          <Link
+            href="/profile/savedquestions"
+            className="py-2 px-6 bg-neutral-200 rounded hover:bg-secondary-500 hover:text-white"
+          >
             Saved Questions
           </Link>
         </div>
 
         <div className="flex flex-col gap-[16px]">
-        <div className="flex flex-col gap-[16px] justify-center items-center">
-          <Image src={empty} alt="No data available" width={400} height={400} />
-          <div className="text-center text-neutral-900 text-xl md:text-2xl font-oswald">
-            No Question Posted Yet
+          <div className="flex flex-col gap-[16px] justify-center items-center">
+            <Image
+              src={empty}
+              alt="No data available"
+              width={400}
+              height={400}
+            />
+            <div className="text-center text-neutral-900 text-xl md:text-2xl font-oswald">
+              No Question Posted Yet
+            </div>
           </div>
-        </div>
-        <div className="py-[16px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
-            Ask a new Question?
-        </div>
+          <Link href="/questionPage/asker">
+            <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+              Ask a new Question?
+            </button>
+          </Link>
         </div>
       </div>
     </div>

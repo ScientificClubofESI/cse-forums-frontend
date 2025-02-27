@@ -7,10 +7,59 @@ import email from "../../../../public/images/google_icone.png";
 import linkedin from "../../../../public/images/linkedin icone.png";
 import emailIcone from "../../../../public/images/emailIcone.png";
 import userIcone from "../../../../public/images/userIcone.png";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setusername] = useState("");
+  const [fullName, setfullName] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      console.log("email value : ",email);
+      console.log("password value : " , password);
+      
+      const response = await axios.post("http://localhost:5000/auth/signup", {
+        username,
+        email,
+        password,
+        fullname : fullName
+      }, {
+        withCredentials: true,
+      });
+  
+      if (response.status === 201) {
+        console.log("signup successful:", response.data);
+        Cookies.set("token", response.data.token, { expires: 1, path: "/" });
+        console.log("Stored token:", Cookies.get("token"));
+        localStorage.setItem("username", response.data.data.username);
+        localStorage.setItem("userId", response.data.data.id);
+        router.push("/");
+      }
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setError(error.response.data.message || "signup failed. Please try again.");
+        console.error("signyp failed:", error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError("No response from the server. Please try again.");
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an error
+        setError("An unexpected error occurred. Please try again.");
+        console.error("Error:", error.message);
+      }
+    }
+  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -34,7 +83,7 @@ export const SignUp = () => {
       <div className=" w-full sm:w-1/2 h-full sm:h-full px-8 sm:px-36  pt-4 pb-4 sm:pb-36    ">
 
         <h1 className="text-primary-900 font-sans font-bold my-16 text-2xl  sm:text-5xl">Create New Account</h1>
-        <form>
+        <form onSubmit={handleSubmit}>
 
           <div className="mb-4 sm:mb-6">
             <label className="block font-serif text-primary-900 text-l sm:text-xl font-extrabold">Full name</label>
@@ -43,6 +92,8 @@ export const SignUp = () => {
               placeholder="Enter your full name"
               className="mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
               type="text"
+              value={fullName}
+              onChange={(e) => setfullName(e.target.value)}
             />
           </div>
 
@@ -53,6 +104,9 @@ export const SignUp = () => {
               placeholder="Enter your username"
               className="mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
               type="text"
+              value={username}
+              onChange={(e) => setusername(e.target.value)}
+              
             />
             <Image
               src={userIcone}
@@ -67,7 +121,9 @@ export const SignUp = () => {
               name="email"
               placeholder="Enter your email"
               className=" mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 rounded-md font-serif focus:outline-none"
-              type="text"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Image
               src={emailIcone}
@@ -83,6 +139,8 @@ export const SignUp = () => {
               placeholder="Enter your password"
               className="mt-1 w-full text-base ring-1 ring-neutral-300 p-2 text-neutral-900 font-serif focus:outline-none rounded-md "
               type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
@@ -106,7 +164,7 @@ export const SignUp = () => {
 
         <div className="flex flex-row items-center mt-6 space-x-4">
           <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
-            <Image src={email} alt="Google Icon" className="w-5 h-5 mr-3" />
+            <Image src={emailIcone} alt="Google Icon" className="w-5 h-5 mr-3" />
             Google
           </button>
           <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
