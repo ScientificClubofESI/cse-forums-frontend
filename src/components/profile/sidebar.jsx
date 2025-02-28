@@ -19,11 +19,7 @@ export default function sidebar() {
         console.error("UserId is not defined");
         return;
       }
-      const token = Cookies.get("token");
-      console.log("Token from cookies:", token);
-      const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      console.log("Decoded token:", decodedToken);
-      console.log("Token expiry:", new Date(decodedToken.exp * 1000));
+
       // Make the request to fetch the user profile
       const response = await api.get(`/user/${UserId}`, {
         headers: {
@@ -46,6 +42,13 @@ export default function sidebar() {
       } else {
         console.error("Error:", error.message);
       }
+
+      // Redirect to login if the error is due to an invalid or expired token
+      // if (error.message === "Failed to refresh token") {
+      //   if (typeof window !== "undefined") {
+      //     window.location.href = "/auth/login";
+      //   }
+      // }
     }
   };
 

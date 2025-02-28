@@ -1,7 +1,20 @@
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
 
 export const Navbarsignedin = () => {
+  const userId = localStorage.getItem("userId");
+  const handleLogout = async()=>{
+    try {
+      const response = await axios.post("http://localhost:5000/auth/logout", {
+        userId,
+      });
+      
+    } catch (error) {
+      console.error(error);
+      
+    }
+  }
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-6 py-3 border-b-2 rounded-b-lg">
@@ -76,6 +89,12 @@ export const Navbarsignedin = () => {
               className="hover:opacity-80"
             />
           </Link>
+          <button
+          onClick={handleLogout}
+            className="px-4 py-2 bg-secondary-500 hover:bg-orange-600 text-white rounded"
+          >
+            Logout
+          </button>
         </div>
       </nav>
     </div>

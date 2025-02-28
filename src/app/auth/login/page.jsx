@@ -21,21 +21,28 @@ export const LogIn = () => {
   const [password, setPassword] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      console.log("email value : ",email);
-      console.log("password value : " , password);
-      
+      console.log("email value : ", email);
+      console.log("password value : ", password);
+
       const response = await axios.post("http://localhost:5000/auth/login", {
         email,
         password,
       });
-  
+
       if (response.status === 200) {
+        const expirationDate = new Date();
+        expirationDate.setMinutes(expirationDate.getMinutes() + 5);
         console.log("Login successful:", response.data);
-        Cookies.set("token", response.data.token, { expires: 1, path: "/" });
+        Cookies.set("token", response.data.token, { expires: expirationDate, path: "/" });
+        Cookies.set(
+          "cse_forums_refresh_token",
+          response.data.data.refreshToken,
+          { expires: 1, path: "/" }
+        );
         console.log("Stored token:", Cookies.get("token"));
-        localStorage.setItem("username", response.data.data.username);
+        // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");
       }
@@ -43,7 +50,9 @@ export const LogIn = () => {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        setError(error.response.data.message || "Login failed. Please try again.");
+        setError(
+          error.response.data.message || "Login failed. Please try again."
+        );
         console.error("Login failed:", error.response.data.message);
       } else if (error.request) {
         // The request was made but no response was received
