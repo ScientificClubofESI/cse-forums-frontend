@@ -17,14 +17,21 @@ import axios from "axios";
 import moment from "moment";
 import PopUp from "../PopUp/page";
 import Cookies from "js-cookie";
+import Search from "@/components/search/search";
+import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 
 import { questions } from "./export.js";
 
 export const AllQuestions = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(10);
-  const [threads, setthreads] = useState();
+  const [threads, setthreads] = useState([]);
+  const itemsPerPage = 2;
+  const indexOfLastCard = currentPage * itemsPerPage;
+  const indexOfFirstCard = indexOfLastCard - itemsPerPage;
+  const currentThreads = threads.slice(indexOfFirstCard, indexOfLastCard);
+
+  const totalPages = Math.ceil(threads.length / itemsPerPage);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [threadId, setthreadId] = useState(0);
   const openPopup = () => setIsPopupOpen(true);
@@ -84,7 +91,7 @@ export const AllQuestions = () => {
         alert("You must be logged in to save a thread.");
         return;
       }
-  
+
       const response = await axios.post(
         `http://localhost:5000/threads/${threadId}/save`,
         {
@@ -97,7 +104,7 @@ export const AllQuestions = () => {
           },
         }
       );
-  
+
       console.log("Thread saved successfully:", response.data);
       alert("Thread saved successfully!"); // Show a success message
     } catch (error) {
@@ -121,6 +128,7 @@ export const AllQuestions = () => {
               Ask a Question ?
             </Link>
           </div>
+          <Search setthreads={setthreads} setCurrentPage={setCurrentPage} />
 
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
@@ -183,109 +191,113 @@ export const AllQuestions = () => {
           </div>
 
           {/*white card */}
-          {threads?.map((question, index) => (
-            <div
-              key={index}
-              className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
-            >
-              <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
-                <div className="flex flex-row items-center justify-between gap-1">
-                  <Image
-                    src={UpDown}
-                    alt="Lines"
-                    className="h-full w-4 lg:w-8"
-                  />
-                  <div className="font-sans text-sm lg:text-3xl text-neutral-900">
-                    {" "}
-                    {question.upvotes}{" "}
+          {threads.length == 0 ? (
+            <EmptySearchPage />
+          ) : (
+            currentThreads?.map((question, index) => (
+              <div
+                key={index}
+                className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+              >
+                <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
+                  <div className="flex flex-row items-center justify-between gap-1">
+                    <Image
+                      src={UpDown}
+                      alt="Lines"
+                      className="h-full w-4 lg:w-8"
+                    />
+                    <div className="font-sans text-sm lg:text-3xl text-neutral-900">
+                      {" "}
+                      {question.upvotes}{" "}
+                    </div>
+                  </div>
+                  <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                    {question.title}
+                  </h1>
+                </div>
+
+                <div className="w-full flex flex-row justify-between items-center gap-0">
+                  <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
+                  <div className="font-serif lg:text-lg text-xs text-neutral-300">
+                    {moment(question.date).format("MMMM D, YYYY")}
                   </div>
                 </div>
-                <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
-                  {question.title}
-                </h1>
-              </div>
 
-              <div className="w-full flex flex-row justify-between items-center gap-0">
-                <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
-                <div className="font-serif lg:text-lg text-xs text-neutral-300">
-                  {moment(question.date).format("MMMM D, YYYY")}
-                </div>
-              </div>
-
-              <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
-                <p>{question.content}</p>
-              </div>
-
-              <div className="w-full flex flex-row justify-between items-center gap-6">
-                {/*drop answer + number of answer buttons */}
-                <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
-                  <button
-                    onClick={()=>{
-                      openPopup()
-                      setthreadId(question.id)
-
-                    }
-                      
-                      }
-                    className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                  >
-                    <Image src={plus} alt="Add answer" className="lg:p-1 w-5" />
-                    <span>Drop an Answer</span>
-                  </button>
-
-
-                  <Link
-                    href="/"
-                    className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                  >
-                    {question.answers_count} answer
-                  </Link>
+                <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
+                  <p>{question.content}</p>
                 </div>
 
-                {/* buttons of share and save */}
-                <div className="flex flex-row items-end justify-end gap-4">
-                  {/*share button */}
-                  <Link
-                    className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center  gap-1 lg:gap-2"
-                    href="#"
-                  >
-                    <Image
-                      src={share}
-                      alt="share icon"
-                      className="w-[13px] lg:w-[24px] "
-                    />
-                    Share
-                  </Link>
+                <div className="w-full flex flex-row justify-between items-center gap-6">
+                  {/*drop answer + number of answer buttons */}
+                  <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
+                    <button
+                      onClick={() => {
+                        openPopup();
+                        setthreadId(question.id);
+                      }}
+                      className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                    >
+                      <Image
+                        src={plus}
+                        alt="Add answer"
+                        className="lg:p-1 w-5"
+                      />
+                      <span>Drop an Answer</span>
+                    </button>
 
-                  {/*save button */}
-                  <button
-                    className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                    // href="#"
-                    onClick={() => handleSaveThread(question.id)}
-                  >
-                    <Image
-                      src={save}
-                      alt="save icon"
-                      className="w-[13px] lg:w-[24px]"
-                    />
-                    Save
-                  </button>
+                    <Link
+                      href="/"
+                      className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                    >
+                      {question.answers_count} answer
+                    </Link>
+                  </div>
+
+                  {/* buttons of share and save */}
+                  <div className="flex flex-row items-end justify-end gap-4">
+                    {/*share button */}
+                    <Link
+                      className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center  gap-1 lg:gap-2"
+                      href="#"
+                    >
+                      <Image
+                        src={share}
+                        alt="share icon"
+                        className="w-[13px] lg:w-[24px] "
+                      />
+                      Share
+                    </Link>
+
+                    {/*save button */}
+                    <button
+                      className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
+                      // href="#"
+                      onClick={() => handleSaveThread(question.id)}
+                    >
+                      <Image
+                        src={save}
+                        alt="save icon"
+                        className="w-[13px] lg:w-[24px]"
+                      />
+                      Save
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
           {isPopupOpen && (
-        <PopUp
-          isOpen={isPopupOpen}
-          onClose={closePopup}
-          threadId={threadId}
-          // onSubmit={async(content) => {
-            
-          //   closePopup(); // Close the popup after submission
-          // }}
-          getQuestions={getQuestions}
-        />
-      )}
+            <PopUp
+              isOpen={isPopupOpen}
+              onClose={closePopup}
+              threadId={threadId}
+              // onSubmit={async(content) => {
+
+              //   closePopup(); // Close the popup after submission
+              // }}
+              getQuestions={getQuestions}
+            />
+          )}
 
           {/*ask a question button */}
           <Link
@@ -305,28 +317,20 @@ export const AllQuestions = () => {
               <Image src={left} alt="left icon" width={24} height={24} />
             </button>
             <div className="flex items-center text-neutral-700">
-              <Link
-                href="/"
-                className={`mr-2 ${
-                  currentPage === 1 && "bg-secondary-500 p-1 rounded-sm"
-                }`}
-              >
-                {currentPage}
-              </Link>
-              <Link href="/" className="mr-2">
-                {currentPage + 1}
-              </Link>
-              <Link href="/" className="mr-2">
-                {currentPage + 2}
-              </Link>
-              <Link href="/" className="mr-2">
-                {currentPage + 3}
-              </Link>
-              <Link href="/" className="mr-2">
-                {currentPage + 5}
-              </Link>
-              <Image src={dotes} alt="dotes" width={28} className="mr-2" />
-              <span>{totalPages}</span>
+            {[...Array(totalPages)].map((_, index) => (
+          <button
+            key={index}
+            className={`py-2 px-4 rounded-md ${
+              currentPage === index + 1
+                ? "bg-secondary-500 text-white"
+                : "bg-neutral-200 text-neutral-900"
+            }`}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </button>
+        ))}
+              {/* <span>{totalPages}</span> */}
             </div>
             <button
               disabled={currentPage === totalPages}

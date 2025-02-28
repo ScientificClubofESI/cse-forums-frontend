@@ -1,6 +1,7 @@
 import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
+import search from "@/components/search/search";
 
 const Hero = () => {
   return (
