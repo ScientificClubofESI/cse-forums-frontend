@@ -2,19 +2,25 @@
 import { useState } from "react";
 import Image from "next/image";
 import Card from "./card";
-import cardData from "./cardData";
+// import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
+import Link from "next/link";
 
+<<<<<<< HEAD
 export const MyReplies = () => {
   const [activeTab, setActiveTab] = useState("All");
+=======
+export const MyReplies = ({ answers }) => {
+  const [activeTab, setActiveTab] = useState("All"); // State for active tab
+>>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 6;
   const indexOfLastCard = currentPage * itemsPerPage;
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
-  const currentCards = cardData.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = answers.slice(indexOfFirstCard, indexOfLastCard);
 
-  const totalPages = Math.ceil(cardData.length / itemsPerPage);
+  const totalPages = Math.ceil(answers.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -49,7 +55,7 @@ export const MyReplies = () => {
       </div>
 
       {/* Content */}
-      {cardData.length === 0 ? (
+      {answers.length === 0 ? (
         <div className="flex flex-col gap-[16px] justify-center items-center">
           <Image src={empty} alt="No data available" width={400} height={400} />
           <div className="text-center text-neutral-900 text-xl md:text-2xl font-oswald">
@@ -61,19 +67,26 @@ export const MyReplies = () => {
           {currentCards.map((card, index) => (
             <Card
               key={index}
-              title={card.title}
+              title={card.threadTitle}
               content={card.content}
+<<<<<<< HEAD
               approved={card.approved}
               onDelete={handleDelete}
+=======
+              approved={card.isApproved}
+              onDelete={() => alert("Delete clicked!")}
+>>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
             />
           ))}
         </div>
       )}
 
       {/* Ask Question Button */}
-      <div className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
-        Ask a new Question?
-      </div>
+      <Link href="/ask-question">
+        <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+          Ask a new Question?
+        </button>
+      </Link>
 
       {/* Pagination */}
       <div className="flex justify-center gap-[10px] mt-[20px]">

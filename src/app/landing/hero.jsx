@@ -1,6 +1,10 @@
 import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
+<<<<<<< HEAD
+=======
+import search from "@/components/search/search";
+>>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
 
 const Hero = () => {
   return (
@@ -53,9 +57,21 @@ const Hero = () => {
         </div>
 
         {/* CTA Button */}
+<<<<<<< HEAD
         <Link href={"/allquestions"} className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">
           Ask a Question?
         </Link>
+=======
+        <Link
+            href="/ask-question"
+            className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
+          >
+            <button className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">
+          Ask a Question?
+        </button>
+          </Link>
+        
+>>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
       </div>
     </div>
   );

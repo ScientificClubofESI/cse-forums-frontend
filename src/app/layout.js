@@ -9,7 +9,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname(); // Get the current path
   const hideNavbar = pathname === "/auth/login" || pathname === "/auth/signup"; // Check if it's login or signup
   return (
-    <html lang="en">
+    <html lang="en" data-arp="">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />

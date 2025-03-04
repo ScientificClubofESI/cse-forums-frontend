@@ -2,19 +2,20 @@
 import { useState } from "react";
 import Image from "next/image";
 import Card from "./card";
-import cardData from "./cardData";
+// import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
+import Link from "next/link";
 
-export const SavedQuestions = () => {
+export const SavedQuestions = ({savedQuestions}) => {
   const [activeTab, setActiveTab] = useState("Recent"); // Track active tab
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 6;
   const indexOfLastCard = currentPage * itemsPerPage;
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
-  const currentCards = cardData.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = savedQuestions.slice(indexOfFirstCard, indexOfLastCard);
 
-  const totalPages = Math.ceil(cardData.length / itemsPerPage);
+  const totalPages = Math.ceil(savedQuestions.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -53,7 +54,7 @@ export const SavedQuestions = () => {
       </div>
 
       {/* Content */}
-      {cardData.length === 0 ? (
+      {currentCards.length === 0 ? (
         <div className="flex flex-col gap-[16px] justify-center items-center">
           <Image src={empty} alt="No data available" width={400} height={400} />
           <div className="text-center text-neutral-900 text-xl md:text-2xl font-oswald">
@@ -65,9 +66,9 @@ export const SavedQuestions = () => {
           {currentCards.map((card, index) => (
             <Card
               key={index}
-              title={card.title}
-              content={card.content}
-              answersCount={card.answersCount}
+              title={card.Thread.title}
+              content={card.Thread.content}
+              answersCount={card.Thread.answers_count}
               onDelete={handleDelete}
             />
           ))}
@@ -75,9 +76,13 @@ export const SavedQuestions = () => {
       )}
 
       {/* Ask Question Button */}
-      <div className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+      <Link href="/ask-question">
+      <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
         Ask a new Question?
-      </div>
+      </button>
+      
+      </Link>
+      
 
       {/* Pagination */}
       <div className="flex justify-center gap-[10px] mt-[20px]">

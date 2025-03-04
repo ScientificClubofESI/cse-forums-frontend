@@ -1,10 +1,28 @@
 import Link from "next/link";
 import Image from "next/image";
+<<<<<<< HEAD
 import user from "../../../public/nav-bar/User.svg";
 import notification from "../../../public/nav-bar/Frame33603.svg";;
 import settings from "../../../public/nav-bar/Frame33604.svg"
 
 const Navbarsignedin = () => {
+=======
+import axios from "axios";
+
+export const Navbarsignedin = () => {
+  const userId = localStorage.getItem("userId");
+  const handleLogout = async()=>{
+    try {
+      const response = await axios.post("http://localhost:5000/auth/logout", {
+        userId,
+      });
+      
+    } catch (error) {
+      console.error(error);
+      
+    }
+  }
+>>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-6 py-3 border-b-2 rounded-b-lg">
@@ -23,8 +41,8 @@ const Navbarsignedin = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-4 md:block">
-          <div className="relative max-w-full md:max-w-2xl mx-auto">
+        <div className="flex-1 mx-8 hidden md:block">
+          <div className="relative max-w-2xl mx-auto">
             {/* Search Icon */}
             <Image
               src={"/nav-bar/Icon.svg"}
@@ -38,7 +56,7 @@ const Navbarsignedin = () => {
             <input
               type="text"
               placeholder="Search CSE Forums ..."
-              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif text-sm md:text-base md:w-full sm:w-[75%]"
+              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
             />
           </div>
         </div>
@@ -84,6 +102,12 @@ const Navbarsignedin = () => {
               className="hover:opacity-80"
             />
           </Link>
+          <button
+          onClick={handleLogout}
+            className="px-4 py-2 bg-secondary-500 hover:bg-orange-600 text-white rounded"
+          >
+            Logout
+          </button>
         </div>
       </nav>
     </div>
