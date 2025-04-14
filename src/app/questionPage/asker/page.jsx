@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-
+import React, {useEffect, useState} from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import BackIcon from "./back.svg";
 import ApprovedIcon from "./Approved.svg";
@@ -13,11 +13,13 @@ import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
 import TrashIcon from "./trash.svg";
 
-const Back = () => (
-  <Link href={"/allquestions"}>
+const Back = () => {
+  const router = useRouter();
+  return(
+  <button onClick={() => router.back()}>
   <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
-  </Link>
-);
+  </button>
+)};
 
 const Approved = () => (
   <img src={ApprovedIcon.src} alt="approved" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
@@ -27,7 +29,9 @@ const Approve = () => (
 );
 
 const Up = () => (
-  <img src={UpIcon.src} alt="up" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
+  <button>
+    <img src={UpIcon.src} alt="up" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
+  </button>
 );
 const Down = () => (
   <img src={DownIcon.src} alt="down" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
@@ -37,11 +41,13 @@ const Share = () => (
   <img src={ShareIcon.src} alt="share" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
 );
 
-const Save = () => (
-  <img src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
+const Save = () => (<button>
+    <img src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
+  </button>
 );
-const Trash = () => (
+const Trash = () => (<button>
   <img src={TrashIcon.src} alt="trash" className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]" />
+  </button>
 );
 
 const Userpic = () => (
@@ -49,6 +55,16 @@ const Userpic = () => (
 );
 
 export const QuestionViewer = () => {
+  const router = useRouter();
+  const [thread, setThread] = useState(null);
+  
+    useEffect(() => {
+      const storedThread = sessionStorage.getItem("selectedThread");
+      if (storedThread) {
+        setThread(JSON.parse(storedThread));
+      }
+    }, []);
+
   return (
     <div className="bg-background-light min-h-screen flex flex-col items-center p-6">
       <div className="font-semibold text-2xl text-neutral-900 self-start md:ml-[5rem] md:mt-[5rem] mt-[3rem] pb-8 flex items-center gap-4 md:text-6xl">
@@ -57,7 +73,7 @@ export const QuestionViewer = () => {
       </div>
 
       <div className="bg-white w-[23rem] md:w-[77rem] flex flex-col items-start font-medium text-xl md:font-semibold md:text-5xl py-8 rounded-lg p-6 gap-4 shadow-lg">
-        <div className="text-neutral-900 md:ml-[1.8rem] flex items-center"><div className="flex flex-col"><Up/> <Down/></div> <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">64</div><div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">Title of the question ?</div></div>
+        <div className="text-neutral-900 md:ml-[1.8rem] flex items-center"><div className="flex flex-col"><Up/> <Down/></div> <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">64</div><div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">{thread?.title}</div></div>
 
         <div className="flex md:w-[99%] md:ml-[2rem] w-[21rem] md:space-x-3 space-x-2">
           <div className="border-t border-neutral-300 md:border-neutral-100 mt-[0.5rem] w-[12.3rem] md:w-[59rem] md:mt-[0.9rem]"></div>
@@ -65,7 +81,7 @@ export const QuestionViewer = () => {
         </div>
 
         <div className="text-neutral-900 font-light text-sm md:text-2xl md:ml-[2rem] md:w-[71rem] w-[20rem] font-serif">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus, sit. Eligendi quidem enim ex officiis illum, voluptas commodi, omnis esse dolor illo, incidunt eos. Et neque tempore doloremque provident. Facere!
+          {thread?.content}
         </div>
 
         <div className="bg-neutral-50 md:w-[71rem] w-[20rem] text-neutral-900 text-sm md:p-4 p-2 md:ml-[2rem] font-light md:text-base">
@@ -76,7 +92,7 @@ export const QuestionViewer = () => {
 
         <div className="flex justify-between w-full items-center md:px-6">
           <button className="bg-primary-300 font-normal text-xs text-white rounded-lg md:text-xl  md:w-[10rem] w-[5.625rem] h-[2rem] md:h-[3rem] ">
-            24 answers
+            {thread?.answer_count}
           </button>
           <div className="flex space-x-4">
             <button className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">

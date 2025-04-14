@@ -3,11 +3,16 @@ import Image from "next/image";
 import trash from "../../../../public/trash.png";
 import approve from "../../../../public/approved.png";
 const Card = ({ title, content, approved, onDelete }) => {
+  const handleNavigation = () => {
+    console.log("navigated to...");
+  };
   return (
     <div className="flex flex-col py-[12px] md:py-[16px] px-[18px] md:px-[24px] bg-white rounded-[8px] gap-[8px] shadow-[0px_0px_64px_0px_#D8D8D866]">
-      <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">Q: {title}</h3>
-      <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">Answer: </h3>
-      <p className="text-neutral-600 font-light text-lg md:text-xl font-nunito">{content}</p>
+        <div onClick={() => handleNavigation()}>
+        <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">Q: {title}</h3>
+        <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">Answer: </h3>
+        <p className="text-neutral-600 font-light text-lg md:text-xl font-nunito">{content}</p>
+      </div>
 
       <div className="flex flex-row justify-between">
          {approved ? (

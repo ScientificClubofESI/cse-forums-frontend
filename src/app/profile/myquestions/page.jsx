@@ -32,32 +32,32 @@ export default function Myquestions() {
       };
       getMyQuestions();
     }, []);
+
+    const deleteThread = async (threadId, setmyquestions) => {
+      if (!confirm("Are you sure you want to delete this thread?")) return;
+    
+      try {
+        const response = await axios.delete(`http://localhost:5000/thread/${threadId}`);
+    
+        if (response.status === 200) {
+          alert("Thread deleted successfully!");
+          setmyquestions(prevThreads => prevThreads.filter(thread => thread.id !== threadId));
+        }
+      } catch (error) {
+        console.error("Error deleting thread:", error);
+        alert("Failed to delete thread.");
+      }
+    };
   
   
   return (
-<<<<<<< HEAD
-    <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20 bg-background-light">
-      
-      {/* Sidebar */}
-      <div className="w-full md:basis-1/4 flex md:flex-col flex-row gap-x-4 md:gap-x-0 items-center text-center bg-white p-[32px] rounded-[4px] ">
-        <div className="flex justify-center items-center rounded-full bg-neutral-900 w-[80px] h-[80px] md:w-[100px] md:h-[100px] overflow-hidden">
-          <Image src={user} alt="User profile image" width={100} height={100} />
-        </div>
-        <div className="mt-4 text-left md:text-center">
-          <p className="text-xl md:text-2xl font-bold">Lorem Ipsum</p>
-          <p className="text-base md:text-lg text-neutral-600">LoremIpsum@gmail.com</p>
-          <Link href={"./settings"} className="md:hidden block mt-4 py-2 px-6 bg-secondary-500 text-white rounded w-fit ">Edit Profile</Link>
-        </div>
-        <Link href={"./settings"} className="hidden md:block mt-4 py-2 px-6 bg-secondary-500 text-white  rounded">Edit Profile</Link>
-      </div>
-=======
     <>
     {isAuthenticated ? <Navbarsignedin/> : <Navbar/>}
-    <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] m-8 md:m-20">
+    <div className="w-full h-full bg-background-light">
+      <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20">
       
       {/* Sidebar */}
     <Sidebar/>
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
 
       {/* Navigation */}
       <div className="basis-3/4">
@@ -74,9 +74,13 @@ export default function Myquestions() {
         </div>
 
         <div>
-        <MyquestionsList myQuestions={myquestions} />
+        <MyquestionsList 
+          myQuestions={myquestions} 
+          setmyquestions={setmyquestions}
+          onDelete={(id) => deleteThread(id, setmyquestions)}/>
         </div>
       </div>
+    </div>
     </div>
     </>
   );

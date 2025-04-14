@@ -1,27 +1,3 @@
-<<<<<<< HEAD
-"use client";
-import { useState, useEffect } from "react";
-import NavbarSignedIn from "./navbarsignedin";
-import NavbarSignedOut from "./navbarnotsignedin";
-import Cookies from "js-cookie";
-
-const Navbar = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null); // Start with null to avoid mismatch
-  
-    
-      useEffect(() => {
-        const storedToken = Cookies.get("token");
-        console.log("Token from cookies:", storedToken);
-        setIsAuthenticated(!!storedToken)
-      }, []);
-  
-    if (isAuthenticated === null) return null; // Prevent mismatch during hydration
-  
-    return isAuthenticated ? <NavbarSignedIn /> : <NavbarSignedOut />;
-  };
-  
-  export default Navbar;
-=======
 import Link from "next/link";
 import Image from "next/image";
 import search from "../search/search";
@@ -44,7 +20,7 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-        <search/>
+        <search />
 
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
@@ -74,4 +50,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231

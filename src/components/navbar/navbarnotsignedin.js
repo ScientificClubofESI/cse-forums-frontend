@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const Navbarnotsignedin = () => {
+  
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-5 sm:px-12 py-3 border-b-2 rounded-b-lg">
@@ -43,7 +44,7 @@ const Navbarnotsignedin = () => {
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
           <Link
-            href="/questionPage/asker"
+            href="/allquestions"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
           >
             All Questions

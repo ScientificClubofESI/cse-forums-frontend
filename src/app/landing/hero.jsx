@@ -1,12 +1,45 @@
 import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
-<<<<<<< HEAD
-=======
-import search from "@/components/search/search";
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 const Hero = () => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const userId = localStorage.getItem("userId");
+  const [searchQuery, setsearchQuery] = useState("");
+  const router = useRouter();
+
+
+  const handleNavigate = (thread) => {
+    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
+  router.push(`/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`);
+  };
+
+  useEffect(() => {
+    const fetchSearchThreads = async () => {
+      if (!searchQuery.trim()) {
+        setSearchResults([]);
+        setShowDropdown(false);
+        return;
+      }
+      //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/threads/search?searchQuery=${searchQuery}`
+        );
+        console.log("search response : ", response.data);
+        setSearchResults(response.data.data);
+        setShowDropdown(true);
+        //setthreads(response.data.data);
+      } catch (error) {
+        console.error("error fetching search : ", error);
+      }
+    };
+    fetchSearchThreads();
+  }, [searchQuery])
   return (
 
     <div className="relative w-full bg-background-light py-16">
@@ -50,18 +83,30 @@ const Hero = () => {
             <input
               type="text"
               placeholder="Search CSE Forums ..."
+              value={searchQuery}
+              onChange={(e) => {
+              setsearchQuery(e.target.value);
+              }}
               className="w-full border-none pl-2 focus:outline-none font-serif text-sm sm:text-2xl font-light"
             />
-            
           </div>
         </div>
+        {showDropdown && searchResults.length > 0 && (
+            <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              {searchResults.slice(0, 6).map((thread) => (
+                <div
+                  key={thread.id}
+                  onClick={() => handleNavigate(thread)}
+                  className="block px-4 py-2 hover:bg-gray-200"
+
+                >
+                  {thread.title}
+                </div>
+              ))}
+            </div>
+          )}
 
         {/* CTA Button */}
-<<<<<<< HEAD
-        <Link href={"/allquestions"} className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">
-          Ask a Question?
-        </Link>
-=======
         <Link
             href="/ask-question"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
@@ -71,7 +116,6 @@ const Hero = () => {
         </button>
           </Link>
         
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
       </div>
     </div>
   );

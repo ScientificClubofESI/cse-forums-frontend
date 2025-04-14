@@ -1,9 +1,5 @@
 "use client";
-<<<<<<< HEAD
-
-=======
 import Navbar from "@/components/navbar/navbar";
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -14,6 +10,7 @@ import dotes from "./../../../public/allQuestion/dotes.svg";
 import UpDown from "./../../../public/allQuestion/UpDown.svg";
 import plus from "./../../../public/allQuestion/addAnswer.svg";
 import save from "./../../../public/allQuestion/save.svg";
+import saveblack from "./../../../public/allQuestion/save-black.svg";
 import share from "./../../../public/allQuestion/share.svg";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
@@ -23,24 +20,27 @@ import PopUp from "../PopUp/page";
 import Cookies from "js-cookie";
 import Search from "@/components/search/search";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
-
+import { useRouter } from "next/navigation";
 import { questions } from "./export.js";
 
 export const AllQuestions = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [threads, setthreads] = useState([]);
+  const [savedThreads, setSavedThreads] = useState(new Set()); // Store saved thread IDs
+  const [userId, setUserId] = useState(null);
   const itemsPerPage = 2;
   const indexOfLastCard = currentPage * itemsPerPage;
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
   const currentThreads = threads.slice(indexOfFirstCard, indexOfLastCard);
+  const router = useRouter();
+  
 
   const totalPages = Math.ceil(threads.length / itemsPerPage);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [threadId, setthreadId] = useState(0);
   const openPopup = () => setIsPopupOpen(true);
   const closePopup = () => setIsPopupOpen(false);
-
   {
     /*  const startIndex = (currentPage - 1) * 4;
   const endIndex = Math.min(startIndex + 4, questions.length);
@@ -70,12 +70,37 @@ export const AllQuestions = () => {
   };
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+useEffect(() => {
+  const storedUserId = localStorage.getItem("userId");
+  if (storedUserId) {
+    setUserId(storedUserId);
+  }
+}, []);
+
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
     if (userId) {
       setIsAuthenticated(true);
+      getQuestions();
+      getSavedQuestions(userId);  // Pass userId correctly
     }
-  }, []);
+  }, [userId]); // Add userId as a dependency
+  
+
+  const getSavedQuestions = async (userId) => {
+    if (!userId) return;
+    try {
+      const response = await axios.get(`http://localhost:5000/threads/saved?user=${userId}`);
+      console.log("Fetched saved threads:", response.data.data); // Debugging log
+      const savedThreadIds = new Set(response.data.data.map((thread) => thread.id));
+      setSavedThreads(savedThreadIds);
+      
+    } catch (error) {
+      console.error("Failed to fetch saved threads:", error);
+    }
+    };
+
+
   const getQuestions = async () => {
     try {
       const response = await axios.get("http://localhost:5000/threads/all");
@@ -85,12 +110,40 @@ export const AllQuestions = () => {
       console.error(error);
     }
   };
-  useEffect(() => {
-    getQuestions();
-  }, []);
+
+
+  const toggleSaveThread = async (threadId) => {
+    if (!userId) {
+      alert("You must be logged in to save a thread.");
+      return;
+    }
+
+    try {
+      if (savedThreads.has(threadId)) {
+        await axios.delete(`http://localhost:5000/threads/${threadId}/save`, {
+          data: { user_id: Number(userId) },
+          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        });
+        setSavedThreads((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(threadId);
+          return newSet;
+        });
+      } else {
+        await axios.post(
+          `http://localhost:5000/threads/${threadId}/save`,
+          { user_id: Number(userId) },
+          { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
+        );
+        setSavedThreads((prev) => new Set(prev).add(threadId));
+      }
+    } catch (error) {
+      console.error("Failed to toggle save:", error);
+    }
+  };
+
   const handleSaveThread = async (threadId) => {
     try {
-      const userId = localStorage.getItem("userId"); // Get the user ID from localStorage
       if (!userId) {
         alert("You must be logged in to save a thread.");
         return;
@@ -116,13 +169,19 @@ export const AllQuestions = () => {
       alert("Failed to save thread. Please try again."); // Show an error message
     }
   };
+
+  useEffect(() => {
+    console.log("Saved Threads:", savedThreads);
+  }, [savedThreads]);
+  
+
+  const handleNavigation = (thread) => {
+    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
+    router.push(`/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`);
+  }
   return (
-<<<<<<< HEAD
-    <div className="w-screen bg-neutral-50">
-=======
     <div className=" bg-neutral-50">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
@@ -207,7 +266,7 @@ export const AllQuestions = () => {
                 key={index}
                 className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
               >
-                <div className="flex flex-row items-center justify-start gap-4 lg:gap-8">
+                <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8" onClick={() => handleNavigation(question)}>
                   <div className="flex flex-row items-center justify-between gap-1">
                     <Image
                       src={UpDown}
@@ -280,10 +339,10 @@ export const AllQuestions = () => {
                     <button
                       className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
                       // href="#"
-                      onClick={() => handleSaveThread(question.id)}
+                      onClick={() => toggleSaveThread(question.id)}
                     >
                       <Image
-                        src={save}
+                        src={savedThreads.has(question.id) ? saveblack : save}
                         alt="save icon"
                         className="w-[13px] lg:w-[24px]"
                       />

@@ -5,8 +5,10 @@ import Card from "./card";
 // import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
 import Link from "next/link";
+import axios from "axios";
+import Cookies from "js-cookie"; // If using authentication
 
-export const MyQuestionsList = ({ myQuestions }) => {
+export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
   const [activeTab, setActiveTab] = useState("Recent"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -17,6 +19,8 @@ export const MyQuestionsList = ({ myQuestions }) => {
 
   const totalPages = Math.ceil(myQuestions.length / itemsPerPage);
 
+  
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -26,25 +30,11 @@ export const MyQuestionsList = ({ myQuestions }) => {
     // Add logic to fetch data for the selected tab if needed
   };
 
+  
+
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
-<<<<<<< HEAD
-      <div className="flex flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
-        {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map((tab) => (
-          <div
-            key={tab}
-            onClick={() => handleTabClick(tab)}
-            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
-              activeTab === tab
-                ? "bg-primary-500 text-white"
-                : "bg-neutral-100 text-neutral-900"
-            }`}
-          >
-            {tab}
-          </div>
-        ))}
-=======
       <div className="flex flex-row gap-[7px] md:gap-[14px]">
         {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map(
           (tab) => (
@@ -61,7 +51,6 @@ export const MyQuestionsList = ({ myQuestions }) => {
             </div>
           )
         )}
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
       </div>
 
       {/* Content */}
@@ -81,12 +70,13 @@ export const MyQuestionsList = ({ myQuestions }) => {
                 className="flex-grow sm:flex-grow-0"
               >
                 <Card
+                  id={card.id} // Pass thread ID
                   title={card.title}
                   content={card.content}
-                  newAnswersCount={card.newAnswersCount}
-                  answersCount={card.answers_count}
+                  // newAnswersCount={card.newAnswersCount}
+                  // answersCount={card.answers_count}
                   onEdit={() => alert("Edit clicked!")}
-                  onDelete={() => alert("Delete clicked!")}
+                  onDelete={() => alert("Delete clicked!")} // Pass delete function
                 />
               </div>
             ))}
@@ -95,8 +85,8 @@ export const MyQuestionsList = ({ myQuestions }) => {
       )}
 
       {/* Ask Question Button */}
-      <Link href="/ask-question">
-        <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+      <Link href="/ask-question" className="w-full flex justify-center">
+        <button className="w-full text-2xl py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
           Ask a new Question?
         </button>
       </Link>

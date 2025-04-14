@@ -1,23 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BackIcon from "./back.svg";
+import { useRouter } from "next/navigation";
 import ApprovedIcon from "./Approved.svg";
 import UpIcon from "./up.svg";
 import DownIcon from "./down.svg";
 import ShareIcon from "./share.svg";
 import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
+import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-const QuestionViewer = () => {
-  //Need to get the actual vote count
+
+const QuestionViewer = () => {const router = useRouter();
+  const [thread, setThread] = useState(null);
+
+  useEffect(() => {
+    const storedThread = sessionStorage.getItem("selectedThread");
+    if (storedThread) {
+      setThread(JSON.parse(storedThread));
+      console.log('kayn thread')
+    }
+    else{
+      console.log('makanch thread')
+    }
+  }, []);
   const [voteCount, setVoteCount] = useState(0);
   const [userVote, setUserVote] = useState(null);
+  console.log(thread)
+  // const user_id = thread.user_id;
+  //   console.log(user_id)
 
   const handleVote = async (type) => {
-    //Static user_id & thread_id
-    const user_id = 1;
-    const thread_id = 1;
+  
     const voteEndpoint = `http://127.0.0.1:5000/threads/${thread_id}/vote`;
 
     if (userVote === type) {
@@ -61,6 +76,7 @@ const QuestionViewer = () => {
         });
 
         if (!response.ok) {
+          console.log(response);
           throw new Error(`Failed to ${type}`);
         }
 
@@ -108,10 +124,10 @@ const QuestionViewer = () => {
             />
           </div>{" "}
           <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">
-            {voteCount}
+            {thread?.upvotes}
           </div>
           <div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">
-            Title of the question ?
+            {thread?.title}
           </div>
         </div>
 
@@ -123,10 +139,7 @@ const QuestionViewer = () => {
         </div>
 
         <div className="text-neutral-900 font-light text-sm md:text-2xl md:ml-[2rem] md:w-[71rem] w-[20rem] font-serif">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellendus,
-          sit. Eligendi quidem enim ex officiis illum, voluptas commodi, omnis
-          esse dolor illo, incidunt eos. Et neque tempore doloremque provident.
-          Facere!
+          {thread?.content}
         </div>
 
         <div className="bg-neutral-50 md:w-[71rem] w-[20rem] text-neutral-900 text-sm md:p-4 p-2 md:ml-[2rem] font-light md:text-base">
@@ -140,7 +153,7 @@ const QuestionViewer = () => {
 
         <div className="flex justify-between w-full items-center md:px-6">
           <button className="bg-primary-300 font-normal text-xs text-white rounded-lg md:text-xl  md:w-[10rem] w-[5.625rem] h-[2rem] md:h-[3rem] ">
-            24 answers
+            {thread?.answer_count}
           </button>
           <div className="flex space-x-4">
             <button className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">
@@ -214,13 +227,13 @@ const QuestionViewer = () => {
   );
 };
 
-const Back = () => (
-  <img
-    src={BackIcon.src}
-    alt="back"
-    className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]"
-  />
-);
+const Back = () => {
+  const router = useRouter();
+  return(
+  <button onClick={() => router.back()}>
+  <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
+  </button>
+)};
 
 const Approved = () => (
   <img

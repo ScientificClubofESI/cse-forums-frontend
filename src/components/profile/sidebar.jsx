@@ -56,7 +56,7 @@ export default function sidebar() {
     getUserProfile();
   }, []);
   return (
-    <div className="basis-1/4 flex flex-col items-center text-center bg-slate-100 p-[32px] rounded-[4px]">
+    <div className="basis-1/4 flex flex-col items-center text-center bg-white p-[32px] rounded-[4px]">
       <div className="flex justify-center items-center rounded-full bg-neutral-900 w-[100px] h-[100px] overflow-hidden">
         <Image src={user} alt="User profile image" width={100} height={100} />
       </div>

@@ -6,13 +6,8 @@ import Card from "./card";
 import empty from "../../../../public/emtyProfil.png";
 import Link from "next/link";
 
-<<<<<<< HEAD
-export const MyReplies = () => {
-  const [activeTab, setActiveTab] = useState("All");
-=======
 export const MyReplies = ({ answers }) => {
   const [activeTab, setActiveTab] = useState("All"); // State for active tab
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 6;
@@ -66,24 +61,20 @@ export const MyReplies = ({ answers }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentCards.map((card, index) => (
             <Card
+              user_id={card.user_id}
               key={index}
               title={card.threadTitle}
               content={card.content}
-<<<<<<< HEAD
-              approved={card.approved}
-              onDelete={handleDelete}
-=======
               approved={card.isApproved}
               onDelete={() => alert("Delete clicked!")}
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
             />
           ))}
         </div>
       )}
 
       {/* Ask Question Button */}
-      <Link href="/ask-question">
-        <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+      <Link href="/ask-question" className="w-full flex justify-center">
+        <button className="w-full text-2xl py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
           Ask a new Question?
         </button>
       </Link>

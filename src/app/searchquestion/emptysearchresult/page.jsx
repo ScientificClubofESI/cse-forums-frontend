@@ -10,12 +10,8 @@ export const EmptySearchPage = ({ search }) => {
   const capitalizedSearch = search ? capitalizeSearch(search.trim()) : "";
 
   return (
-<<<<<<< HEAD
-    <div className="bg-background-light">
-=======
     <div className="bg-background-light w-full">
       {/* <Navbar /> */}
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
       <div className="flex justify-center items-center pt-12 lg:pt-14 font-serif bg-background-light min-h-screen text-neutral-900">
         <div className="max-w-[1110px] w-full px-6 mb-20">
           <div className="flex gap-2 flex-col mb-9 lg:mb-12 lg:gap-6">

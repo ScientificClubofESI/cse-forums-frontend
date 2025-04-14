@@ -97,22 +97,41 @@ export const Settings = () => {
     // Logic for handling file upload (e.g., updating state or uploading to server)
     console.log("Selected file:", e.target.files[0]);
   };
+
   const updateProfile = async () => {
-    const UserId = localStorage.getItem("userId");
-    const response = await api.put(
-      `/user/${UserId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Include the access token
+    try {
+      const userId = localStorage.getItem("userId");
+  
+      const response = await api.put(
+        `/user/${userId}`,
+        {
+          username: formData.userName,
+          email: formData.email,
         },
-      },
-      {
-        // fullName: formData.fullName,
-        username: formData.userName,
-        email: formData.email,
-      } // it may change based on the backend
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+          withCredentials: true,
+        }
+      );
+  
+      console.log("Update Response:", response.data); // Debugging
+  
+      if (response.data.success) {
+        console.log("Profile updated successfully!");
+        getUserProfile(userId); // Fetch the latest data immediately after update
+      } else {
+        alert("Failed to update profile: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("An error occurred while updating the profile.");
+    }
   };
+  
+  
+
   const handleSave = () => {
     // Logic for saving form data (e.g., API call)
     updateProfile();
@@ -120,21 +139,6 @@ export const Settings = () => {
   };
 
   return (
-<<<<<<< HEAD
-    <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center px-[5%] justify-center gap-y-14 py-14">
-      {/* Title */}
-      <div className="font-sans sm:font-semiboldsm:font-sans text-3xl text-[#262626] sm:w-full sm:text-5xl font-medium">
-      My Informations
-      </div>
-
-      {/* Main Content */}
-      <div className="bg-white w-full p-8 rounded-lg shadow-xl flex flex-col sm:flex-row items-center sm:items-start sm:p-10 sm:mx-4">
-        {/* User Picture Section */}
-        <UserPicture handleFileChange={handleFileChange} />
-        
-        {/* Vertical Line for Desktop */}
-        <div className="hidden sm:block border-l border-neutral-300 h-[16rem] p-[1.5rem] ml-[0.6rem]"></div> {/* Vertical line for desktop */}
-=======
     <>
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <div className="bg-[#fffbfe] min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
@@ -149,7 +153,6 @@ export const Settings = () => {
           <div className="flex justify-center sm:justify-start">
             <UserPicture handleFileChange={handleFileChange} />
           </div>
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
 
           {/* Vertical Line for Desktop */}
           <div className="hidden sm:block border-l border-neutral-300 h-auto mx-4"></div>
@@ -201,21 +204,7 @@ export const Settings = () => {
           </div>
         </div>
       </div>
-<<<<<<< HEAD
-
-      {/* Save & Go Back Button for Desktop */}
-      <div className="hidden sm:flex justify-center">
-        <button
-          onClick={handleSave}
-          className="bg-[#FF902E] font-normal	 rounded text-white w-60 h-[3rem] sm:w-[15.125rem] text-xl"
-        >
-          Save & Go Back
-        </button>
-      </div>
-    </div>
-=======
     </>
->>>>>>> 934c104f742bd557399bebb90f94bbdbb0580231
   );
 };
 

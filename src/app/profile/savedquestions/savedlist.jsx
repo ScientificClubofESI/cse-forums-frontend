@@ -34,6 +34,8 @@ export const SavedQuestions = ({savedQuestions}) => {
     alert("Delete clicked!");
   };
 
+  console.log(currentCards)
+
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
@@ -65,6 +67,7 @@ export const SavedQuestions = ({savedQuestions}) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentCards.map((card, index) => (
             <Card
+              user_id={card.user_id}
               key={index}
               title={card.Thread.title}
               content={card.Thread.content}
@@ -76,8 +79,8 @@ export const SavedQuestions = ({savedQuestions}) => {
       )}
 
       {/* Ask Question Button */}
-      <Link href="/ask-question">
-      <button className="py-[12px] px-[40px] bg-secondary-500 text-white font-oswald rounded-[8px] text-center">
+      <Link href="/ask-question" className="w-full flex justify-center">
+      <button className="py-[12px] px-[40px] bg-secondary-500 text-white w-full text-2xl font-oswald rounded-[8px] text-center">
         Ask a new Question?
       </button>
       
