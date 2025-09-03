@@ -7,7 +7,7 @@ import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import axios from "axios";
+import api from "@/lib/api";
 
 export default function Profil() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,7 +21,7 @@ export default function Profil() {
   }, []);
   const getSavedQuestions = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/threads/saved?user=${userId}`);
+      const response = await api.get(`/threads/saved?user=${userId}`);
       console.log("threads from savedquestions page:", response.data.data);
       setsavedQuestions(response.data.data);
     } catch (error) {

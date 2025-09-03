@@ -9,6 +9,7 @@ import DownIcon from "./down.svg";
 import ShareIcon from "./share.svg";
 import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
+import api from "@/lib/api";
 import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 
@@ -32,22 +33,22 @@ const QuestionViewer = () => {const router = useRouter();
   //   console.log(user_id)
 
   const handleVote = async (type) => {
-  
-    const voteEndpoint = `http://127.0.0.1:5000/threads/${thread_id}/vote`;
+    if (!thread?.id) {
+      console.error("Thread ID not available");
+      return;
+    }
+
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      console.error("User not logged in");
+      return;
+    }
 
     if (userVote === type) {
       try {
-        const response = await fetch(voteEndpoint, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_id }),
+        const response = await api.delete(`/threads/${thread.id}/vote`, {
+          data: { user_id: Number(userId) }
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to unvote");
-        }
 
         setVoteCount((prevCount) =>
           type === "upvote" ? prevCount - 1 : prevCount + 1
@@ -67,18 +68,10 @@ const QuestionViewer = () => {const router = useRouter();
       }
 
       try {
-        const response = await fetch(voteEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_id, type }),
+        const response = await api.post(`/threads/${thread.id}/vote`, {
+          user_id: Number(userId),
+          type
         });
-
-        if (!response.ok) {
-          console.log(response);
-          throw new Error(`Failed to ${type}`);
-        }
 
         setVoteCount((prevCount) => prevCount + voteAdjustment);
         setUserVote(type);

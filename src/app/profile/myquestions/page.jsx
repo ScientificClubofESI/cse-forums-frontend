@@ -7,7 +7,7 @@ import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import axios from "axios";
+import api from "@/lib/api";
 
 export default function Myquestions() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,7 +19,7 @@ export default function Myquestions() {
       }
       const getMyQuestions = async () => {
         try {
-          const response = await axios.get("http://localhost:5000/threads/all"); // a controller will be implementer in the backend soon enough
+          const response = await api.get("/threads/all"); // a controller will be implementer in the backend soon enough
           console.log("threads from myquestions page : ", response.data.data);
           
           const filteredQuestions = response.data.data.filter((item) => item.user_id == userId);
@@ -37,7 +37,7 @@ export default function Myquestions() {
       if (!confirm("Are you sure you want to delete this thread?")) return;
     
       try {
-        const response = await axios.delete(`http://localhost:5000/thread/${threadId}`);
+        const response = await api.delete(`/thread/${threadId}`);
     
         if (response.status === 200) {
           alert("Thread deleted successfully!");

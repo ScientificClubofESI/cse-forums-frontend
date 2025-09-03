@@ -19,7 +19,7 @@ import {
 } from 'iconsax-react';
 import { common, createLowlight } from 'lowlight';
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
-import axios from 'axios';
+import api from '@/lib/api';
 
 export default function PopUp({ isOpen, onClose, onSubmit , threadId , getQuestions }) {
   const [iconSize, setIconSize] = useState(20);
@@ -76,7 +76,7 @@ export default function PopUp({ isOpen, onClose, onSubmit , threadId , getQuesti
     try {
       console.log("threadid : ", threadId);
       
-      const response = await axios.post(`http://localhost:5000/threads/${threadId}/answers/create`, {
+      const response = await api.post(`/threads/${threadId}/answers/create`, {
         user_id : Number(localStorage.getItem("userId")),
         content: editor.getHTML(),
       }, {

@@ -3,12 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import userpicture from "./userpicture.svg"; // Importing a user picture (SVG file)
-import axios from "axios";
 import api from "@/lib/api";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
-import Cookies from "js-cookie";
 import Link from "next/link";
 
 // Subcomponent: User Picture Section
@@ -29,7 +27,7 @@ const UserPicture = ({ handleFileChange }) => (
     {/* Change Picture Button */}
     <label
       htmlFor="upload-picture"
-      className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 sm:mt-[1rem] text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
+      className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
     >
       Change Picture
     </label>
@@ -66,12 +64,7 @@ export const Settings = () => {
     email: "",
   });
   const getUserProfile = async (userid) => {
-    const response = await api.get(`/user/${userid}`, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
-      },
-      withCredentials: true,
-    });
+    const response = await api.get(`/user/${userid}`);
     setFormData({
       fullName: response.data.data.fullname,
       userName: response.data.data.username,
@@ -101,23 +94,14 @@ export const Settings = () => {
   const updateProfile = async () => {
     try {
       const userId = localStorage.getItem("userId");
-  
-      const response = await api.put(
-        `/user/${userId}`,
-        {
-          username: formData.userName,
-          email: formData.email,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-          withCredentials: true,
-        }
-      );
-  
+
+      const response = await api.put(`/user/${userId}`, {
+        username: formData.userName,
+        email: formData.email,
+      });
+
       console.log("Update Response:", response.data); // Debugging
-  
+
       if (response.data.success) {
         console.log("Profile updated successfully!");
         getUserProfile(userId); // Fetch the latest data immediately after update
@@ -129,8 +113,6 @@ export const Settings = () => {
       alert("An error occurred while updating the profile.");
     }
   };
-  
-  
 
   const handleSave = () => {
     // Logic for saving form data (e.g., API call)

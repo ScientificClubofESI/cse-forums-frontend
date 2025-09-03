@@ -5,7 +5,7 @@ import Card from "./card";
 // import cardData from "./cardData";
 import empty from "../../../../public/emtyProfil.png";
 import Link from "next/link";
-import axios from "axios";
+import api from "@/lib/api";
 import Cookies from "js-cookie"; // If using authentication
 
 export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {

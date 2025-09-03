@@ -8,7 +8,6 @@ import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
-import Cookies from "js-cookie";
 
 export default function Profil() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,12 +21,7 @@ export default function Profil() {
 
     const fetchUserAnswers = async () => {
       try {
-        const response = await api.get(`/user/${userId}/answers`, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
-          },
-          withCredentials: true,
-        });
+        const response = await api.get(`/user/${userId}/answers`);
         console.log("User answers data:", response.data);
 
         setAnswers(response.data.data); // Update the state

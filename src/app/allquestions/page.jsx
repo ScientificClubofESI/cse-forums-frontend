@@ -14,7 +14,7 @@ import saveblack from "./../../../public/allQuestion/save-black.svg";
 import share from "./../../../public/allQuestion/share.svg";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import axios from "axios";
+import api from "@/lib/api";
 import moment from "moment";
 import PopUp from "../PopUp/page";
 import Cookies from "js-cookie";
@@ -90,7 +90,7 @@ useEffect(() => {
   const getSavedQuestions = async (userId) => {
     if (!userId) return;
     try {
-      const response = await axios.get(`http://localhost:5000/threads/saved?user=${userId}`);
+      const response = await api.get(`/threads/saved?user=${userId}`);
       console.log("Fetched saved threads:", response.data.data); // Debugging log
       const savedThreadIds = new Set(response.data.data.map((thread) => thread.id));
       setSavedThreads(savedThreadIds);
@@ -103,7 +103,7 @@ useEffect(() => {
 
   const getQuestions = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/threads/all");
+      const response = await api.get("/threads/all");
       console.log("threads : ", response.data);
       setthreads(response.data.data);
     } catch (error) {
@@ -120,9 +120,8 @@ useEffect(() => {
 
     try {
       if (savedThreads.has(threadId)) {
-        await axios.delete(`http://localhost:5000/threads/${threadId}/save`, {
+        await api.delete(`/threads/${threadId}/save`, {
           data: { user_id: Number(userId) },
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
         });
         setSavedThreads((prev) => {
           const newSet = new Set(prev);
@@ -130,10 +129,9 @@ useEffect(() => {
           return newSet;
         });
       } else {
-        await axios.post(
-          `http://localhost:5000/threads/${threadId}/save`,
-          { user_id: Number(userId) },
-          { headers: { Authorization: `Bearer ${Cookies.get("token")}` } }
+        await api.post(
+          `/threads/${threadId}/save`,
+          { user_id: Number(userId) }
         );
         setSavedThreads((prev) => new Set(prev).add(threadId));
       }
@@ -149,16 +147,10 @@ useEffect(() => {
         return;
       }
 
-      const response = await axios.post(
-        `http://localhost:5000/threads/${threadId}/save`,
+      const response = await api.post(
+        `/threads/${threadId}/save`,
         {
           user_id: Number(userId), // Send the user_id in the request body
-        },
-        {
-          withCredentials: true, // Include cookies if needed
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
-          },
         }
       );
 

@@ -10,7 +10,7 @@ import emailIcone from "../../../../public/images/emailIcone.png";
 import userIcone from "../../../../public/images/userIcone.png";
 import eyeclosed from "../../../../public/images/eye-closed.png";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import authApi from "@/lib/authApi";
 
 export const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +26,7 @@ export const LogIn = () => {
       console.log("email value : ", email);
       console.log("password value : ", password);
 
-      const response = await axios.post("http://localhost:5000/auth/login", {
+      const response = await authApi.post("/auth/login", {
         email,
         password,
       });
@@ -41,7 +41,7 @@ export const LogIn = () => {
           response.data.data.refreshToken,
           { expires: 1, path: "/" }
         );
-        console.log("Stored token:", Cookies.get("token"));
+        // console.log("Stored token:", Cookies.get("token"));
         // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");
@@ -111,6 +111,7 @@ export const LogIn = () => {
               src={eyeclosed}
               alt="Email Icon"
               className="absolute top-[45px] md:top-1/2 right-3 w-5 h-5"
+              onClick={togglePasswordVisibility}
             />
             <a href="dfghj" className="font-serif text-neutral-200 text-sm">
               {" "}
@@ -138,7 +139,7 @@ export const LogIn = () => {
           <p className="flex text-l font-serif text-neutral-500">
             Don't have an account?
           </p>
-          <a href="dfghj" className="font-serif ml-2 text-secondary-500">
+          <a href="/auth/signup" className="font-serif ml-2 text-secondary-500">
             Sign Up
           </a>
         </div>

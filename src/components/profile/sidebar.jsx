@@ -5,8 +5,6 @@ import Image from "next/image";
 import user from "../../../public/Icon.png";
 // import Myquestions from "./myquestions/page";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
 import api from "@/lib/api";
 
 export default function sidebar() {
@@ -21,12 +19,7 @@ export default function sidebar() {
       }
 
       // Make the request to fetch the user profile
-      const response = await api.get(`/user/${UserId}`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`, // Include the access token
-        },
-        withCredentials: true,
-      });
+      const response = await api.get(`/user/${UserId}`);
 
       // Log the response data
       console.log("User profile data:", response.data);

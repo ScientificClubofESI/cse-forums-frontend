@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/lib/api";
 
 export default function search({ setthreads, setCurrentPage }) {
   const [searchQuery, setsearchQuery] = useState("");
@@ -9,8 +9,8 @@ export default function search({ setthreads, setCurrentPage }) {
     const fetchSearchThreads = async () => {
       setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
       try {
-        const response = await axios.get(
-          `http://localhost:5000/threads/search?searchQuery=${searchQuery}`
+        const response = await api.get(
+          `/threads/search?searchQuery=${searchQuery}`
         );
         console.log("search response : ", response.data);
         setthreads(response.data.data);

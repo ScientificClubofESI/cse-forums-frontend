@@ -22,7 +22,7 @@ import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
 import { IoIosClose } from 'react-icons/io';
 // import PopUp from '../PopUp/page';
 import { Navbarsignedin } from '@/components/navbar/navbarsignedin';
-import axios from "axios";
+import api from '@/lib/api';
 import Cookies from "js-cookie";
 
 
@@ -208,18 +208,12 @@ const handleThreadSubmit = async () => {
     setError(null);
 
     try {
-        const { data } = await axios.post(
-            "http://localhost:5000/threads/create",
+        const { data } = await api.post(
+            "/threads/create",
             {
                 user_id: localStorage.getItem("userId"), // Get user ID
                 title: questionTitle,
                 content: editor.getHTML(), // Get the HTML content from TipTap
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${Cookies.get("token")}`,
-                },
             }
         );
 

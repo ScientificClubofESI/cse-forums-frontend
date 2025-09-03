@@ -4,7 +4,7 @@ import search from "../search/search";
 import user from "../../../public/nav-bar/User.svg";
 import notification from "../../../public/nav-bar/Frame33603.svg";;
 import settings from "../../../public/nav-bar/Frame33604.svg"
-import axios from "axios";
+import api from "@/lib/api";
 import { useState, useEffect } from "react";
 
 export const Navbarsignedin = () => {
@@ -13,7 +13,7 @@ export const Navbarsignedin = () => {
   const userId = localStorage.getItem("userId");
   const handleLogout = async()=>{
     try {
-      const response = await axios.post("http://localhost:5000/auth/logout", {
+      const response = await api.post("/auth/logout", {
         userId,
       });
       localStorage.clear();
@@ -33,8 +33,8 @@ export const Navbarsignedin = () => {
       }
       //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
       try {
-        const response = await axios.get(
-          `http://localhost:5000/threads/search?searchQuery=${searchQuery}`
+        const response = await api.get(
+          `/threads/search?searchQuery=${searchQuery}`
         );
         console.log("search response : ", response.data);
         setSearchResults(response.data.data);

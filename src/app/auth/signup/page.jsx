@@ -8,7 +8,7 @@ import google from "../../../../public/images/google_icone.png";
 import linkedin from "../../../../public/images/linkedin icone.png";
 import emailIcone from "../../../../public/images/emailIcone.png";
 import userIcone from "../../../../public/images/userIcone.png";
-import axios from "axios";
+import authApi from "@/lib/authApi";
 import { useRouter } from "next/navigation";
 
 export const SignUp = () => {
@@ -25,19 +25,15 @@ export const SignUp = () => {
     try {
       console.log("email value : ", email);
       console.log("password value : ", password);
+      console.log("username value : ", username);
+      console.log("fullName value : ", fullName);
 
-      const response = await axios.post(
-        "http://localhost:5000/auth/signup",
-        {
-          username,
-          email,
-          password,
-          fullname: fullName,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await authApi.post("/auth/signup", {
+        username,
+        email,
+        password,
+        fullname: fullName,
+      });
       // const userData = {
       //   username,
       //   fullname,
@@ -63,7 +59,7 @@ export const SignUp = () => {
           response.data.data.refreshToken,
           { expires: 1, path: "/" }
         );
-        console.log("Stored token:", Cookies.get("token"));
+        // console.log("Stored token:", Cookies.get("token"));
         // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");
@@ -240,7 +236,7 @@ export const SignUp = () => {
           <p className="flex text-l font-serif text-neutral-500">
             Already a member ?
           </p>
-          <a href="dfghj" className="ml-2 text-secondary-500">
+          <a href="/auth/login" className="ml-2 text-secondary-500">
             Sign In
           </a>
         </div>

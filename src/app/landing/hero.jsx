@@ -1,21 +1,29 @@
 import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
-import axios from "axios";
+import api from "@/lib/api";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
 
 const Hero = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const userId = localStorage.getItem("userId");
+  const [userId, setUserId] = useState(null);
   const [searchQuery, setsearchQuery] = useState("");
   const router = useRouter();
 
+  // Get userId on client side only
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
 
   const handleNavigate = (thread) => {
     sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-  router.push(`/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`);
+    router.push(
+      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
+    );
   };
 
   useEffect(() => {
@@ -27,8 +35,8 @@ const Hero = () => {
       }
       //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
       try {
-        const response = await axios.get(
-          `http://localhost:5000/threads/search?searchQuery=${searchQuery}`
+        const response = await api.get(
+          `/threads/search?searchQuery=${searchQuery}`
         );
         console.log("search response : ", response.data);
         setSearchResults(response.data.data);
@@ -39,9 +47,8 @@ const Hero = () => {
       }
     };
     fetchSearchThreads();
-  }, [searchQuery])
+  }, [searchQuery]);
   return (
-
     <div className="relative w-full bg-background-light py-16">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0 hidden sm:block">
@@ -63,59 +70,61 @@ const Hero = () => {
         />
       </div>
 
-
-
       {/* Main content */}
       <div className="relative mx-auto max-w-4xl px-4 text-center">
         {/* Logo/Title */}
-        <h1 className="mb-10 text-5xl sm:text-8xl font-bold text-primary-900 font-sans">CSE Forums</h1>
+        <h1 className="mb-10 text-5xl sm:text-8xl font-bold text-primary-900 font-sans">
+          CSE Forums
+        </h1>
 
         {/* Welcome message */}
         <div className="mb-8 space-y-2">
-          <h2 className="text-2xl sm:text-4xl font-semibold text-primary-500 font-sans">Hello my friend!</h2>
-          <p className="text-lg sm:text-3xl font-normal text-[#0C2239] font-serif">It's a good day to ask a question, isn't it?</p>
+          <h2 className="text-2xl sm:text-4xl font-semibold text-primary-500 font-sans">
+            Hello my friend!
+          </h2>
+          <p className="text-lg sm:text-3xl font-normal text-[#0C2239] font-serif">
+            It's a good day to ask a question, isn't it?
+          </p>
         </div>
 
         {/* Search bar */}
         <div className="mb-8">
           <div className="relative mx-auto max-w-4xl flex items-center rounded-lg border-none py-3 pl-4 bg-white">
-          <SearchNormal1 size="32" color="black"/>
+            <SearchNormal1 size="32" color="black" />
             <input
               type="text"
               placeholder="Search CSE Forums ..."
               value={searchQuery}
               onChange={(e) => {
-              setsearchQuery(e.target.value);
+                setsearchQuery(e.target.value);
               }}
               className="w-full border-none pl-2 focus:outline-none font-serif text-sm sm:text-2xl font-light"
             />
           </div>
         </div>
         {showDropdown && searchResults.length > 0 && (
-            <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              {searchResults.slice(0, 6).map((thread) => (
-                <div
-                  key={thread.id}
-                  onClick={() => handleNavigate(thread)}
-                  className="block px-4 py-2 hover:bg-gray-200"
-
-                >
-                  {thread.title}
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+            {searchResults.slice(0, 6).map((thread) => (
+              <div
+                key={thread.id}
+                onClick={() => handleNavigate(thread)}
+                className="block px-4 py-2 hover:bg-gray-200"
+              >
+                {thread.title}
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* CTA Button */}
         <Link
-            href="/ask-question"
-            className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
-          >
-            <button className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">
-          Ask a Question?
-        </button>
-          </Link>
-        
+          href="/ask-question"
+          className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
+        >
+          <button className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">
+            Ask a Question?
+          </button>
+        </Link>
       </div>
     </div>
   );

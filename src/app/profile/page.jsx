@@ -4,7 +4,7 @@ import Image from "next/image";
 import user from "../../../public/Icon.png";
 import Myquestions from "./myquestions/page";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "@/lib/api";
 import Cookies from "js-cookie";
 import Sidebar from "@/components/profile/sidebar";
 
