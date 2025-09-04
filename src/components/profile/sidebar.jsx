@@ -36,6 +36,7 @@ export default function sidebar() {
         console.error("Error:", error.message);
       }
 
+      //TODO see what this is for
       // Redirect to login if the error is due to an invalid or expired token
       // if (error.message === "Failed to refresh token") {
       //   if (typeof window !== "undefined") {
