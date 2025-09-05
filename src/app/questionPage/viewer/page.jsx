@@ -11,6 +11,7 @@ import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
 import api from "@/lib/api";
 import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import Image from "next/image";
 
 const QuestionViewer = () => {
   const router = useRouter();
@@ -99,7 +100,7 @@ const QuestionViewer = () => {
       <div className="bg-white w-[23rem] md:w-[77rem] flex flex-col items-start font-medium text-xl md:font-semibold md:text-5xl py-8 rounded-lg p-6 gap-4 shadow-lg">
         <div className="text-neutral-900 md:ml-[1.8rem] flex items-center">
           <div className="flex flex-col">
-            <img
+            <Image
               src={UpIcon.src}
               alt="up"
               onClick={handleUpvote}
@@ -110,7 +111,7 @@ const QuestionViewer = () => {
               }`}
             />
 
-            <img
+            <Image
               src={DownIcon.src}
               alt="down"
               onClick={handleDownvote}
@@ -229,7 +230,7 @@ const Back = () => {
   const router = useRouter();
   return (
     <button onClick={() => router.back()}>
-      <img
+      <Image
         src={BackIcon.src}
         alt="back"
         className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]"
@@ -239,7 +240,7 @@ const Back = () => {
 };
 
 const Approved = () => (
-  <img
+  <Image
     src={ApprovedIcon.src}
     alt="approved"
     className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]"
@@ -247,7 +248,7 @@ const Approved = () => (
 );
 
 const Share = () => (
-  <img
+  <Image
     src={ShareIcon.src}
     alt="share"
     className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]"
@@ -255,7 +256,7 @@ const Share = () => (
 );
 
 const Save = () => (
-  <img
+  <Image
     src={SaveIcon.src}
     alt="save"
     className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]"
@@ -263,7 +264,7 @@ const Save = () => (
 );
 
 const Userpic = () => (
-  <img
+  <Image
     src={UserpicIcon.src}
     alt="userpic"
     className="w-[27px] h-[27px] md:w-[48px] md:h-[48px]"

@@ -9,32 +9,33 @@ import DownIcon from "./down.svg";
 import ShareIcon from "./share.svg";
 import SaveIcon from "./save.svg";
 import UserpicIcon from "./userpic.svg";
+import {Image} from "next/image";
 
 const Back = () => (
-  <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
+  <Image src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
 );
 
 const Approved = () => (
-  <img src={ApprovedIcon.src} alt="approved" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
+  <Image src={ApprovedIcon.src} alt="approved" className="w-[20px] h-[20px] md:w-[40px] md:h-[40px]" />
 );
 
 const Up = () => (
-  <img src={UpIcon.src} alt="up" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
+  <Image src={UpIcon.src} alt="up" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
 );
 const Down = () => (
-  <img src={DownIcon.src} alt="down" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
+  <Image src={DownIcon.src} alt="down" className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]" />
 );
 
 const Share = () => (
-  <img src={ShareIcon.src} alt="share" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
+  <Image src={ShareIcon.src} alt="share" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
 );
 
 const Save = () => (
-  <img src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
+  <Image src={SaveIcon.src} alt="save" className="w-[13.5px] h-[13.5px] md:w-[24px] md:h-[24px]" />
 );
 
 const Userpic = () => (
-  <img src={UserpicIcon.src} alt="userpic" className="w-[27px] h-[27px] md:w-[48px] md:h-[48px]" />
+  <Image src={UserpicIcon.src} alt="userpic" className="w-[27px] h-[27px] md:w-[48px] md:h-[48px]" />
 );
 
 export const QuestionViewer = () => {
