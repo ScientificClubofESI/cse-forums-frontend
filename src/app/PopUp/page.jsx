@@ -72,12 +72,19 @@ export default function PopUp({ isOpen, onClose, onSubmit , threadId , getQuesti
   if (!isOpen) return null;
   if (!editor) return null;
 
+  const [userId, setUserId] = useState(null);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setUserId(localStorage.getItem("userId"));
+  }
+}, []);
+
   const handleAnswerCreation = async()=>{
     try {
       console.log("threadid : ", threadId);
       
       const response = await api.post(`/threads/${threadId}/answers/create`, {
-        user_id : Number(localStorage.getItem("userId")),
+        user_id : userId,
         content: editor.getHTML(),
       }, {
         withCredentials: true,

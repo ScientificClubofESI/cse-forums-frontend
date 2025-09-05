@@ -14,7 +14,10 @@ export default function Profil() {
   const [Answers, setAnswers] = useState([]);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
+    let userId = null;
+    if (typeof window !== "undefined") {
+      userId = localStorage.getItem("userId");
+    }
     if (userId) {
       setIsAuthenticated(true);
     }

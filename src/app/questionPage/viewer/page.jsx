@@ -32,13 +32,19 @@ const QuestionViewer = () => {const router = useRouter();
   // const user_id = thread.user_id;
   //   console.log(user_id)
 
+  const [userId, setUserId] = useState(null);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setUserId(localStorage.getItem("userId"));
+  }
+}, []);
+
   const handleVote = async (type) => {
     if (!thread?.id) {
       console.error("Thread ID not available");
       return;
     }
 
-    const userId = localStorage.getItem("userId");
     if (!userId) {
       console.error("User not logged in");
       return;

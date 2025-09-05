@@ -8,7 +8,13 @@ import { useEffect, useState } from "react";
 import api from "@/lib/api";
 
 export default function sidebar() {
-  const UserId = localStorage.getItem("userId"); // we can customize this later (based on login/singup logic for handling the place of the userid)
+  const [userId, setUserId] = useState(null);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setUserId(localStorage.getItem("userId"));
+  }
+}, []);
+  const UserId = userId; // we can customize this later (based on login/singup logic for handling the place of the userid)
   const [userInfo, setuserInfo] = useState({});
   const getUserProfile = async () => {
     try {

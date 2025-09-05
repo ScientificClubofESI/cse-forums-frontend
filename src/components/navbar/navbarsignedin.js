@@ -10,7 +10,14 @@ import { useState, useEffect } from "react";
 export const Navbarsignedin = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const userId = localStorage.getItem("userId");
+  
+const [userId, setUserId] = useState(null);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setUserId(localStorage.getItem("userId"));
+  }
+}, []);
+
   const handleLogout = async()=>{
     try {
       const response = await api.post("/auth/logout", {

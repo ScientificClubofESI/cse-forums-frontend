@@ -196,7 +196,12 @@ const AskQuestion = () => {
     return null;
   }
 
-  
+  const [userId, setUserId] = useState(null);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    setUserId(localStorage.getItem("userId"));
+  }
+}, []);
 
 const handleThreadSubmit = async () => {
     if (!questionTitle.trim() || !editor.getHTML().trim()) {
@@ -211,7 +216,7 @@ const handleThreadSubmit = async () => {
         const { data } = await api.post(
             "/threads/create",
             {
-                user_id: localStorage.getItem("userId"), // Get user ID
+                user_id: userId, // Get user ID
                 title: questionTitle,
                 content: editor.getHTML(), // Get the HTML content from TipTap
             }

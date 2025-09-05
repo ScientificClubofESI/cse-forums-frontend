@@ -13,10 +13,12 @@ export default function Profil() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [savedQuestions, setsavedQuestions] = useState([]);
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      setIsAuthenticated(true);
-      getSavedQuestions(userId);
+    if (typeof window !== "undefined") {
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        setIsAuthenticated(true);
+        getSavedQuestions(userId);
+      }
     }
   }, []);
   const getSavedQuestions = async (userId) => {
@@ -31,33 +33,41 @@ export default function Profil() {
 
   return (
     <>
-    {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-    <div className="w-full h-full bg-background-light">
-      <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20">
-      
-      {/* Sidebar */}
-      <Sidebar/>
+      {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+      <div className="w-full h-full bg-background-light">
+        <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20">
+          {/* Sidebar */}
+          <Sidebar />
 
-      {/* Navigation */}
-      <div className="basis-3/4">
-        <div className="flex flex-row justify-between gap-3 md:gap-6 mb-8">
-          <Link href="/profile/myquestions" className="text-center w-full py-1 md:py-2 md:px-6 text-lg bg-white rounded hover:bg-secondary-500 hover:text-white">
-            My Questions
-          </Link>
-          <Link href="/profile/myreplies" className="text-center w-full py-1 md:py-2 md:px-6 text-lg bg-white rounded hover:bg-secondary-500 hover:text-white">
-            My Answers
-          </Link>
-          <Link href="/profile/savedquestions" className="text-center w-full text-white py-1 md:py-2 md:px-6 text-lg bg-secondary-500 rounded hover:bg-secondary-500 hover:text-white">
-            Saved Questions
-          </Link>
-        </div>
+          {/* Navigation */}
+          <div className="basis-3/4">
+            <div className="flex flex-row justify-between gap-3 md:gap-6 mb-8">
+              <Link
+                href="/profile/myquestions"
+                className="text-center w-full py-1 md:py-2 md:px-6 text-lg bg-white rounded hover:bg-secondary-500 hover:text-white"
+              >
+                My Questions
+              </Link>
+              <Link
+                href="/profile/myreplies"
+                className="text-center w-full py-1 md:py-2 md:px-6 text-lg bg-white rounded hover:bg-secondary-500 hover:text-white"
+              >
+                My Answers
+              </Link>
+              <Link
+                href="/profile/savedquestions"
+                className="text-center w-full text-white py-1 md:py-2 md:px-6 text-lg bg-secondary-500 rounded hover:bg-secondary-500 hover:text-white"
+              >
+                Saved Questions
+              </Link>
+            </div>
 
-        <div>
-        <MySavedList savedQuestions={savedQuestions} />
+            <div>
+              <MySavedList savedQuestions={savedQuestions} />
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    </div>
     </>
   );
 }

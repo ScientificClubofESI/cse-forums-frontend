@@ -72,12 +72,14 @@ export const Settings = () => {
     });
   };
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      setIsAuthenticated(true);
-    }
+    if (typeof window !== "undefined") {
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        setIsAuthenticated(true);
+      }
 
-    getUserProfile(userId);
+      getUserProfile(userId);
+    }
   }, []);
   // State for form inputs
 
@@ -91,10 +93,15 @@ export const Settings = () => {
     console.log("Selected file:", e.target.files[0]);
   };
 
+  const [userId, setUserId] = useState(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
+
   const updateProfile = async () => {
     try {
-      const userId = localStorage.getItem("userId");
-
       const response = await api.put(`/user/${userId}`, {
         username: formData.userName,
         email: formData.email,

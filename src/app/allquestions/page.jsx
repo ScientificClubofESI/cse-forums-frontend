@@ -72,9 +72,11 @@ export const AllQuestions = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 useEffect(() => {
-  const storedUserId = localStorage.getItem("userId");
-  if (storedUserId) {
-    setUserId(storedUserId);
+  if (typeof window !== "undefined") {
+    const storedUserId = localStorage.getItem("userId");
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
   }
 }, []);
 
