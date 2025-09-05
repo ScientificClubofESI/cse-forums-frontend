@@ -23,8 +23,8 @@ export const LogIn = () => {
     e.preventDefault();
 
     try {
-      console.log("email value : ", email);
-      console.log("password value : ", password);
+      //console.log("email value : ", email);
+      //console.log("password value : ", password);
 
       const response = await authApi.post("/auth/login", {
         email,
@@ -34,14 +34,17 @@ export const LogIn = () => {
       if (response.status === 200) {
         const expirationDate = new Date();
         expirationDate.setMinutes(expirationDate.getMinutes() + 5);
-        console.log("Login successful:", response.data);
-        Cookies.set("token", response.data.token, { expires: expirationDate, path: "/" });
+        //console.log("Login successful:", response.data);
+        Cookies.set("token", response.data.token, {
+          expires: expirationDate,
+          path: "/",
+        });
         Cookies.set(
           "cse_forums_refresh_token",
           response.data.data.refreshToken,
           { expires: 1, path: "/" }
         );
-        // console.log("Stored token:", Cookies.get("token"));
+        // //console.log("Stored token:", Cookies.get("token"));
         // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");
@@ -53,15 +56,15 @@ export const LogIn = () => {
         setError(
           error.response.data.message || "Login failed. Please try again."
         );
-        console.error("Login failed:", error.response.data.message);
+        //console.error("Login failed:", error.response.data.message);
       } else if (error.request) {
         // The request was made but no response was received
         setError("No response from the server. Please try again.");
-        console.error("No response received:", error.request);
+        //console.error("No response received:", error.request);
       } else {
         // Something happened in setting up the request that triggered an error
         setError("An unexpected error occurred. Please try again.");
-        console.error("Error:", error.message);
+        //console.error("Error:", error.message);
       }
     }
   };
@@ -127,9 +130,8 @@ export const LogIn = () => {
                 className="appearance-none w-4 h-4 mr-2 border-2 border-orange-300 bg-white rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white "
               />
               Remember me next time
-          </label>
+            </label>
           </div>
-
 
           <button className="w-full my-4 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
             Sign In

@@ -17,14 +17,14 @@ api.interceptors.request.use(
     if (!accessToken || isTokenExpired(accessToken)) {
       try {
         const newToken = await refreshToken();
-        console.log(" newtoken generated : ", newToken);
+        //console.log(" newtoken generated : ", newToken);
         const expirationDate = new Date();
         expirationDate.setMinutes(expirationDate.getMinutes() + 5);
         Cookies.set("token", newToken, { path: "/", expires: expirationDate });
         config.headers.Authorization = `Bearer ${newToken}`; // Set the new token in the request
         accessToken = newToken;
       } catch (error) {
-        console.error("Failed to refresh token:", error);
+        //console.error("Failed to refresh token:", error);
         // Redirect to login if refresh fails
         if (typeof window !== "undefined") {
           window.location.href = "/auth/login";
@@ -51,7 +51,7 @@ const isTokenExpired = (token) => {
     const currentTime = Date.now() / 1000; // Convert to seconds
     return decodedToken.exp <= currentTime + 60; // Refresh if token expires in less than 1 minute or is expired
   } catch (error) {
-    console.error("Error decoding token:", error);
+    //console.error("Error decoding token:", error);
     return true; // Assume token is expired if decoding fails
   }
 };
@@ -60,16 +60,16 @@ const isTokenExpired = (token) => {
 const refreshToken = async () => {
   try {
     // Use authApi to avoid interceptor circular dependency
-    const response = await authApi.get('/auth/token/refresh');
+    const response = await authApi.get("/auth/token/refresh");
 
     if (response.data.token) {
-      console.log("new token in refreshToken function : ", response.data.token);
+      //console.log("new token in refreshToken function : ", response.data.token);
       return response.data.token; // Return the new access token
     } else {
       throw new Error("Failed to refresh token");
     }
   } catch (error) {
-    console.error("Error refreshing token:", error);
+    //console.error("Error refreshing token:", error);
     throw error;
   }
 };

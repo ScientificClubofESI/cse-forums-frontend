@@ -12,48 +12,47 @@ import UserpicIcon from "./userpic.svg";
 import api from "@/lib/api";
 import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-
-const QuestionViewer = () => {const router = useRouter();
+const QuestionViewer = () => {
+  const router = useRouter();
   const [thread, setThread] = useState(null);
 
   useEffect(() => {
     const storedThread = sessionStorage.getItem("selectedThread");
     if (storedThread) {
       setThread(JSON.parse(storedThread));
-      console.log('kayn thread')
-    }
-    else{
-      console.log('makanch thread')
+      //console.log('kayn thread')
+    } else {
+      //console.log('makanch thread')
     }
   }, []);
   const [voteCount, setVoteCount] = useState(0);
   const [userVote, setUserVote] = useState(null);
-  console.log(thread)
+  //console.log(thread)
   // const user_id = thread.user_id;
-  //   console.log(user_id)
+  //   //console.log(user_id)
 
   const [userId, setUserId] = useState(null);
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    setUserId(localStorage.getItem("userId"));
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
 
   const handleVote = async (type) => {
     if (!thread?.id) {
-      console.error("Thread ID not available");
+      //console.error("Thread ID not available");
       return;
     }
 
     if (!userId) {
-      console.error("User not logged in");
+      //console.error("User not logged in");
       return;
     }
 
     if (userVote === type) {
       try {
         const response = await api.delete(`/threads/${thread.id}/vote`, {
-          data: { user_id: Number(userId) }
+          data: { user_id: Number(userId) },
         });
 
         setVoteCount((prevCount) =>
@@ -61,7 +60,7 @@ useEffect(() => {
         );
         setUserVote(null);
       } catch (error) {
-        console.error("Error during unvote:", error);
+        //console.error("Error during unvote:", error);
       }
     } else {
       let voteAdjustment = 0;
@@ -76,13 +75,13 @@ useEffect(() => {
       try {
         const response = await api.post(`/threads/${thread.id}/vote`, {
           user_id: Number(userId),
-          type
+          type,
         });
 
         setVoteCount((prevCount) => prevCount + voteAdjustment);
         setUserVote(type);
       } catch (error) {
-        console.error(`Error during ${type}:`, error);
+        //console.error(`Error during ${type}:`, error);
       }
     }
   };
@@ -228,11 +227,16 @@ useEffect(() => {
 
 const Back = () => {
   const router = useRouter();
-  return(
-  <button onClick={() => router.back()}>
-  <img src={BackIcon.src} alt="back" className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]" />
-  </button>
-)};
+  return (
+    <button onClick={() => router.back()}>
+      <img
+        src={BackIcon.src}
+        alt="back"
+        className="w-[25px] h-[25px] md:w-[48px] md:h-[48px]"
+      />
+    </button>
+  );
+};
 
 const Approved = () => (
   <img

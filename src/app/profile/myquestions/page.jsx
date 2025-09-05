@@ -23,15 +23,15 @@ export default function Myquestions() {
     const getMyQuestions = async () => {
       try {
         const response = await api.get("/threads/all"); // a controller will be implementer in the backend soon enough
-        console.log("threads from myquestions page : ", response.data.data);
+        //console.log("threads from myquestions page : ", response.data.data);
 
         const filteredQuestions = response.data.data.filter(
           (item) => item.user_id == userId
         );
         setmyquestions(filteredQuestions);
-        console.log("myquestions : ", myquestions);
+        //console.log("myquestions : ", myquestions);
       } catch (error) {
-        console.error(error);
+        //console.error(error);
       }
     };
     getMyQuestions();
@@ -50,7 +50,7 @@ export default function Myquestions() {
         );
       }
     } catch (error) {
-      console.error("Error deleting thread:", error);
+      //console.error("Error deleting thread:", error);
       alert("Failed to delete thread.");
     }
   };

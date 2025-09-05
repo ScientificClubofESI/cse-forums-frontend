@@ -6,7 +6,7 @@ import Card from "./card";
 import empty from "../../../../public/emtyProfil.png";
 import Link from "next/link";
 
-export const SavedQuestions = ({savedQuestions}) => {
+export const SavedQuestions = ({ savedQuestions }) => {
   const [activeTab, setActiveTab] = useState("Recent"); // Track active tab
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -34,25 +34,27 @@ export const SavedQuestions = ({savedQuestions}) => {
     alert("Delete clicked!");
   };
 
-  console.log(currentCards)
+  //console.log(currentCards)
 
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
       <div className="flex flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
-        {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map((tab) => (
-          <div
-            key={tab}
-            onClick={() => handleTabClick(tab)}
-            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
-              activeTab === tab
-                ? "bg-primary-500 text-white"
-                : "bg-neutral-100 text-neutral-900"
-            }`}
-          >
-            {tab}
-          </div>
-        ))}
+        {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map(
+          (tab) => (
+            <div
+              key={tab}
+              onClick={() => handleTabClick(tab)}
+              className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
+                activeTab === tab
+                  ? "bg-primary-500 text-white"
+                  : "bg-neutral-100 text-neutral-900"
+              }`}
+            >
+              {tab}
+            </div>
+          )
+        )}
       </div>
 
       {/* Content */}
@@ -80,12 +82,10 @@ export const SavedQuestions = ({savedQuestions}) => {
 
       {/* Ask Question Button */}
       <Link href="/ask-question" className="w-full flex justify-center">
-      <button className="py-[12px] px-[40px] bg-secondary-500 text-white w-full text-2xl font-oswald rounded-[8px] text-center">
-        Ask a new Question?
-      </button>
-      
+        <button className="py-[12px] px-[40px] bg-secondary-500 text-white w-full text-2xl font-oswald rounded-[8px] text-center">
+          Ask a new Question?
+        </button>
       </Link>
-      
 
       {/* Pagination */}
       <div className="flex justify-center gap-[10px] mt-[20px]">
@@ -108,4 +108,3 @@ export const SavedQuestions = ({savedQuestions}) => {
 };
 
 export default SavedQuestions;
-

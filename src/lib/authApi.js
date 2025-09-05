@@ -10,7 +10,7 @@ const authApi = axios.create({
 authApi.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("Auth API Error:", error);
+    //console.error("Auth API Error:", error);
     return Promise.reject(error);
   }
 );

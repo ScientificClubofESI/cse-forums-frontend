@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
-export default function search({ setthreads, setCurrentPage }) {
+export default function Search({ setthreads, setCurrentPage }) {
   const [searchQuery, setsearchQuery] = useState("");
   useEffect(() => {
     const fetchSearchThreads = async () => {
@@ -12,10 +12,10 @@ export default function search({ setthreads, setCurrentPage }) {
         const response = await api.get(
           `/threads/search?searchQuery=${searchQuery}`
         );
-        console.log("search response : ", response.data);
+        //console.log("search response : ", response.data);
         setthreads(response.data.data);
       } catch (error) {
-        console.error("error fetching search : ", error);
+        //console.error("error fetching search : ", error);
       }
     };
     fetchSearchThreads();

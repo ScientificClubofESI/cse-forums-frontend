@@ -38,12 +38,12 @@ const Hero = () => {
         const response = await api.get(
           `/threads/search?searchQuery=${searchQuery}`
         );
-        console.log("search response : ", response.data);
+        //console.log("search response : ", response.data);
         setSearchResults(response.data.data);
         setShowDropdown(true);
         //setthreads(response.data.data);
       } catch (error) {
-        console.error("error fetching search : ", error);
+        //console.error("error fetching search : ", error);
       }
     };
     fetchSearchThreads();

@@ -90,7 +90,7 @@ export const Settings = () => {
 
   const handleFileChange = (e) => {
     // Logic for handling file upload (e.g., updating state or uploading to server)
-    console.log("Selected file:", e.target.files[0]);
+    //console.log("Selected file:", e.target.files[0]);
   };
 
   const [userId, setUserId] = useState(null);
@@ -107,16 +107,16 @@ export const Settings = () => {
         email: formData.email,
       });
 
-      console.log("Update Response:", response.data); // Debugging
+      //console.log("Update Response:", response.data); // Debugging
 
       if (response.data.success) {
-        console.log("Profile updated successfully!");
+        //console.log("Profile updated successfully!");
         getUserProfile(userId); // Fetch the latest data immediately after update
       } else {
         alert("Failed to update profile: " + response.data.message);
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      //console.error("Error updating profile:", error);
       alert("An error occurred while updating the profile.");
     }
   };
@@ -124,7 +124,7 @@ export const Settings = () => {
   const handleSave = () => {
     // Logic for saving form data (e.g., API call)
     updateProfile();
-    console.log("Saving form data:", formData);
+    //console.log("Saving form data:", formData);
   };
 
   return (

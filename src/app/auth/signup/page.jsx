@@ -23,10 +23,10 @@ export const SignUp = () => {
     e.preventDefault();
 
     try {
-      console.log("email value : ", email);
-      console.log("password value : ", password);
-      console.log("username value : ", username);
-      console.log("fullName value : ", fullName);
+      //console.log("email value : ", email);
+      //console.log("password value : ", password);
+      //console.log("username value : ", username);
+      //console.log("fullName value : ", fullName);
 
       const response = await authApi.post("/auth/signup", {
         username,
@@ -49,7 +49,7 @@ export const SignUp = () => {
       if (response.status === 201) {
         const expirationDate = new Date();
         expirationDate.setMinutes(expirationDate.getMinutes() + 5);
-        console.log("signup successful:", response.data);
+        //console.log("signup successful:", response.data);
         Cookies.set("token", response.data.token, {
           expires: expirationDate,
           path: "/",
@@ -59,7 +59,7 @@ export const SignUp = () => {
           response.data.data.refreshToken,
           { expires: 1, path: "/" }
         );
-        // console.log("Stored token:", Cookies.get("token"));
+        // //console.log("Stored token:", Cookies.get("token"));
         // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");
@@ -71,15 +71,15 @@ export const SignUp = () => {
         setError(
           error.response.data.message || "signup failed. Please try again."
         );
-        console.error("signyp failed:", error.response.data.message);
+        //console.error("signyp failed:", error.response.data.message);
       } else if (error.request) {
         // The request was made but no response was received
         setError("No response from the server. Please try again.");
-        console.error("No response received:", error.request);
+        //console.error("No response received:", error.request);
       } else {
         // Something happened in setting up the request that triggered an error
         setError("An unexpected error occurred. Please try again.");
-        console.error("Error:", error.message);
+        //console.error("Error:", error.message);
       }
     }
   };
@@ -194,8 +194,7 @@ export const SignUp = () => {
                 type="checkbox"
                 className="bg-white appearance-none w-4 h-4 mr-2 border-2 border-orange-300 rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white "
               />
-              I agree all statements in{" "}
-              //TODO link to terms of service page
+              I agree all statements in //TODO link to terms of service page
               <a href="trm" className="ml-1 text-secondary-500">
                 {" "}
                 Terms of service

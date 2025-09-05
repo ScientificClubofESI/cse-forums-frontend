@@ -34,7 +34,6 @@ export const AllQuestions = () => {
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
   const currentThreads = threads.slice(indexOfFirstCard, indexOfLastCard);
   const router = useRouter();
-  
 
   const totalPages = Math.ceil(threads.length / itemsPerPage);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -71,48 +70,46 @@ export const AllQuestions = () => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    const storedUserId = localStorage.getItem("userId");
-    if (storedUserId) {
-      setUserId(storedUserId);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
     }
-  }
-}, []);
+  }, []);
 
   useEffect(() => {
     if (userId) {
       setIsAuthenticated(true);
       getQuestions();
-      getSavedQuestions(userId);  // Pass userId correctly
+      getSavedQuestions(userId); // Pass userId correctly
     }
   }, [userId]); // Add userId as a dependency
-  
 
   const getSavedQuestions = async (userId) => {
     if (!userId) return;
     try {
       const response = await api.get(`/threads/saved?user=${userId}`);
-      console.log("Fetched saved threads:", response.data.data); // Debugging log
-      const savedThreadIds = new Set(response.data.data.map((thread) => thread.id));
+      //console.log("Fetched saved threads:", response.data.data); // Debugging log
+      const savedThreadIds = new Set(
+        response.data.data.map((thread) => thread.id)
+      );
       setSavedThreads(savedThreadIds);
-      
     } catch (error) {
-      console.error("Failed to fetch saved threads:", error);
+      //console.error("Failed to fetch saved threads:", error);
     }
-    };
-
+  };
 
   const getQuestions = async () => {
     try {
       const response = await api.get("/threads/all");
-      console.log("threads : ", response.data);
+      //console.log("threads : ", response.data);
       setthreads(response.data.data);
     } catch (error) {
-      console.error(error);
+      //console.error(error);
     }
   };
-
 
   const toggleSaveThread = async (threadId) => {
     if (!userId) {
@@ -131,14 +128,13 @@ useEffect(() => {
           return newSet;
         });
       } else {
-        await api.post(
-          `/threads/${threadId}/save`,
-          { user_id: Number(userId) }
-        );
+        await api.post(`/threads/${threadId}/save`, {
+          user_id: Number(userId),
+        });
         setSavedThreads((prev) => new Set(prev).add(threadId));
       }
     } catch (error) {
-      console.error("Failed to toggle save:", error);
+      //console.error("Failed to toggle save:", error);
     }
   };
 
@@ -149,30 +145,28 @@ useEffect(() => {
         return;
       }
 
-      const response = await api.post(
-        `/threads/${threadId}/save`,
-        {
-          user_id: Number(userId), // Send the user_id in the request body
-        }
-      );
+      const response = await api.post(`/threads/${threadId}/save`, {
+        user_id: Number(userId), // Send the user_id in the request body
+      });
 
-      console.log("Thread saved successfully:", response.data);
+      //console.log("Thread saved successfully:", response.data);
       alert("Thread saved successfully!"); // Show a success message
     } catch (error) {
-      console.error("Failed to save thread:", error);
+      //console.error("Failed to save thread:", error);
       alert("Failed to save thread. Please try again."); // Show an error message
     }
   };
 
   useEffect(() => {
-    console.log("Saved Threads:", savedThreads);
+    //console.log("Saved Threads:", savedThreads);
   }, [savedThreads]);
-  
 
   const handleNavigation = (thread) => {
     sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-    router.push(`/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`);
-  }
+    router.push(
+      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
+    );
+  };
   return (
     <div className=" bg-neutral-50">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
@@ -260,7 +254,10 @@ useEffect(() => {
                 key={index}
                 className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
               >
-                <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8" onClick={() => handleNavigation(question)}>
+                <div
+                  className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8"
+                  onClick={() => handleNavigation(question)}
+                >
                   <div className="flex flex-row items-center justify-between gap-1">
                     <Image
                       src={UpDown}
@@ -378,19 +375,19 @@ useEffect(() => {
               <Image src={left} alt="left icon" width={24} height={24} />
             </button>
             <div className="flex items-center text-neutral-700">
-            {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={index}
-            className={`py-2 px-4 rounded-md ${
-              currentPage === index + 1
-                ? "bg-secondary-500 text-white"
-                : "bg-neutral-200 text-neutral-900"
-            }`}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index}
+                  className={`py-2 px-4 rounded-md ${
+                    currentPage === index + 1
+                      ? "bg-secondary-500 text-white"
+                      : "bg-neutral-200 text-neutral-900"
+                  }`}
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
               {/* <span>{totalPages}</span> */}
             </div>
             <button

@@ -1,92 +1,93 @@
-'use client';
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import Underline from '@tiptap/extension-underline';
-import TextAlign from '@tiptap/extension-text-align';
-import Image from '@tiptap/extension-image';
-import Dropcursor from '@tiptap/extension-dropcursor';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-import Highlight from '@tiptap/extension-highlight';
-import Placeholder from '@tiptap/extension-placeholder';
-import ListItem from '@tiptap/extension-list-item';
+"use client";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import Underline from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+import Image from "@tiptap/extension-image";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import Highlight from "@tiptap/extension-highlight";
+import Placeholder from "@tiptap/extension-placeholder";
+import ListItem from "@tiptap/extension-list-item";
 import {
-  GalleryImport, Code1, TextBold, TextUnderline,
-  TextItalic, TextalignLeft, TextalignCenter, TextalignRight, Document,
-  Send
-} from 'iconsax-react';
-import { common, createLowlight } from 'lowlight';
-import { TfiAlignLeft, TfiListOl, TfiAlignRight } from 'react-icons/tfi';
-import { IoIosClose } from 'react-icons/io';
+  GalleryImport,
+  Code1,
+  TextBold,
+  TextUnderline,
+  TextItalic,
+  TextalignLeft,
+  TextalignCenter,
+  TextalignRight,
+  Document,
+  Send,
+} from "iconsax-react";
+import { common, createLowlight } from "lowlight";
+import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
+import { IoIosClose } from "react-icons/io";
 // import PopUp from '../PopUp/page';
-import { Navbarsignedin } from '@/components/navbar/navbarsignedin';
-import api from '@/lib/api';
+import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
+import api from "@/lib/api";
 import Cookies from "js-cookie";
-
 
 const AskQuestion = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [questionTitle, setQuestionTitle] = useState('');
+  const [questionTitle, setQuestionTitle] = useState("");
   const [tags, setTags] = useState([]);
-  const [tagInput, setTagInput] = useState('');
+  const [tagInput, setTagInput] = useState("");
   const fileInputRef = useRef(null);
   const [error, setError] = useState(null);
   const [iconSize, setIconSize] = useState(25);
   const [isAnswerPopupOpen, setIsAnswerPopupOpen] = useState(false);
 
   const handleAnswerSubmit = (answerHtml) => {
-    console.log('Answer submitted:', answerHtml);
+    //console.log('Answer submitted:', answerHtml);
     // Process the submitted answer
     setIsAnswerPopupOpen(false);
   };
 
- 
   // Update icon size on mount and window resize
   useEffect(() => {
     const updateIconSize = () => {
       setIconSize(window.innerWidth < 768 ? 20 : 25);
     };
-   
+
     // Set initial size
     updateIconSize();
-   
+
     // Add event listener
-    window.addEventListener('resize', updateIconSize);
-   
+    window.addEventListener("resize", updateIconSize);
+
     // Clean up
-    return () => window.removeEventListener('resize', updateIconSize);
+    return () => window.removeEventListener("resize", updateIconSize);
   }, []);
 
   // Custom image handler function
   const handleImageUpload = useCallback((file) => {
     if (!file || !editor) return;
-   
+
     const fileReader = new FileReader();
     fileReader.readAsDataURL(file);
     fileReader.onload = () => {
-      editor
-        .chain()
-        .focus()
-        .setImage({ src: fileReader.result })
-        .run();
+      editor.chain().focus().setImage({ src: fileReader.result }).run();
     };
   }, []);
 
   const editor = useEditor({
     editorProps: {
       attributes: {
-        class: 'focus:outline-none',
+        class: "focus:outline-none",
       },
       handlePaste: (view, event) => {
         // Simple paste handler for images
         const items = Array.from(event.clipboardData?.items || []);
-        const imageItems = items.filter(item => /image/.test(item.type));
-       
+        const imageItems = items.filter((item) => /image/.test(item.type));
+
         if (imageItems.length > 0) {
           event.preventDefault();
-          imageItems.forEach(item => {
+          imageItems.forEach((item) => {
             const file = item.getAsFile();
             if (file) handleImageUpload(file);
           });
@@ -97,11 +98,11 @@ const AskQuestion = () => {
       handleDrop: (view, event) => {
         // Simple drop handler for images
         const files = Array.from(event.dataTransfer?.files || []);
-        const imageFiles = files.filter(file => /image/.test(file.type));
-       
+        const imageFiles = files.filter((file) => /image/.test(file.type));
+
         if (imageFiles.length > 0) {
           event.preventDefault();
-          imageFiles.forEach(file => handleImageUpload(file));
+          imageFiles.forEach((file) => handleImageUpload(file));
           return true;
         }
         return false;
@@ -115,9 +116,9 @@ const AskQuestion = () => {
       OrderedList,
       ListItem,
       Placeholder.configure({
-        placeholder: 'Give us more details about your question…',
+        placeholder: "Give us more details about your question…",
         emptyEditorClass:
-          'is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none',
+          "is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none",
       }),
       Underline,
       Image.configure({
@@ -125,8 +126,8 @@ const AskQuestion = () => {
       }),
       Dropcursor,
       TextAlign.configure({
-        types: ['heading', 'paragraph', 'input'],
-        defaultAlignment: 'left',
+        types: ["heading", "paragraph", "input"],
+        defaultAlignment: "left",
       }),
       CodeBlockLowlight.configure({
         lowlight: createLowlight(common),
@@ -142,16 +143,16 @@ const AskQuestion = () => {
   });
 
   const handleKeyEvent = (e) => {
-    if (e.key === 'Enter' && e.target.value !== '') {
+    if (e.key === "Enter" && e.target.value !== "") {
       setTags([...tags, e.target.value]);
-      setTagInput('');
+      setTagInput("");
     }
   };
 
   const addImage = useCallback(() => {
     if (!editor) return;
-   
-    const url = window.prompt('Insert an Image Link');
+
+    const url = window.prompt("Insert an Image Link");
     if (url) {
       editor.chain().focus().setImage({ src: url }).run();
     }
@@ -163,23 +164,26 @@ const AskQuestion = () => {
     }
   }, []);
 
-  const handleFileSelection = useCallback((e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-   
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+  const handleFileSelection = useCallback(
+    (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-    // Simple handling for image files
-    if (file.type.startsWith('image/')) {
-      handleImageUpload(file);
-    } else {
-      // For other document types, you could implement a simple parser
-      // or just notify user that this functionality is limited
-      setError('Only image uploads are supported in this version');
-    }
-  }, [handleImageUpload]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      // Simple handling for image files
+      if (file.type.startsWith("image/")) {
+        handleImageUpload(file);
+      } else {
+        // For other document types, you could implement a simple parser
+        // or just notify user that this functionality is limited
+        setError("Only image uploads are supported in this version");
+      }
+    },
+    [handleImageUpload]
+  );
 
   // Add code block function
   const addCodeBlock = useCallback(() => {
@@ -189,7 +193,11 @@ const AskQuestion = () => {
   }, [editor]);
 
   if (isLoading) {
-    return <div className="w-full h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (!editor) {
@@ -197,213 +205,250 @@ const AskQuestion = () => {
   }
 
   const [userId, setUserId] = useState(null);
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    setUserId(localStorage.getItem("userId"));
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
 
-const handleThreadSubmit = async () => {
+  const handleThreadSubmit = async () => {
     if (!questionTitle.trim() || !editor.getHTML().trim()) {
-        setError("Title and content cannot be empty!");
-        return;
+      setError("Title and content cannot be empty!");
+      return;
     }
 
     setIsLoading(true);
     setError(null);
 
     try {
-        const { data } = await api.post(
-            "/threads/create",
-            {
-                user_id: userId, // Get user ID
-                title: questionTitle,
-                content: editor.getHTML(), // Get the HTML content from TipTap
-            }
-        );
+      const { data } = await api.post("/threads/create", {
+        user_id: userId, // Get user ID
+        title: questionTitle,
+        content: editor.getHTML(), // Get the HTML content from TipTap
+      });
 
-        if (data.success) {
-            alert("Thread created successfully!");
-            setQuestionTitle(""); // Reset input
-            editor.commands.clearContent(); // Clear editor content
-        } else {
-            setError(data.message);
-        }
+      if (data.success) {
+        alert("Thread created successfully!");
+        setQuestionTitle(""); // Reset input
+        editor.commands.clearContent(); // Clear editor content
+      } else {
+        setError(data.message);
+      }
     } catch (error) {
-        setError(error.response?.data?.message || "Error creating thread");
+      setError(error.response?.data?.message || "Error creating thread");
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
-
+  };
 
   return (
     <>
-    <Navbarsignedin/>
-    <main
-      className="w-full min-h-screen px-4 sm:px-8 md:px-16 lg:px-32 py-6 md:py-14 flex flex-col gap-3 md:gap-5"
-      style={{
-        background:
-          'linear-gradient(0deg, rgba(46, 117, 173, 0.05), rgba(46, 117, 173, 0.05)), #FFFBFE',
-      }}
-    >
-      
-      <div className="flex content-center justify-start">
-        <h2 className="font-sans font-semibold text-3xl sm:text-4xl lg:text-5xl leading-tight sm:leading-normal">Few Steps to Ask Your Question</h2>
-      </div>
-     
-      <div className="w-full flex flex-col gap-0.5">
-        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
-          Title <span className="text-secondary-500">*</span>
-        </h3>
-        <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
-          It's best to write short & to the point titles.
-        </p>
-        <input
-          type="text"
-          name="question"
-          className="w-full h-10 bg-white rounded-sm p-4 font-serif focus:outline-none"
-          placeholder="Enter the title of your question"
-          value={questionTitle}
-          onChange={(e) => setQuestionTitle(e.target.value)}
-        />
-      </div>
-     
-      <div className="w-full flex flex-col gap-0.5">
-        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
-          Details <span className="text-secondary-500">*</span>
-        </h3>
-       
-        <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0">
-          <div className="flex flex-col items-center gap-1 mb-2">
-            <h3 className="font-serif font-bold text-sm md:text-base text-center">Fonts</h3>
-            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-              <span onClick={() => editor.chain().focus().toggleBold().run()} className="cursor-pointer">
-                <TextBold color="#000000" size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().toggleUnderline().run()} className="cursor-pointer">
-                <TextUnderline color="#000000" size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().toggleItalic().run()} className="cursor-pointer">
-                <TextItalic color="#000000" size={iconSize} />
-              </span>
-            </div>
-          </div>
-         
-          <div className="flex flex-col items-center gap-1 mb-2">
-            <h3 className="font-serif font-bold text-sm md:text-base text-center">Alignment</h3>
-            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-              <span onClick={() => editor.chain().focus().setTextAlign('left').run()} className="cursor-pointer">
-                <TextalignLeft color="#000000" size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().setTextAlign('center').run()} className="cursor-pointer">
-                <TextalignCenter color="#000000" size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().setTextAlign('right').run()} className="cursor-pointer">
-                <TextalignRight color="#000000" size={iconSize} />
-              </span>
-            </div>
-          </div>
-         
-          <div className="flex flex-col items-center gap-1 mb-2">
-            <h3 className="font-serif font-bold text-sm md:text-base text-center">Indenting/Lists</h3>
-            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-              <TfiAlignLeft size={iconSize} className="cursor-pointer" />
-              <TfiAlignRight size={iconSize} className="cursor-pointer" />
-              <span onClick={() => editor.chain().focus().toggleBulletList().run()} className="cursor-pointer">
-                <TfiListOl size={iconSize} />
-              </span>
-              <span onClick={() => editor.chain().focus().toggleOrderedList().run()} className="cursor-pointer">
-                <TfiListOl size={iconSize} />
-              </span>
-            </div>
-          </div>
-         
-          <div className="flex flex-col items-center gap-1 mb-2">
-            <h3 className="font-serif font-bold text-sm md:text-base text-center">Inserts</h3>
-            <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-              <button
-                onClick={handleFileInputClick}
-                className="bg-transparent border-0 p-0 cursor-pointer"
-              >
-                <Document color="#000000" size={iconSize} />
-                <input
-                  onChange={handleFileSelection}
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                />
-              </button>
-              <span onClick={addImage} className="cursor-pointer">
-                <GalleryImport color="#000000" size={iconSize} />
-              </span>
-              <span onClick={addCodeBlock} className="cursor-pointer">
-                <Code1 color="#000000" size={iconSize} />
-              </span>
-            </div>
-          </div>
+      <Navbarsignedin />
+      <main
+        className="w-full min-h-screen px-4 sm:px-8 md:px-16 lg:px-32 py-6 md:py-14 flex flex-col gap-3 md:gap-5"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(46, 117, 173, 0.05), rgba(46, 117, 173, 0.05)), #FFFBFE",
+        }}
+      >
+        <div className="flex content-center justify-start">
+          <h2 className="font-sans font-semibold text-3xl sm:text-4xl lg:text-5xl leading-tight sm:leading-normal">
+            Few Steps to Ask Your Question
+          </h2>
         </div>
-       
-        {error && <div className="text-red-500 mb-2">{error}</div>}
-       
-        <EditorContent
-          className="w-full h-64 md:h-96 rounded-md p-3 md:p-4 lg:p-6 bg-white resize-none focus:outline-none overflow-auto"
-          editor={editor}
-        />
-      </div>
-     
-      <div className="w-full flex flex-col gap-0.5">
-        <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
-          Tags <span className="text-secondary-500">*</span>
-        </h3>
-        <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
-          You can choose up to 10 tags.
-        </p>
-        <div className="w-full min-h-[50px] bg-white rounded-sm p-2 font-serif flex flex-wrap gap-2 md:gap-3">
-          {tags.map((tag, index) => (
-            <div
-              className="h-6 w-fit bg-black rounded-sm p-1 font-serif flex items-center justify-center gap-0.5 mb-2 md:mb-0"
-              key={index}
-            >
-              <span
-                className="cursor-pointer"
-                onClick={() => setTags(tags.filter((t) => t !== tag))}
-              >
-                <IoIosClose size={iconSize} color="white" />
-              </span>
-              <p className="text-white text-xs md:text-sm font-bold">{tag}</p>
-            </div>
-          ))}
+
+        <div className="w-full flex flex-col gap-0.5">
+          <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+            Title <span className="text-secondary-500">*</span>
+          </h3>
+          <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
+            It's best to write short & to the point titles.
+          </p>
           <input
             type="text"
-            name="tag"
-            className="flex-grow h-10 bg-white font-serif focus:outline-none"
-            placeholder="Enter a tag"
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={handleKeyEvent}
+            name="question"
+            className="w-full h-10 bg-white rounded-sm p-4 font-serif focus:outline-none"
+            placeholder="Enter the title of your question"
+            value={questionTitle}
+            onChange={(e) => setQuestionTitle(e.target.value)}
           />
         </div>
-      </div>
-     
-      <button
-        className="bg-secondary-500 w-full h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300" 
-        // onClick={() => setIsAnswerPopupOpen(true)}
-        onClick={handleThreadSubmit}
-      >
-         
-        <span className="text-sm md:text-base">Post Your Question</span>
-        <Send size={iconSize} color="#d9e3f0" variant="Bold" />
-        
-      </button>
-      
-      {/* <PopUp
+
+        <div className="w-full flex flex-col gap-0.5">
+          <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+            Details <span className="text-secondary-500">*</span>
+          </h3>
+
+          <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0">
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <h3 className="font-serif font-bold text-sm md:text-base text-center">
+                Fonts
+              </h3>
+              <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+                <span
+                  onClick={() => editor.chain().focus().toggleBold().run()}
+                  className="cursor-pointer"
+                >
+                  <TextBold color="#000000" size={iconSize} />
+                </span>
+                <span
+                  onClick={() => editor.chain().focus().toggleUnderline().run()}
+                  className="cursor-pointer"
+                >
+                  <TextUnderline color="#000000" size={iconSize} />
+                </span>
+                <span
+                  onClick={() => editor.chain().focus().toggleItalic().run()}
+                  className="cursor-pointer"
+                >
+                  <TextItalic color="#000000" size={iconSize} />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <h3 className="font-serif font-bold text-sm md:text-base text-center">
+                Alignment
+              </h3>
+              <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+                <span
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("left").run()
+                  }
+                  className="cursor-pointer"
+                >
+                  <TextalignLeft color="#000000" size={iconSize} />
+                </span>
+                <span
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("center").run()
+                  }
+                  className="cursor-pointer"
+                >
+                  <TextalignCenter color="#000000" size={iconSize} />
+                </span>
+                <span
+                  onClick={() =>
+                    editor.chain().focus().setTextAlign("right").run()
+                  }
+                  className="cursor-pointer"
+                >
+                  <TextalignRight color="#000000" size={iconSize} />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <h3 className="font-serif font-bold text-sm md:text-base text-center">
+                Indenting/Lists
+              </h3>
+              <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+                <TfiAlignLeft size={iconSize} className="cursor-pointer" />
+                <TfiAlignRight size={iconSize} className="cursor-pointer" />
+                <span
+                  onClick={() =>
+                    editor.chain().focus().toggleBulletList().run()
+                  }
+                  className="cursor-pointer"
+                >
+                  <TfiListOl size={iconSize} />
+                </span>
+                <span
+                  onClick={() =>
+                    editor.chain().focus().toggleOrderedList().run()
+                  }
+                  className="cursor-pointer"
+                >
+                  <TfiListOl size={iconSize} />
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <h3 className="font-serif font-bold text-sm md:text-base text-center">
+                Inserts
+              </h3>
+              <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+                <button
+                  onClick={handleFileInputClick}
+                  className="bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  <Document color="#000000" size={iconSize} />
+                  <input
+                    onChange={handleFileSelection}
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                </button>
+                <span onClick={addImage} className="cursor-pointer">
+                  <GalleryImport color="#000000" size={iconSize} />
+                </span>
+                <span onClick={addCodeBlock} className="cursor-pointer">
+                  <Code1 color="#000000" size={iconSize} />
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {error && <div className="text-red-500 mb-2">{error}</div>}
+
+          <EditorContent
+            className="w-full h-64 md:h-96 rounded-md p-3 md:p-4 lg:p-6 bg-white resize-none focus:outline-none overflow-auto"
+            editor={editor}
+          />
+        </div>
+
+        <div className="w-full flex flex-col gap-0.5">
+          <h3 className="font-serif font-bold text-lg sm:text-xl leading-tight">
+            Tags <span className="text-secondary-500">*</span>
+          </h3>
+          <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
+            You can choose up to 10 tags.
+          </p>
+          <div className="w-full min-h-[50px] bg-white rounded-sm p-2 font-serif flex flex-wrap gap-2 md:gap-3">
+            {tags.map((tag, index) => (
+              <div
+                className="h-6 w-fit bg-black rounded-sm p-1 font-serif flex items-center justify-center gap-0.5 mb-2 md:mb-0"
+                key={index}
+              >
+                <span
+                  className="cursor-pointer"
+                  onClick={() => setTags(tags.filter((t) => t !== tag))}
+                >
+                  <IoIosClose size={iconSize} color="white" />
+                </span>
+                <p className="text-white text-xs md:text-sm font-bold">{tag}</p>
+              </div>
+            ))}
+            <input
+              type="text"
+              name="tag"
+              className="flex-grow h-10 bg-white font-serif focus:outline-none"
+              placeholder="Enter a tag"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleKeyEvent}
+            />
+          </div>
+        </div>
+
+        <button
+          className="bg-secondary-500 w-full h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300"
+          // onClick={() => setIsAnswerPopupOpen(true)}
+          onClick={handleThreadSubmit}
+        >
+          <span className="text-sm md:text-base">Post Your Question</span>
+          <Send size={iconSize} color="#d9e3f0" variant="Bold" />
+        </button>
+
+        {/* <PopUp
         isOpen={isAnswerPopupOpen}
         onClose={() => setIsAnswerPopupOpen(false)}
         onSubmit={handleAnswerSubmit}
       /> */}
-    </main>
+      </main>
     </>
   );
 };

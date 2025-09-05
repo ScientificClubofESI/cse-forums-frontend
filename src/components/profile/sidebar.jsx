@@ -7,7 +7,7 @@ import user from "../../../public/Icon.png";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 
-export default function sidebar() {
+export default function Sidebar() {
   const [userId, setUserId] = useState(null);
 useEffect(() => {
   if (typeof window !== "undefined") {
@@ -20,7 +20,7 @@ useEffect(() => {
     try {
       // Ensure UserId is defined
       if (!UserId) {
-        console.error("UserId is not defined");
+        //console.error("UserId is not defined");
         return;
       }
 
@@ -28,18 +28,18 @@ useEffect(() => {
       const response = await api.get(`/user/${UserId}`);
 
       // Log the response data
-      console.log("User profile data:", response.data);
+      //console.log("User profile data:", response.data);
       setuserInfo(response.data.data);
       return response.data; // Return the data for further use
     } catch (error) {
       // Handle errors
       if (error.response) {
-        console.error("Error response:", error.response.data);
-        console.error("Status code:", error.response.status);
+        //console.error("Error response:", error.response.data);
+        //console.error("Status code:", error.response.status);
       } else if (error.request) {
-        console.error("No response received:", error.request);
+        //console.error("No response received:", error.request);
       } else {
-        console.error("Error:", error.message);
+        //console.error("Error:", error.message);
       }
 
       //TODO see what this is for

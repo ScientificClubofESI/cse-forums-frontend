@@ -24,10 +24,10 @@ export default function Profil() {
   const getSavedQuestions = async (userId) => {
     try {
       const response = await api.get(`/threads/saved?user=${userId}`);
-      console.log("threads from savedquestions page:", response.data.data);
+      //console.log("threads from savedquestions page:", response.data.data);
       setsavedQuestions(response.data.data);
     } catch (error) {
-      console.error(error);
+      //console.error(error);
     }
   };
 
