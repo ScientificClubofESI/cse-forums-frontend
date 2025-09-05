@@ -36,6 +36,13 @@ export default function PopUp({
   getQuestions,
 }) {
   const [iconSize, setIconSize] = useState(20);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
 
   const editor = useEditor({
     extensions: [
@@ -85,12 +92,6 @@ export default function PopUp({
   if (!isOpen) return null;
   if (!editor) return null;
 
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
 
   const handleAnswerCreation = async () => {
     try {

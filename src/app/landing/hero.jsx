@@ -83,7 +83,7 @@ const Hero = () => {
             Hello my friend!
           </h2>
           <p className="text-lg sm:text-3xl font-normal text-[#0C2239] font-serif">
-            It's a good day to ask a question, isn't it?
+            It&apos;s a good day to ask a question, isn&apos;t it?
           </p>
         </div>
 

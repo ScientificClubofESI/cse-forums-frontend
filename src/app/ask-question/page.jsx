@@ -41,6 +41,13 @@ const AskQuestion = () => {
   const [error, setError] = useState(null);
   const [iconSize, setIconSize] = useState(25);
   const [isAnswerPopupOpen, setIsAnswerPopupOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
 
   const handleAnswerSubmit = (answerHtml) => {
     //console.log('Answer submitted:', answerHtml);
@@ -73,7 +80,7 @@ const AskQuestion = () => {
     fileReader.onload = () => {
       editor.chain().focus().setImage({ src: fileReader.result }).run();
     };
-  }, []);
+  }, [editor]);
 
   const editor = useEditor({
     editorProps: {
@@ -204,13 +211,6 @@ const AskQuestion = () => {
     return null;
   }
 
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
-
   const handleThreadSubmit = async () => {
     if (!questionTitle.trim() || !editor.getHTML().trim()) {
       setError("Title and content cannot be empty!");
@@ -262,7 +262,7 @@ const AskQuestion = () => {
             Title <span className="text-secondary-500">*</span>
           </h3>
           <p className="font-serif font-light text-sm sm:text-base text-neutral-700 leading-normal">
-            It's best to write short & to the point titles.
+            It&apos;s best to write short & to the point titles.
           </p>
           <input
             type="text"

@@ -116,7 +116,7 @@ export const LogIn = () => {
               className="absolute top-[45px] md:top-1/2 right-3 w-5 h-5"
               onClick={togglePasswordVisibility}
             />
-            //TODO take to change password page
+            {/**TODO take to change password page*/}
             <a href="dfghj" className="font-serif text-neutral-200 text-sm">
               {" "}
               Forget your password?
@@ -140,7 +140,7 @@ export const LogIn = () => {
 
         <div className="flex justify-center items-center mb-10">
           <p className="flex text-l font-serif text-neutral-500">
-            Don't have an account?
+            Don&apos;t have an account?
           </p>
           <a href="/auth/signup" className="font-serif ml-2 text-secondary-500">
             Sign Up

@@ -19,7 +19,7 @@ export default function Search({ setthreads, setCurrentPage }) {
       }
     };
     fetchSearchThreads();
-  }, [searchQuery]);
+  }, [searchQuery, setthreads, setCurrentPage]);
   return (
     <div className="flex-1 mx-8 hidden md:block w-full">
       <div className="relative max-w-2xl mx-auto">

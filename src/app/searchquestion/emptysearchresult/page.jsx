@@ -37,7 +37,7 @@ export const EmptySearchPage = ({ search }) => {
           <div className="flex justify-center items-center flex-col text-center gap-3 mb-9 lg:mb-12">
             <div className="text-base sm:text-lg lg:text-2xl leading-6 font-normal flex flex-col sm:flex-row items-center gap-1">
               <span className="whitespace-nowrap">
-                We couldn't find anything for
+                We couldn&apos;t find anything for
               </span>
               <div className="flex font-semibold lg:font-serif lg:font-bold font-sans">
                 <span className="truncate max-w-xs lg:max-w-lg inline-block overflow-hidden text-ellipsis">

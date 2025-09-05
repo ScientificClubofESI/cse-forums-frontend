@@ -4,19 +4,19 @@ import Link from "next/link";
 import Image from "next/image";
 import user from "../../../public/Icon.png";
 // import Myquestions from "./myquestions/page";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import api from "@/lib/api";
 
 export default function Sidebar() {
   const [userId, setUserId] = useState(null);
-useEffect(() => {
-  if (typeof window !== "undefined") {
-    setUserId(localStorage.getItem("userId"));
-  }
-}, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setUserId(localStorage.getItem("userId"));
+    }
+  }, []);
   const UserId = userId; // we can customize this later (based on login/singup logic for handling the place of the userid)
   const [userInfo, setuserInfo] = useState({});
-  const getUserProfile = async () => {
+  const getUserProfile = useCallback(async () => {
     try {
       // Ensure UserId is defined
       if (!UserId) {
@@ -50,11 +50,11 @@ useEffect(() => {
       //   }
       // }
     }
-  };
+  }, [UserId]);
 
   useEffect(() => {
     getUserProfile();
-  }, []);
+  }, [getUserProfile]); 
   return (
     <div className="basis-1/4 flex flex-col items-center text-center bg-white p-[32px] rounded-[4px]">
       <div className="flex justify-center items-center rounded-full bg-neutral-900 w-[100px] h-[100px] overflow-hidden">
