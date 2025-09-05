@@ -71,17 +71,6 @@ const AskQuestion = () => {
     return () => window.removeEventListener("resize", updateIconSize);
   }, []);
 
-  // Custom image handler function
-  const handleImageUpload = useCallback((file) => {
-    if (!file || !editor) return;
-
-    const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
-    fileReader.onload = () => {
-      editor.chain().focus().setImage({ src: fileReader.result }).run();
-    };
-  }, [editor]);
-
   const editor = useEditor({
     editorProps: {
       attributes: {
@@ -96,7 +85,19 @@ const AskQuestion = () => {
           event.preventDefault();
           imageItems.forEach((item) => {
             const file = item.getAsFile();
-            if (file) handleImageUpload(file);
+            if (file) {
+              const fileReader = new FileReader();
+              fileReader.readAsDataURL(file);
+              fileReader.onload = () => {
+                // Use view.dispatch instead of editor chain to avoid circular dependency
+                const { schema } = view.state;
+                const node = schema.nodes.image.create({
+                  src: fileReader.result,
+                });
+                const transaction = view.state.tr.replaceSelectionWith(node);
+                view.dispatch(transaction);
+              };
+            }
           });
           return true;
         }
@@ -109,7 +110,19 @@ const AskQuestion = () => {
 
         if (imageFiles.length > 0) {
           event.preventDefault();
-          imageFiles.forEach((file) => handleImageUpload(file));
+          imageFiles.forEach((file) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              // Use view.dispatch instead of editor chain to avoid circular dependency
+              const { schema } = view.state;
+              const node = schema.nodes.image.create({
+                src: fileReader.result,
+              });
+              const transaction = view.state.tr.replaceSelectionWith(node);
+              view.dispatch(transaction);
+            };
+          });
           return true;
         }
         return false;
@@ -148,6 +161,20 @@ const AskQuestion = () => {
       setIsLoading(false);
     },
   });
+
+  // Custom image handler function
+  const handleImageUpload = useCallback(
+    (file) => {
+      if (!file || !editor) return;
+
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        editor.chain().focus().setImage({ src: fileReader.result }).run();
+      };
+    },
+    [editor]
+  );
 
   const handleKeyEvent = (e) => {
     if (e.key === "Enter" && e.target.value !== "") {
