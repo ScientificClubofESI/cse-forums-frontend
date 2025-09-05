@@ -194,11 +194,12 @@ export const SignUp = () => {
                 type="checkbox"
                 className="bg-white appearance-none w-4 h-4 mr-2 border-2 border-orange-300 rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white "
               />
-              I agree all statements in //TODO link to terms of service page
+              I agree all statements in
               <a href="trm" className="ml-1 text-secondary-500">
                 {" "}
                 Terms of service
               </a>
+              {/**TODO link to terms of service page*/}
             </label>
           </div>
 

@@ -44,7 +44,7 @@ export const LogIn = () => {
           response.data.data.refreshToken,
           { expires: 1, path: "/" }
         );
-        // //console.log("Stored token:", Cookies.get("token"));
+        //console.log("Stored token:", Cookies.get("token"));
         // localStorage.setItem("username", response.data.data.username);
         localStorage.setItem("userId", response.data.data.id);
         router.push("/");

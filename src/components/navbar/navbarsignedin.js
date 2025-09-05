@@ -1,15 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
-import search from "../search/search";
+import { useRouter } from "next/navigation";
 import user from "../../../public/nav-bar/User.svg";
 import notification from "../../../public/nav-bar/Frame33603.svg";
 import settings from "../../../public/nav-bar/Frame33604.svg";
 import api from "@/lib/api";
+import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
 
 export const Navbarsignedin = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   const [userId, setUserId] = useState(null);
   useEffect(() => {
@@ -19,13 +22,29 @@ export const Navbarsignedin = () => {
   }, []);
 
   const handleLogout = async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
     try {
-      const response = await api.post("/auth/logout", {
+      // Call logout API
+      await authApi.post("/auth/logout", {
         userId,
       });
       localStorage.clear();
+      sessionStorage.clear();
+            
+      // Redirect to login page
+      router.push("/auth/login");
+      
     } catch (error) {
-      //console.error(error);
+      console.error("Logout error:", error);
+      
+      // Even if API call fails, clear local data and redirect
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      router.push("/auth/login");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
   const [searchQuery, setsearchQuery] = useState("");
