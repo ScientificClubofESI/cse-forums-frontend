@@ -23,18 +23,16 @@ export default function FooterPage() {
             <Image
               src={logocse}
               alt="CSE"
-              width={100}
-              height={140}
-              style={{ width: "auto", height: "auto" }}
+              width={85}
+              height={94}
               className="sm:w-[143.02px] sm:h-[197.05px]"
             />
             <div className="relative">
               <Image
                 src={subtract}
                 alt="Subtract"
-                width={120}
-                height={140}
-                style={{ width: "auto", height: "auto" }}
+                width={90}
+                height={90}
                 className="sm:w-[174.8px] sm:h-[188.25px]"
               />
               <div className="absolute -right-9 sm:-right-20 -top-16 sm:-top-24">
@@ -43,7 +41,6 @@ export default function FooterPage() {
                   alt="Arrow"
                   width={36.73}
                   height={112.1}
-                  style={{ width: "auto", height: "auto" }}
                   className="sm:w-[73.45px] sm:h-[204.21px]"
                 />
               </div>
