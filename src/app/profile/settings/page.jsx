@@ -9,7 +9,7 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
 import Link from "next/link";
 
-// Subcomponent: User Picture Section
+// Subcomponent: User Picture Section 
 const UserPicture = ({ handleFileChange }) => (
   <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
     <Image

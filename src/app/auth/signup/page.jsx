@@ -2,12 +2,11 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import logo from "../../../../public/images/Subtract.png";
-import pic from "../../../../public/images/Code typing-sis.png";
-import google from "../../../../public/images/google_icone.png";
-import linkedin from "../../../../public/images/linkedin icone.png";
-import emailIcone from "../../../../public/images/emailIcone.png";
-import userIcone from "../../../../public/images/userIcone.png";
+import logo from "../../../../public/icons/Subtract.png";
+import pic from "../../../../public/images/illustrations/Code typing-sis.png";
+import linkedin from "../../../../public/icons/linkedin icone.png";
+import emailIcone from "../../../../public/icons/emailIcone.png";
+import userIcone from "../../../../public/icons/userIcone.png";
 import authApi from "@/lib/authApi";
 import { useRouter } from "next/navigation";
 

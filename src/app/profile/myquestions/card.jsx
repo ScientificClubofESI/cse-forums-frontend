@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import trash from "../../../../public/trash.png";
-import Link from "next/link";
+import trash from "../../../../public/icons/trash.png";
 
 const Card = ({ id, title, content, newAnswersCount, answersCount, onEdit, onDelete }) => {
   return (

@@ -1,17 +1,13 @@
 "use client";
-import Image from "next/image";
 import Navbar from "@/components/navbar/navbarnotsignedin";
 import Hero from "../components/pages/landing/hero";
 import Offers from "../components/pages/landing/offers";
 import About from "../components/pages/landing/about";
 import Feedback from "../components/pages/landing/feedback";
 import Footer from "../components/pages/landing/footer";
-import SignUp from "./auth/signup/page";
-import LogIn from "./auth/login/page";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import Profil from "./profile/page";
 import { useState, useEffect } from "react";
-import AllQuestions from "./allquestions/page";
+
 
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

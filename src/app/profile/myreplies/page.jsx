@@ -1,7 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
-import user from "../../../../public/Icon.png";
 import MyRepliesList from "./replieslist";
 import Sidebar from "@/components/profile/sidebar";
 import Navbar from "@/components/navbar/navbar";

@@ -27,10 +27,8 @@ import {
 import { common, createLowlight } from "lowlight";
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
 import { IoIosClose } from "react-icons/io";
-// import PopUp from '../PopUp/page';
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import api from "@/lib/api";
-import Cookies from "js-cookie";
 
 const AskQuestion = () => {
   const [isLoading, setIsLoading] = useState(false);

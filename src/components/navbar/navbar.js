@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import search from "../search/search";
 
 const Navbar = () => {
   return (

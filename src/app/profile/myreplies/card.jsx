@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
-import trash from "../../../../public/trash.png";
-import approve from "../../../../public/approved.png";
+import trash from "../../../../public/icons/trash.png";
+import approve from "../../../../public/icons/approved.png";
 const Card = ({ title, content, approved, onDelete }) => {
   const handleNavigation = () => {
     //console.log("navigated to...");

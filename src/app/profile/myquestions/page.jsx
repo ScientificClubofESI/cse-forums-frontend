@@ -1,7 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
-import user from "../../../../public/Icon.png";
 import MyquestionsList from "./questionslist";
 import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";

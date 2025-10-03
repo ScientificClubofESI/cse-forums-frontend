@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import user from "../../../public/nav-bar/User.svg";
-import notification from "../../../public/nav-bar/Frame33603.svg";
-import settings from "../../../public/nav-bar/Frame33604.svg";
+import user from "../../../public/pages/nav-bar/User.svg";
+import notification from "../../../public/pages/nav-bar/Frame33603.svg";
+import settings from "../../../public/pages/nav-bar/Frame33604.svg";
 import api from "@/lib/api";
 import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";

@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import user from "../../../public/Icon.png";
+import user from "../../../public/images/avatars/Icon.png";
 // import Myquestions from "./myquestions/page";
 import { useEffect, useState, useCallback } from "react";
 import api from "@/lib/api";

@@ -1,6 +1,4 @@
-import Navbar from "@/components/navbar/navbarnotsignedin";
 import Image from "next/image";
-import Link from "next/link";
 export const EmptySearchPage = ({ search }) => {
   const capitalizeSearch = (str) => {
     if (!str) return "";

@@ -31,7 +31,6 @@ import api from "@/lib/api";
 export default function PopUp({
   isOpen,
   onClose,
-  onSubmit,
   threadId,
   getQuestions,
 }) {

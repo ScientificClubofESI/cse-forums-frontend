@@ -3,7 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Card from "./card";
 // import cardData from "./cardData";
-import empty from "../../../../public/emtyProfil.png";
+import empty from "../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
 
 export const SavedQuestions = ({ savedQuestions }) => {

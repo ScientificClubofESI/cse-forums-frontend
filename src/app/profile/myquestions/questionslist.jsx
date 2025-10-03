@@ -1,12 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Card from "./card";
 // import cardData from "./cardData";
-import empty from "../../../../public/emtyProfil.png";
+import empty from "../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
-import api from "@/lib/api";
-import Cookies from "js-cookie"; // If using authentication
 
 export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
   const [activeTab, setActiveTab] = useState("Recent"); // State for active tab

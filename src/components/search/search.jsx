@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
+
 export default function Search({ setthreads, setCurrentPage }) {
   const [searchQuery, setsearchQuery] = useState("");
   useEffect(() => {

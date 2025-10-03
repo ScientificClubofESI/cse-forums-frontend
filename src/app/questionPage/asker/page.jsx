@@ -2,17 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import BackIcon from "./back.svg";
-import ApprovedIcon from "./Approved.svg";
-import ApproveIcon from "./Approve.svg";
-import UpIcon from "./up.svg";
-import DownIcon from "./down.svg";
-import ShareIcon from "./share.svg";
-import SaveIcon from "./save.svg";
-import UserpicIcon from "./userpic.svg";
-import TrashIcon from "./trash.svg";
+import BackIcon from "../../../../public/pages/questionPage/back.svg";
+import ApprovedIcon from "../../../../public/pages/questionPage/Approved.svg";
+import ApproveIcon from "../../../../public/pages/questionPage/Approve.svg";
+import UpIcon from "../../../../public/pages/questionPage/up.svg";
+import DownIcon from "../../../../public/pages/questionPage/down.svg";
+import ShareIcon from "../../../../public/pages/questionPage/share.svg";
+import SaveIcon from "../../../../public/pages/questionPage/save.svg";
+import UserpicIcon from "../../../../public/pages/questionPage/userpic.svg";
+import TrashIcon from "../../../../public/pages/questionPage/trash.svg";
 import Image from "next/image";
+
+
 
 const Back = () => {
   const router = useRouter();

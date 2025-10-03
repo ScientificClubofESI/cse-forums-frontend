@@ -2,13 +2,10 @@
 import { useState } from "react";
 import Cookies from "js-cookie";
 import Image from "next/image";
-import logo from "../../../../public/images/Subtract.png";
-import pic from "../../../../public/images/Coding workshop-pana.png";
-import email from "../../../../public/images/google_icone.png";
-import linkedin from "../../../../public/images/linkedin icone.png";
-import emailIcone from "../../../../public/images/emailIcone.png";
-import userIcone from "../../../../public/images/userIcone.png";
-import eyeclosed from "../../../../public/images/eye-closed.png";
+import logo from "../../../../public/icons/Subtract.png";
+import pic from "../../../../public/images/illustrations/Coding workshop-pana.png";
+import emailIcone from "../../../../public/icons/emailIcone.png";
+import eyeclosed from "../../../../public/icons/eye-closed.png";
 import { useRouter } from "next/navigation";
 import authApi from "@/lib/authApi";
 

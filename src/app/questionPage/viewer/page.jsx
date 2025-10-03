@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import BackIcon from "./back.svg";
+import BackIcon from "../../../../public/pages/questionPage/back.svg";
 import { useRouter } from "next/navigation";
-import ApprovedIcon from "./Approved.svg";
-import UpIcon from "./up.svg";
-import DownIcon from "./down.svg";
-import ShareIcon from "./share.svg";
-import SaveIcon from "./save.svg";
-import UserpicIcon from "./userpic.svg";
+import ApprovedIcon from "../../../../public/pages/questionPage/Approved.svg";
+import UpIcon from "../../../../public/pages/questionPage/up.svg";
+import DownIcon from "../../../../public/pages/questionPage/down.svg";
+import ShareIcon from "../../../../public/pages/questionPage/share.svg";
+import SaveIcon from "../../../../public/pages/questionPage/save.svg";
+import UserpicIcon from "../../../../public/pages/questionPage/userpic.svg";
 import api from "@/lib/api";
-import { responseCookiesToRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import Image from "next/image";
 
 const QuestionViewer = () => {
