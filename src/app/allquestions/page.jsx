@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 import Search from "@/components/search/search";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";
-import { questions } from "./export.js";
+import { questions } from "../../data/questions.js";
 
 export const AllQuestions = () => {
   const [activeFilter, setActiveFilter] = useState("all");
