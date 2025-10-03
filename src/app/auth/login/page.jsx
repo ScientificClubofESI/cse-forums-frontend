@@ -69,12 +69,12 @@ export const LogIn = () => {
   return (
     <div className="flex flex-col w-full sm:flex-row h-screen">
       <div className="flex flex-col items-center w-full sm:w-1/2  relative bg-primary-900">
-        <div className="sm:rounded-br-[80px] min-h-full flex flex-col justify-start pb-24 w-full sm:px-36 px-8" style={{ backgroundColor: '#FFFBFE' }}>
-          <h1 className="text-primary-900 font-sans font-bold text-2xl sm:text-[56px] mt-16 mb-9 ">
+        <div className="sm:rounded-br-[80px] min-h-full flex flex-col justify-between pb-24 w-full sm:px-36 px-8" style={{ backgroundColor: '#FFFBFE' }}>
+          <h1 className="text-primary-900 font-sans font-bold text-2xl sm:text-[56px] mt-16 ">
             Log In
           </h1>
-          <form className="w-full" onSubmit={handleSubmit}>
-            <div className=" relative mb-10 sm:mb-16 w-full">
+          <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+            <div className=" relative w-full">
               <label className="block text-l font-sans font-bold text-primary-900 sm:text-2xl">
                 Email
               </label>
@@ -93,7 +93,7 @@ export const LogIn = () => {
               />
             </div>
 
-            <div className="relative mb-4 sm:mb-16 flex flex-col gap-y-2 w-full">
+            <div className="relative flex flex-col w-full">
               <label className="block font-sans font-bold text-primary-900  text-l sm:text-2xl">
                 Password
               </label>
@@ -131,16 +131,16 @@ export const LogIn = () => {
             <button className="w-full my-4 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
               Sign In
             </button>
-
+            <div className="flex justify-center items-center mb-10">
+              <p className="flex text-l font-serif text-neutral-500">
+                Don&apos;t have an account?
+              </p>
+              <a href="/auth/signup" className="ml-2 text-secondary-500">
+                Sign Up
+              </a>
+            </div>
           </form>
-          <div className="flex justify-center items-center mb-10">
-            <p className="flex text-l font-serif text-neutral-500">
-              Don&apos;t have an account?
-            </p>
-            <a href="/auth/signup" className="ml-2 text-secondary-500">
-              Sign Up
-            </a>
-          </div>
+
 
         </div>
       </div>

@@ -11,6 +11,7 @@ import plus from "./../../../public/pages/allQuestion/icons/addAnswer.svg";
 import save from "./../../../public/pages/allQuestion/icons/save.svg";
 import saveblack from "./../../../public/pages/allQuestion/icons/save-black.svg";
 import share from "./../../../public/pages/allQuestion/icons/share.svg";
+import loop from "./../../../public/images/illustrations/Loop 6.svg";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import api from "@/lib/api";
@@ -43,134 +44,138 @@ export const AllQuestions = () => {
   const displayedQuestions = questions.slice(startIndex, endIndex);*/
   }
 
-  const handleFilterChange = (filter) => {
-    setActiveFilter(filter);
-  };
+  // const handleFilterChange = (filter) => {
+  //   setActiveFilter(filter);
+  // };
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-    }
-  };
+  // const handlePageChange = (newPage) => {
+  //   if (newPage >= 1 && newPage <= totalPages) {
+  //     setCurrentPage(newPage);
+  //   }
+  // };
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  // const handlePrevPage = () => {
+  //   if (currentPage > 1) {
+  //     setCurrentPage(currentPage - 1);
+  //   }
+  // };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  // const handleNextPage = () => {
+  //   if (currentPage < totalPages) {
+  //     setCurrentPage(currentPage + 1);
+  //   }
+  // };
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        setUserId(storedUserId);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const storedUserId = localStorage.getItem("userId");
+  //     if (storedUserId) {
+  //       setUserId(storedUserId);
+  //       setIsAuthenticated(true);
+  //     }
+  //     setIsAuthenticated(false);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (userId) {
-      setIsAuthenticated(true);
-      getQuestions();
-      getSavedQuestions(userId); // Pass userId correctly
-    }
-  }, [userId]); // Add userId as a dependency
+  // useEffect(() => {
+  //   if (userId) {
+  //     setIsAuthenticated(true);
+  //     getQuestions();
+  //     getSavedQuestions(userId); // Pass userId correctly
+  //   }
+  // }, [userId]); // Add userId as a dependency
 
-  const getSavedQuestions = async (userId) => {
-    if (!userId) return;
-    try {
-      const response = await api.get(`/threads/saved?user=${userId}`);
-      //console.log("Fetched saved threads:", response.data.data); // Debugging log
-      const savedThreadIds = new Set(
-        response.data.data.map((thread) => thread.id)
-      );
-      setSavedThreads(savedThreadIds);
-    } catch (error) {
-      //console.error("Failed to fetch saved threads:", error);
-    }
-  };
+  // const getSavedQuestions = async (userId) => {
+  //   if (!userId) return;
+  //   try {
+  //     const response = await api.get(`/threads/saved?user=${userId}`);
+  //     //console.log("Fetched saved threads:", response.data.data); // Debugging log
+  //     const savedThreadIds = new Set(
+  //       response.data.data.map((thread) => thread.id)
+  //     );
+  //     setSavedThreads(savedThreadIds);
+  //   } catch (error) {
+  //     //console.error("Failed to fetch saved threads:", error);
+  //   }
+  // };
 
-  const getQuestions = async () => {
-    try {
-      const response = await api.get("/threads/all");
-      //console.log("threads : ", response.data);
-      setthreads(response.data.data);
-    } catch (error) {
-      //console.error(error);
-    }
-  };
+  // const getQuestions = async () => {
+  //   try {
+  //     const response = await api.get("/threads/all");
+  //     //console.log("threads : ", response.data);
+  //     setthreads(response.data.data);
+  //   } catch (error) {
+  //     //console.error(error);
+  //   }
+  // };
 
-  const toggleSaveThread = async (threadId) => {
-    if (!userId) {
-      alert("You must be logged in to save a thread.");
-      return;
-    }
+  // const toggleSaveThread = async (threadId) => {
+  //   if (!userId) {
+  //     alert("You must be logged in to save a thread.");
+  //     return;
+  //   }
 
-    try {
-      if (savedThreads.has(threadId)) {
-        await api.delete(`/threads/${threadId}/save`, {
-          data: { user_id: Number(userId) },
-        });
-        setSavedThreads((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(threadId);
-          return newSet;
-        });
-      } else {
-        await api.post(`/threads/${threadId}/save`, {
-          user_id: Number(userId),
-        });
-        setSavedThreads((prev) => new Set(prev).add(threadId));
-      }
-    } catch (error) {
-      //console.error("Failed to toggle save:", error);
-    }
-  };
+  //   try {
+  //     if (savedThreads.has(threadId)) {
+  //       await api.delete(`/threads/${threadId}/save`, {
+  //         data: { user_id: Number(userId) },
+  //       });
+  //       setSavedThreads((prev) => {
+  //         const newSet = new Set(prev);
+  //         newSet.delete(threadId);
+  //         return newSet;
+  //       });
+  //     } else {
+  //       await api.post(`/threads/${threadId}/save`, {
+  //         user_id: Number(userId),
+  //       });
+  //       setSavedThreads((prev) => new Set(prev).add(threadId));
+  //     }
+  //   } catch (error) {
+  //     //console.error("Failed to toggle save:", error);
+  //   }
+  // };
 
-  const handleSaveThread = async (threadId) => {
-    try {
-      if (!userId) {
-        alert("You must be logged in to save a thread.");
-        return;
-      }
+  // const handleSaveThread = async (threadId) => {
+  //   try {
+  //     if (!userId) {
+  //       alert("You must be logged in to save a thread.");
+  //       return;
+  //     }
 
-      const response = await api.post(`/threads/${threadId}/save`, {
-        user_id: Number(userId), // Send the user_id in the request body
-      });
+  //     const response = await api.post(`/threads/${threadId}/save`, {
+  //       user_id: Number(userId), // Send the user_id in the request body
+  //     });
 
-      //console.log("Thread saved successfully:", response.data);
-      alert("Thread saved successfully!"); // Show a success message
-    } catch (error) {
-      //console.error("Failed to save thread:", error);
-      alert("Failed to save thread. Please try again."); // Show an error message
-    }
-  };
+  //     //console.log("Thread saved successfully:", response.data);
+  //     alert("Thread saved successfully!"); // Show a success message
+  //   } catch (error) {
+  //     //console.error("Failed to save thread:", error);
+  //     alert("Failed to save thread. Please try again."); // Show an error message
+  //   }
+  // };
 
-  useEffect(() => {
-    //console.log("Saved Threads:", savedThreads);
-  }, [savedThreads]);
+  // useEffect(() => {
+  //   //console.log("Saved Threads:", savedThreads);
+  // }, [savedThreads]);
 
-  const handleNavigation = (thread) => {
-    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-    router.push(
-      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
-    );
-  };
+  // const handleNavigation = (thread) => {
+  //   sessionStorage.setItem("selectedThread", JSON.stringify(thread));
+  //   router.push(
+  //     `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
+  //   );
+  // };
+
+
   return (
-    <div className=" bg-neutral-50">
+    <div className=" bg-neutral-50b">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
-        <div className="flex flex-col justify-between items-center gap-8 w-full">
-          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
-            <h1 className="text-2xl lg:text-5xl text-neutral-900 font-sans">
+        <div className="flex flex-col justify-between items-center gap-8 w-full mt-6">
+          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full relative">
+            <h1 className="text-2xl lg:text-5xl text-neutral-900 font-sans font-semibold">
               All Questions
             </h1>
             <Link
@@ -179,52 +184,50 @@ export const AllQuestions = () => {
             >
               Ask a Question ?
             </Link>
+            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden"/>
           </div>
-          <Search setthreads={setthreads} setCurrentPage={setCurrentPage} />
+          {/* this should be removed in the all questions page */}
+          {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
 
-          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full">
+          <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full mt-14">
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 ${
-                  activeFilter === "all"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "all"
                     ? "bg-primary-500 text-white"
                     : "bg-neutral-100"
-                }`}
-                onClick={() => handleFilterChange("all")}
+                  }`}
+                // onClick={() => handleFilterChange("all")}
               >
                 All
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 ${
-                  activeFilter === "Popular"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Popular"
                     ? "bg-primary-500 text-white"
                     : "bg-neutral-100"
-                }`}
-                onClick={() => handleFilterChange("Popular")}
+                  }`}
+                // onClick={() => handleFilterChange("Popular")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 ${
-                  activeFilter === "Newest"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Newest"
                     ? "bg-primary-500 text-white"
                     : "bg-neutral-100"
-                }`}
-                onClick={() => handleFilterChange("Newest")}
+                  }`}
+                // onClick={() => handleFilterChange("Newest")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 ${
-                  activeFilter === "Most Answered"
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most Answered"
                     ? "bg-primary-500 text-white"
                     : "bg-neutral-100"
-                }`}
-                onClick={() => handleFilterChange("Most Answered")}
+                  }`}
+                // onClick={() => handleFilterChange("Most Answered")}
               >
                 Most Answered
               </Link>
@@ -253,7 +256,7 @@ export const AllQuestions = () => {
               >
                 <div
                   className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8"
-                  onClick={() => handleNavigation(question)}
+                  // onClick={() => handleNavigation(question)}
                 >
                   <div className="flex flex-row items-center justify-between gap-1">
                     <Image
@@ -286,10 +289,10 @@ export const AllQuestions = () => {
                   {/*drop answer + number of answer buttons */}
                   <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
                     <button
-                      onClick={() => {
-                        openPopup();
-                        setthreadId(question.id);
-                      }}
+                      // onClick={() => {
+                      //   openPopup();
+                      //   setthreadId(question.id);
+                      // }}
                       className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                     >
                       <Image
@@ -327,7 +330,7 @@ export const AllQuestions = () => {
                     <button
                       className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
                       // href="#"
-                      onClick={() => toggleSaveThread(question.id)}
+                      // onClick={() => toggleSaveThread(question.id)}
                     >
                       <Image
                         src={savedThreads.has(question.id) ? saveblack : save}
@@ -350,7 +353,7 @@ export const AllQuestions = () => {
 
               //   closePopup(); // Close the popup after submission
               // }}
-              getQuestions={getQuestions}
+              // getQuestions={getQuestions}
             />
           )}
 
@@ -366,7 +369,7 @@ export const AllQuestions = () => {
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-2">
             <button
               disabled={currentPage === 1}
-              onClick={handlePrevPage}
+              // onClick={handlePrevPage}
               className="disabled:opacity-50"
             >
               <Image src={left} alt="left icon" width={24} height={24} />
@@ -375,12 +378,11 @@ export const AllQuestions = () => {
               {[...Array(totalPages)].map((_, index) => (
                 <button
                   key={index}
-                  className={`py-2 px-4 rounded-md ${
-                    currentPage === index + 1
+                  className={`py-2 px-4 rounded-md ${currentPage === index + 1
                       ? "bg-secondary-500 text-white"
                       : "bg-neutral-200 text-neutral-900"
-                  }`}
-                  onClick={() => handlePageChange(index + 1)}
+                    }`}
+                  // onClick={() => handlePageChange(index + 1)}
                 >
                   {index + 1}
                 </button>
@@ -389,7 +391,7 @@ export const AllQuestions = () => {
             </div>
             <button
               disabled={currentPage === totalPages}
-              onClick={handleNextPage}
+              // onClick={handleNextPage}
               className="disabled:opacity-100"
             >
               <Image src={right} alt="right icon" width={24} height={24} />

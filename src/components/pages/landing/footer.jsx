@@ -8,11 +8,14 @@ import twitter from "../../../../public/pages/footer/icons/twitter.svg";
 import youtube from "../../../../public/pages/footer/icons/youtube.svg";
 import linkedin from "../../../../public/pages/footer/icons/linkedin.svg";
 
+
+import bgDesktop from "../../../../public/images/illustrations/bg.svg";
+import bgMobile from "../../../../public/images/illustrations/bgr.svg";
+
 export default function FooterPage() {
   return (
     <div className="min-h-full flex flex-col bg-background-light pt-[5%]">
       <div className="flex-grow"></div>
-
       <footer className="py-6 px-3 sm:py-10 sm:px-4 relative bg-light">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-[#133149] text-3xl sm:text-5xl font-semibold mb-7">
@@ -130,6 +133,7 @@ export default function FooterPage() {
             </a>
           </div>
         </div>
+
       </footer>
     </div>
   );

@@ -4,9 +4,12 @@ import { useRouter } from "next/navigation";
 import user from "../../../public/pages/nav-bar/icons/User.svg";
 import notification from "../../../public/pages/nav-bar/icons/Frame33603.svg";
 import settings from "../../../public/pages/nav-bar/icons/Frame33604.svg";
+import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
+import logo from '../../../public/pages/nav-bar/icons/Logo.svg'
 import api from "@/lib/api";
 import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
+
 
 export const Navbarsignedin = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -77,7 +80,7 @@ export const Navbarsignedin = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src={"/nav-bar/logo.svg"}
+              src={logo}
               alt="Logo"
               width={64}
               height={64}
@@ -92,7 +95,7 @@ export const Navbarsignedin = () => {
           <div className="relative max-w-2xl mx-auto">
             {/* Search Icon */}
             <Image
-              src={"/nav-bar/Icon.svg"}
+              src={icon}
               alt="search"
               width={20}
               height={20}

@@ -2,31 +2,36 @@ import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
+import icon from  "../../../public/pages/nav-bar/icons/Icon.svg";
+
+
 
 
 export default function Search({ setthreads, setCurrentPage }) {
   const [searchQuery, setsearchQuery] = useState("");
-  useEffect(() => {
-    const fetchSearchThreads = async () => {
-      setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
-      try {
-        const response = await api.get(
-          `/threads/search?searchQuery=${searchQuery}`
-        );
-        //console.log("search response : ", response.data);
-        setthreads(response.data.data);
-      } catch (error) {
-        //console.error("error fetching search : ", error);
-      }
-    };
-    fetchSearchThreads();
-  }, [searchQuery, setthreads, setCurrentPage]);
+  // useEffect(() => {
+  //   const fetchSearchThreads = async () => {
+  //     setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
+  //     try {
+  //       const response = await api.get(
+  //         `/threads/search?searchQuery=${searchQuery}`
+  //       );
+  //       //console.log("search response : ", response.data);
+  //       setthreads(response.data.data);
+  //     } catch (error) {
+  //       //console.error("error fetching search : ", error);
+  //     }
+  //   };
+  //   fetchSearchThreads();
+  // }, [searchQuery, setthreads, setCurrentPage]);
+
+
   return (
     <div className="flex-1 mx-8 hidden md:block w-full">
       <div className="relative max-w-2xl mx-auto">
         {/* Search Icon */}
         <Image
-          src={"/nav-bar/Icon.svg"}
+          src={icon}
           alt="search"
           width={20}
           height={20}

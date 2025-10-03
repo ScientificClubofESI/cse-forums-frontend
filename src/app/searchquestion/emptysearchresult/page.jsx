@@ -1,4 +1,5 @@
 import Image from "next/image";
+import emptySearch from "../../../../public/pages/emptysearchresult/illustrations/ilus.png";
 export const EmptySearchPage = ({ search }) => {
   const capitalizeSearch = (str) => {
     if (!str) return "";
@@ -8,14 +9,11 @@ export const EmptySearchPage = ({ search }) => {
   const capitalizedSearch = search ? capitalizeSearch(search.trim()) : "";
 
   return (
-    <div className="bg-background-light w-full">
+    <div className=" w-full">
       {/* <Navbar /> */}
-      <div className="flex justify-center items-center pt-12 lg:pt-14 font-serif bg-background-light min-h-screen text-neutral-900">
+      <div className="flex justify-center items-center pt-12 lg:pt-14 font-serif min-h-screen text-neutral-900">
         <div className="max-w-[1110px] w-full px-6 mb-20">
           <div className="flex gap-2 flex-col mb-9 lg:mb-12 lg:gap-6">
-            <div className="text-2xl font-sans sm:text-4xl font-semibold lg:text-5xl ">
-              Results :
-            </div>
             <div className="font-sans lg:font-serif font-semibold lg:font-bold text-base sm:text-xl lg:text-2xl truncate max-w-md md:max-w-lg lg:max-w-6xl">
               {capitalizedSearch}
             </div>
@@ -23,7 +21,7 @@ export const EmptySearchPage = ({ search }) => {
           <div className="flex justify-center items-center mb-9 lg:mb-12">
             <div className="relative w-56 sm:w-80 lg:w-96 h-56 sm:h-80 lg:h-96">
               <Image
-                src="/emptysearchresult/ilus.png"
+                src={emptySearch}
                 alt="search"
                 fill
                 className="object-cover"
