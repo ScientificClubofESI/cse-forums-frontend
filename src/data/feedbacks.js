@@ -1,4 +1,4 @@
-import guest from "../../../public/guest.jpg";
+import guest from "../../public/images/avatars/guest.jpg";
 
 export const feedbacks = [
     {

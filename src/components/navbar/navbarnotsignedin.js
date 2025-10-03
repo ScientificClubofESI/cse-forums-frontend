@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-
+import logo from "../../../public/pages/nav-bar/icons/Logo.svg";
+import icon from  "../../../public/pages/nav-bar/icons/Icon.svg";
 
 const Navbarnotsignedin = () => {
   
@@ -11,7 +12,7 @@ const Navbarnotsignedin = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={logo}
               alt="Logo"
               width={64}
               height={64}
@@ -26,7 +27,7 @@ const Navbarnotsignedin = () => {
           <div className="relative max-w-2xl mx-auto">
             {/* Search Icon */}
             <Image
-              src={"/nav-bar/Icon.svg"}
+              src={icon}
               alt="search"
               width={20}
               height={20}

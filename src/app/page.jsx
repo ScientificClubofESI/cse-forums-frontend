@@ -20,7 +20,7 @@ export default function Home() {
     }
   }, []);
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* <Question/> */}
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <Hero />

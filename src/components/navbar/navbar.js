@@ -1,5 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import logo from "../../../public/pages/nav-bar/icons/Logo.svg";
+
+
 
 const Navbar = () => {
   return (
@@ -9,7 +12,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={logo}
               alt="Logo"
               width={64}
               height={64}

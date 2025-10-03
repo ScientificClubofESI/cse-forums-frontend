@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import user from "../../../public/pages/nav-bar/User.svg";
-import notification from "../../../public/pages/nav-bar/Frame33603.svg";
-import settings from "../../../public/pages/nav-bar/Frame33604.svg";
+import user from "../../../public/pages/nav-bar/icons/User.svg";
+import notification from "../../../public/pages/nav-bar/icons/Frame33603.svg";
+import settings from "../../../public/pages/nav-bar/icons/Frame33604.svg";
 import api from "@/lib/api";
 import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
@@ -77,7 +77,7 @@ export const Navbarsignedin = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={"/nav-bar/logo.svg"}
               alt="Logo"
               width={64}
               height={64}

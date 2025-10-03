@@ -1,9 +1,9 @@
 import Image from "next/image";
-import image2 from "../../../public/images/landing/About_Image1.png";
-import image1 from "../../../public/images/landing/About_Image2.png";
-import image1S from "../../../public/images/landing/About_Image1_small.png";
-import image2S from "../../../public/images/landing/About_Image2_small.png";
-import underline from "../../../public/images/illustrations/underline.svg"
+import image2 from "../../../../public/images/landing/About_Image1.png";
+import image1 from "../../../../public/images/landing/About_Image2.png";
+import image1S from "../../../../public/images/landing/About_Image1_small.png";
+import image2S from "../../../../public/images/landing/About_Image2_small.png";
+import underline from "../../../../public/images/illustrations/underline.svg"
 
 
 

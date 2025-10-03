@@ -1,4 +1,12 @@
 import Image from "next/image";
+import logocse from "../../../../public/pages/footer/icons/logocse.svg";
+import subtract from "../../../../public/pages/footer/icons/Subtract.svg";
+import arrow13 from "../../../../public/pages/footer/illustrations/Arrow13.svg";
+import facebook from "../../../../public/pages/footer/icons/facebook.svg";
+import instagram from "../../../../public/pages/footer/icons/instagram.svg";
+import twitter from "../../../../public/pages/footer/icons/twitter.svg";
+import youtube from "../../../../public/pages/footer/icons/youtube.svg";
+import linkedin from "../../../../public/pages/footer/icons/linkedin.svg";
 
 export default function FooterPage() {
   return (
@@ -13,7 +21,7 @@ export default function FooterPage() {
           </h2>
           <div className="flex justify-center items-center gap-8 sm:gap-16 mb-10">
             <Image
-              src="/footer/logocse.svg"
+              src={logocse}
               alt="CSE"
               width={100}
               height={140}
@@ -22,7 +30,7 @@ export default function FooterPage() {
             />
             <div className="relative">
               <Image
-                src="/footer/subtract.svg"
+                src={subtract}
                 alt="Subtract"
                 width={120}
                 height={140}
@@ -31,7 +39,7 @@ export default function FooterPage() {
               />
               <div className="absolute -right-9 sm:-right-20 -top-16 sm:-top-24">
                 <Image
-                  src="/footer/Arrow13.svg"
+                  src={arrow13}
                   alt="Arrow"
                   width={36.73}
                   height={112.1}
@@ -59,7 +67,7 @@ export default function FooterPage() {
               className="transform hover:scale-110 transition-transform duration-300 ease-in-out"
             >
               <Image
-                src="/footer/facebook.svg"
+                src={facebook}
                 alt="Facebook"
                 width={45}
                 height={45}
@@ -73,7 +81,7 @@ export default function FooterPage() {
               className="transform hover:scale-110 transition-transform duration-300 ease-in-out"
             >
               <Image
-                src="/footer/instagram.svg"
+                src={instagram}
                 alt="Instagram"
                 width={45}
                 height={45}
@@ -87,7 +95,7 @@ export default function FooterPage() {
               className="transform hover:scale-110 transition-transform duration-300 ease-in-out"
             >
               <Image
-                src="/footer/twitter.svg"
+                src={twitter}
                 alt="Twitter"
                 width={45}
                 height={45}
@@ -101,7 +109,7 @@ export default function FooterPage() {
               className="transform hover:scale-110 transition-transform duration-300 ease-in-out"
             >
               <Image
-                src="/footer/youtube.svg"
+                src={youtube}
                 alt="YouTube"
                 width={45}
                 height={45}
@@ -115,7 +123,7 @@ export default function FooterPage() {
               className="transform hover:scale-110 transition-transform duration-300 ease-in-out"
             >
               <Image
-                src="/footer/linkedin.svg"
+                src={linkedin}
                 alt="LinkedIn"
                 width={45}
                 height={45}

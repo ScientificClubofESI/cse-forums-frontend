@@ -2,8 +2,12 @@ import { SearchNormal1 } from "iconsax-react";
 import Image from "next/image";
 import Link from "next/link";
 import api from "@/lib/api";
+
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
+
+import bgDesktop from "../../../../public/images/illustrations/bg.svg";
+import bgMobile from "../../../../public/images/illustrations/bgr.svg";
 
 const Hero = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -53,7 +57,7 @@ const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0 hidden sm:block">
         <Image
-          src="/images/bg.svg"
+          src={bgDesktop}
           alt="Background pattern"
           fill
           className="object-cover"
@@ -62,7 +66,7 @@ const Hero = () => {
       </div>
       <div className="absolute inset-0 w-full h-full z-0 block sm:hidden">
         <Image
-          src="/images/bgr.svg"
+          src={bgMobile}
           alt="Background pattern"
           fill
           className="object-cover"

@@ -231,9 +231,9 @@ export const SignUp = () => {
             <p className="flex text-l font-serif text-neutral-500">
               Already a member ?
             </p>
-            <Link href="/auth/login" className="ml-2 text-secondary-500">
+            <a href="/auth/login" className="ml-2 text-secondary-500">
               Sign In
-            </Link>
+            </a>
           </div>
         </div>
 

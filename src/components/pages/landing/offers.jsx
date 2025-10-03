@@ -1,4 +1,13 @@
 import Image from "next/image";
+import whirl8 from "../../../../public/pages/offers/illustrations/Whirl 8.png";
+import whirl5 from "../../../../public/pages/offers/illustrations/Whirl 5.png";
+import whirl6 from "../../../../public/pages/offers/illustrations/Whirl 6.png";
+import arrow13 from "../../../../public/pages/offers/illustrations/Arrow 13.png";
+import underline4 from "../../../../public/pages/offers/illustrations/Underline 4.png";
+import line9 from "../../../../public/pages/offers/illustrations/Line 9.png";
+import underline3 from "../../../../public/pages/offers/illustrations/Underline 3.png";
+import blob10 from "../../../../public/pages/offers/illustrations/Blob 10.png";
+
 
 export const Offers = () => {
   return (
@@ -6,18 +15,18 @@ export const Offers = () => {
       <section className="relative flex flex-col items-center bg-background-light py-12 min-h-[400px] xl:min-h-[600px] ">
         {/* Whirl 8 */}
         <div className="absolute z-0 w-[72px] sm:w-[190px] top-[145.1px] right-[2%] sm:top-[210px] aspect-square">
-          <Image src="/offers/Whirl 8.png" alt="Whirl 8" fill />
+          <Image src={whirl8} alt="Whirl 8" fill />
         </div>
 
         {/*Whirl 5 */}
 
         <div className="absolute h-[98px] w-[59px]  left-0 top-[400.64px] sm:top-[700px] lg:hidden ">
-          <Image src="/offers/Whirl 5.png" alt="Whirl 5" fill />
+          <Image src={whirl5} alt="Whirl 5" fill />
         </div>
 
         {/*whirl 6 */}
         <div className="absolute h-[125px] w-[131px] bottom-0 left-3 z-0 hidden lg:block">
-          <Image src="/offers/Whirl 6.png" alt="Whirl 6" fill />
+          <Image src={whirl6} alt="Whirl 6" fill />
         </div>
 
         {/*Arrow 13*/}
@@ -25,14 +34,14 @@ export const Offers = () => {
           className="absolute w-[28px] h-[77px] sm:w-[50px] sm:h-[100px] top-[370px] right-[18%]
         sm:top-[680px] lg:hidden aspect-square"
         >
-          <Image src="/offers/Arrow 13.png" alt="Arrow 13" fill />
+          <Image src={arrow13} alt="Arrow 13" fill />
         </div>
 
         <h2 className="text-4xl sm:text-6xl mb-4 font-bold  text-primary-900 ">
           What we offer for you
         </h2>
         <div className=" relative w-[311px] h-[26px] sm:w-[566px] mb-[50px] sm:mb-[95px]  ">
-          <Image src="/offers/Underline 4.png" alt="Underline 4" fill />
+          <Image src={underline4} alt="Underline 4" fill />
         </div>
         <div className="flex justify-center flex-wrap gap-[30px] sm:gap-[60px] md:gap-[90px]  px-6">
           {/* Card 1 */}
@@ -44,7 +53,7 @@ export const Offers = () => {
                 -right-[10px] sm:w-[150px] sm:h-[21.42px] sm:top-[40px]
               "
                 >
-                  <Image src="/offers/Line 9.png" alt="Line 9" fill />
+                  <Image src={line9} alt="Line 9" fill />
                 </div>
 
                 <span className="text-base sm:text-4xl relative z-20">
@@ -63,7 +72,7 @@ export const Offers = () => {
             <h3 className=" text-primary-900 mb-4 sm:mb-10">
               <span className="relative inline-block">
                 <div className="absolute top-[23px] -left-[7px]  h-[4px] w-[74px]  sm:w-[170px] sm:top-[45px]    ">
-                  <Image src="/offers/Underline 3.png" alt="Underline 3" fill />
+                  <Image src={underline3} alt="Underline 3" fill />
                 </div>
                 <span className="text-base sm:text-4xl  relative z-20">
                   Community
@@ -81,7 +90,7 @@ export const Offers = () => {
             <h3 className=" text-primary-900 mb-4 sm:mb-10">
               <div className="relative inline-block">
                 <div className="absolute top-[6px] -left-[20px] sm:-top-[0px] sm:-left-[40px] w-[105px] h-[17px] sm:h-[53px] sm:w-[230px] ">
-                  <Image src="/offers/Blob 10.png" alt="Blob 10" fill />
+                  <Image src={blob10} alt="Blob 10" fill />
                 </div>
 
                 <span className="text-base sm:text-4xl relative z-20">

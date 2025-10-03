@@ -4,11 +4,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { feedbacks } from "../../../data/feedbacks";
-import switchD from "../../../public/switchD.svg";
-import switchG from "../../../public/switchG.svg";
-import lines from "../../../public/LinesSvg.svg";
-
-
+import switchD from "../../../../public/icons/switchD.svg";
+import switchG from "../../../../public/icons/switchG.svg";
+import lines from "../../../../public/images/illustrations/LinesSvg.svg";
 
 export const Feedback = () => {
   const [currentIndex, setCurrentIndex] = useState(0);

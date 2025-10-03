@@ -8,7 +8,6 @@ import emailIcone from "../../../../public/icons/emailIcone.png";
 import eyeclosed from "../../../../public/icons/eye-closed.png";
 import { useRouter } from "next/navigation";
 import authApi from "@/lib/authApi";
-import { Link } from "iconsax-react";
 
 export const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -132,16 +131,17 @@ export const LogIn = () => {
             <button className="w-full my-4 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
               Sign In
             </button>
-          </form>
 
+          </form>
           <div className="flex justify-center items-center mb-10">
             <p className="flex text-l font-serif text-neutral-500">
               Don&apos;t have an account?
             </p>
-            <Link href="/auth/signup" className="ml-2 text-secondary-500">
+            <a href="/auth/signup" className="ml-2 text-secondary-500">
               Sign Up
-            </Link>
+            </a>
           </div>
+
         </div>
       </div>
 
