@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import authApi from '@/lib/authApi'; // Using authApi for public endpoints
-import api from '@/lib/api'
+import { useState, useEffect } from "react";
+import authApi from "@/lib/authApi"; // Using authApi for public endpoints
+import api from "@/lib/api";
 
 export const useQuestions = () => {
   const [questions, setQuestions] = useState([]);
@@ -12,11 +12,15 @@ export const useQuestions = () => {
     setError(null);
     try {
       // Using authApi since this is a public endpoint (no authentication required)
-      const response = await authApi.get('/threads/all');
+      const response = await authApi.get("/threads/all");
       setQuestions(response.data.data);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to fetch questions');
-      console.error('Failed to fetch questions:', err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch questions"
+      );
+      console.error("Failed to fetch questions:", err);
     } finally {
       setLoading(false);
     }
@@ -42,17 +46,19 @@ export const useQuestion = (id) => {
 
   const fetchQuestion = async () => {
     if (!id) return;
-    
+
     setLoading(true);
     setError(null);
     try {
       // Using authApi since this is now a public endpoint
       const response = await authApi.get(`/threads/${id}`);
-      console.log(response)
+      console.log(response);
       setQuestion(response.data.data);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to fetch question');
-      console.error('Failed to fetch question:', err);
+      setError(
+        err.response?.data?.message || err.message || "Failed to fetch question"
+      );
+      console.error("Failed to fetch question:", err);
     } finally {
       setLoading(false);
     }
@@ -70,13 +76,11 @@ export const useQuestion = (id) => {
   };
 };
 
-
 export const useSavedThreads = (userId) => {
-     const [savedThreads, setSavedThreads] = useState(new Set());
+  const [savedThreads, setSavedThreads] = useState(new Set());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  
   const fetchSavedThreads = async () => {
     if (!userId) {
       setSavedThreads(new Set());
@@ -88,11 +92,15 @@ export const useSavedThreads = (userId) => {
     try {
       // Using api instance for authenticated endpoints
       const response = await api.get(`/threads/saved`);
-      const savedIds = new Set(response.data.data.map(thread => thread.id));
+      const savedIds = new Set(response.data.data.map((thread) => thread.id));
       setSavedThreads(savedIds);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to fetch saved threads');
-      console.error('Failed to fetch saved threads:', err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch saved threads"
+      );
+      console.error("Failed to fetch saved threads:", err);
     } finally {
       setLoading(false);
     }
@@ -108,7 +116,7 @@ export const useSavedThreads = (userId) => {
     error,
     refetch: fetchSavedThreads,
   };
-}
+};
 
 export const useSaveThread = () => {
   const [loading, setLoading] = useState(false);
@@ -122,9 +130,10 @@ export const useSaveThread = () => {
       await api.post(`/threads/${threadId}/save`);
       return { success: true };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to save thread';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to save thread";
       setError(errorMessage);
-      console.error('Failed to save thread:', err);
+      console.error("Failed to save thread:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -139,9 +148,10 @@ export const useSaveThread = () => {
       await api.delete(`/threads/${threadId}/save`);
       return { success: true };
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to unsave thread';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to unsave thread";
       setError(errorMessage);
-      console.error('Failed to unsave thread:', err);
+      console.error("Failed to unsave thread:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -174,27 +184,28 @@ export const useCreateThread = () => {
     setError(null);
 
     try {
-      const response = await api.post('/threads/create', {
+      const response = await api.post("/threads/create", {
         title: threadData.title,
         content: threadData.content,
         // check for the tags logic later
       });
 
       if (response.data.success) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: response.data.data,
-          message: 'Thread created successfully!'
+          message: "Thread created successfully!",
         };
       } else {
-        const errorMessage = response.data.message || 'Failed to create thread';
+        const errorMessage = response.data.message || "Failed to create thread";
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to create thread';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to create thread";
       setError(errorMessage);
-      console.error('Create thread error:', err);
+      console.error("Create thread error:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -218,16 +229,17 @@ export const useDeleteThread = () => {
     try {
       const response = await api.delete(`/threads/${threadId}`);
       if (response.status === 200) {
-        return { success: true, message: 'Thread deleted successfully!' };
+        return { success: true, message: "Thread deleted successfully!" };
       } else {
-        const errorMessage = response.data.message || 'Failed to delete thread';
+        const errorMessage = response.data.message || "Failed to delete thread";
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to delete thread';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to delete thread";
       setError(errorMessage);
-      console.error('Error deleting thread:', err);
+      console.error("Error deleting thread:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -238,7 +250,7 @@ export const useDeleteThread = () => {
     loading,
     error,
   };
-}
+};
 
 export const useUpdateThread = () => {
   const [loading, setLoading] = useState(false);
@@ -250,24 +262,25 @@ export const useUpdateThread = () => {
     try {
       const response = await api.put(`/threads/${threadId}`, {
         title: threadData.title,
-        content: threadData.content
+        content: threadData.content,
       });
 
       if (response.data.success) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: response.data.data,
-          message: 'Thread updated successfully!'
+          message: "Thread updated successfully!",
         };
       } else {
-        const errorMessage = response.data.message || 'Failed to update thread';
+        const errorMessage = response.data.message || "Failed to update thread";
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to update thread';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to update thread";
       setError(errorMessage);
-      console.error('Update thread error:', err);
+      console.error("Update thread error:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -291,24 +304,25 @@ export const useVoteThread = () => {
     setError(null);
     try {
       const response = await api.post(`/threads/${threadId}/vote`, {
-        voteType // 'up' or 'down'
+        voteType, // 'up' or 'down'
       });
 
       if (response.data.success) {
-        return { 
-          success: true, 
+        return {
+          success: true,
           data: response.data.data,
-          message: 'Vote recorded successfully!'
+          message: "Vote recorded successfully!",
         };
       } else {
-        const errorMessage = response.data.message || 'Failed to vote';
+        const errorMessage = response.data.message || "Failed to vote";
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to vote';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to vote";
       setError(errorMessage);
-      console.error('Vote error:', err);
+      console.error("Vote error:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -330,8 +344,8 @@ export const useAddAnswer = () => {
 
   const addAnswer = async (threadId, content) => {
     if (!threadId || !content) {
-      setError('Thread ID and content are required');
-      return { success: false, error: 'Thread ID and content are required' };
+      setError("Thread ID and content are required");
+      return { success: false, error: "Thread ID and content are required" };
     }
 
     setLoading(true);
@@ -345,21 +359,22 @@ export const useAddAnswer = () => {
 
       if (response.data.success) {
         setSuccess(true);
-        console.log('Answer added successfully:', response.data);
-        return { 
-          success: true, 
+        console.log("Answer added successfully:", response.data);
+        return {
+          success: true,
           data: response.data.data,
-          message: 'Answer added successfully!' 
+          message: "Answer added successfully!",
         };
       } else {
-        const errorMessage = response.data.message || 'Failed to add answer';
+        const errorMessage = response.data.message || "Failed to add answer";
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to add answer';
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to add answer";
       setError(errorMessage);
-      console.error('Error adding answer:', err);
+      console.error("Error adding answer:", err);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
@@ -377,4 +392,113 @@ export const useAddAnswer = () => {
     clearError,
     clearSuccess,
   };
-}
+};
+
+export const useThreadAnswers = (threadId) => {
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchThreadAnswers = async () => {
+    if (!threadId) {
+      setAnswers([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/threads/${threadId}/answers`);
+      setAnswers(response.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch user answers"
+      );
+      console.error("Failed to fetch user answers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchThreadAnswers();
+  }, [threadId]);
+
+  return {
+    answers,
+    loading,
+    error,
+  };
+};
+
+export const useUserAnswers = (userId) => {
+  const [answers, setAnswers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchUserAnswers = async () => {
+    if (!userId) {
+      setAnswers([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/users/${userId}/answers`);
+      setAnswers(response.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch user answers"
+      );
+      console.error("Failed to fetch user answers:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchUserAnswers();
+  }, [userId]);
+
+  return {
+    answers,
+    loading,
+    error,
+  };
+};
+
+export const useGetUserSavedQuestions = () => {
+  const [savedQuestions, setSavedQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchSavedQuestions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/threads/saved`);
+      console.log(response);
+      setSavedQuestions(response.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch saved questions"
+      );
+      console.error("Failed to fetch saved questions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchSavedQuestions();
+  }, []);
+
+  return {
+    savedQuestions,
+    loading,
+    error,
+    refetch: fetchSavedQuestions,
+  };
+};

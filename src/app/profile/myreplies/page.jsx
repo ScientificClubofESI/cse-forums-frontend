@@ -7,37 +7,13 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
+// import the auth hook
+import useAuth from "@/hooks/Auth";
+import { useUserAnswers } from "@/hooks/Questions";
+
 export default function Profil() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [Answers, setAnswers] = useState([]);
-
-  useEffect(() => {
-    let userId = null;
-    if (typeof window !== "undefined") {
-      userId = localStorage.getItem("userId");
-    }
-    if (userId) {
-      setIsAuthenticated(true);
-    }
-
-    const fetchUserAnswers = async () => {
-      try {
-        const response = await api.get(`/user/${userId}/answers`);
-        //console.log("User answers data:", response.data);
-
-        setAnswers(response.data.data); // Update the state
-      } catch (error) {
-        //console.error("Failed to fetch user answers:", error);
-      }
-    };
-
-    fetchUserAnswers();
-  }, []);
-
-  // Log the updated Answers state
-  useEffect(() => {
-    //console.log("answers: ", Answers);
-  }, [Answers]); // This runs whenever Answers changes
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+  const { answers, loading, error } = useUserAnswers(userId);
 
   return (
     <>
@@ -71,7 +47,7 @@ export default function Profil() {
             </div>
 
             <div>
-              <MyRepliesList answers={Answers} /> {/* Pass Answers as a prop */}
+              <MyRepliesList answers={answers} /> {/* Pass Answers as a prop */}
             </div>
           </div>
         </div>

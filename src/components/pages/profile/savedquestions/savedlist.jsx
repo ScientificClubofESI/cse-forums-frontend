@@ -39,7 +39,7 @@ export const SavedQuestions = ({ savedQuestions }) => {
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
-      <div className="flex flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
+      <div className="flex flex-col md:flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
         {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map(
           (tab) => (
             <div
@@ -70,9 +70,9 @@ export const SavedQuestions = ({ savedQuestions }) => {
             <Card
               user_id={card.user_id}
               key={index}
-              title={card.Thread.title}
-              content={card.Thread.content}
-              answersCount={card.Thread.answers_count}
+              title={card.Thread?.title}
+              content={card.Thread?.content}
+              answersCount={card.Thread?.answers_count}
               onDelete={handleDelete}
             />
           ))}
