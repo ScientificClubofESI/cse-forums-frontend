@@ -52,7 +52,7 @@ export const useSavedThreads = (userId) => {
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      const response = await api.get(`/threads/saved?user=${userId}`);
+      const response = await api.get(`/threads/saved`);
       const savedIds = new Set(response.data.data.map(thread => thread.id));
       setSavedThreads(savedIds);
     } catch (err) {
@@ -84,9 +84,7 @@ export const useSaveThread = () => {
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      await api.post(`/threads/${threadId}/save`, {
-        user_id: Number(userId)
-      });
+      await api.post(`/threads/${threadId}/save`);
       return { success: true };
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to save thread';
@@ -103,9 +101,7 @@ export const useSaveThread = () => {
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      await api.delete(`/threads/${threadId}/save`, {
-        data: { user_id: Number(userId) }
-      });
+      await api.delete(`/threads/${threadId}/save`);
       return { success: true };
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Failed to unsave thread';
@@ -131,5 +127,49 @@ export const useSaveThread = () => {
     toggleSaveThread,
     loading,
     error,
+  };
+};
+
+export const useCreateThread = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const createThread = async (threadData) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.post('/threads/create', {
+        title: threadData.title,
+        content: threadData.content,
+        // check for the tags logic later
+      });
+
+      if (response.data.success) {
+        return { 
+          success: true, 
+          data: response.data.data,
+          message: 'Thread created successfully!'
+        };
+      } else {
+        const errorMessage = response.data.message || 'Failed to create thread';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to create thread';
+      setError(errorMessage);
+      console.error('Create thread error:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    createThread,
+    loading,
+    error,
+    clearError: () => setError(null),
   };
 };

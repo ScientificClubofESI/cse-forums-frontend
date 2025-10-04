@@ -9,19 +9,19 @@ import { useRouter } from "next/navigation"; // Import useRouter
 import bgDesktop from "../../../../public/images/illustrations/bg.svg";
 import bgMobile from "../../../../public/images/illustrations/bgr.svg";
 
+// the auth hook
+import useAuth from "@/hooks/Auth";
+
+
 const Hero = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [userId, setUserId] = useState(null);
+
   const [searchQuery, setsearchQuery] = useState("");
   const router = useRouter();
 
-  // Get userId on client side only
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
+
+  const { userId, isAuthenticated } = useAuth();
 
   const handleNavigate = (thread) => {
     sessionStorage.setItem("selectedThread", JSON.stringify(thread));
@@ -52,6 +52,8 @@ const Hero = () => {
     };
     fetchSearchThreads();
   }, [searchQuery]);
+
+
   return (
     <div className="relative w-full bg-background-light py-16">
       {/* Background Image */}
@@ -121,8 +123,9 @@ const Hero = () => {
         )}
 
         {/* CTA Button */}
+        {/* if authenticated redirect to the ask question else redirect to login */}
         <Link
-          href="/ask-question"
+          href={isAuthenticated ? "/ask-question" : "/auth/login"}
           className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
         >
           <button className="rounded-lg max-w-5xl bg-secondary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors hover:bg-orange-600">

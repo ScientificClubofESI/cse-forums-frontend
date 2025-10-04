@@ -9,63 +9,39 @@ import eyeclosed from "../../../../public/icons/eye-closed.png";
 import { useRouter } from "next/navigation";
 import authApi from "@/lib/authApi";
 
+// the login hook 
+import { useLogin } from "@/hooks/Auth";
+
 export const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-
-  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { login, loading, error, clearError } = useLogin();
 
 
   // to replace this with the hook
   const handleSubmit = async (e) => {
     e.preventDefault();
+    clearError();
 
-    try {
-      const response = await authApi.post("/auth/login", {
-        email,
-        password,
-      });
+    const result = await login(email, password);
 
-      if (response.status === 200) {
-        const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 5);
-        Cookies.set("token", response.data.token, {
-          expires: expirationDate,
-          path: "/",
-        });
-        Cookies.set(
-          "cse_forums_refresh_token",
-          response.data.data.refreshToken,
-          { expires: 1, path: "/" }
-        );
-        localStorage.setItem("userId", response.data.data.id);
-        router.push("/");
-      }
-    } catch (error) {
-      if (error.response) {
-
-        setError(
-          error.response.data.message || "Login failed. Please try again."
-        );
-
-      } else if (error.request) {
-        // The request was made but no response was received
-        setError("No response from the server. Please try again.");
-        //console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an error
-        setError("An unexpected error occurred. Please try again.");
-        //console.error("Error:", error.message);
-      }
+    if (result.success) {
+      // Login successful - redirect is handled by the hook
+      // console.log('Login successful');
+    } else {
+      // Error is already set by the hook
+      // console.log('Login failed:', result.error);
     }
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+
   return (
     <div className="flex flex-col w-full sm:flex-row h-screen">
       <div className="flex flex-col items-center w-full sm:w-1/2  relative bg-primary-900">
@@ -74,6 +50,11 @@ export const LogIn = () => {
             Log In
           </h1>
           <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
             <div className=" relative w-full">
               <label className="block text-l font-sans font-bold text-primary-900 sm:text-2xl">
                 Email
@@ -128,9 +109,14 @@ export const LogIn = () => {
               </label>
             </div>
 
-            <button className="w-full my-4 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
-              Sign In
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full my-4 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
+
             <div className="flex justify-center items-center mb-10">
               <p className="flex text-l font-serif text-neutral-500">
                 Don&apos;t have an account?

@@ -10,67 +10,42 @@ import userIcone from "../../../../public/icons/userIcone.png";
 import authApi from "@/lib/authApi";
 import { useRouter } from "next/navigation";
 
+
+// the signup hook
+import { useSignup } from "@/hooks/Auth";
+
 export const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [username, setusername] = useState("");
   const [fullName, setfullName] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const { signup, loading, error, clearError } = useSignup();
 
 
-  // to replace this with the hook
   const handleSubmit = async (e) => {
     e.preventDefault();
+    clearError(); // Clear any previous errors
 
-    try {
-      const response = await authApi.post("/auth/signup", {
-        username,
-        email,
-        password,
-        fullname: fullName,
-      });
+    const userData = {
+      username,
+      email,
+      password,
+      fullName,
+    };
 
-      if (response.status === 201) {
-        const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 5);
-        //console.log("signup successful:", response.data);
-        Cookies.set("token", response.data.token, {
-          expires: expirationDate,
-          path: "/",
-        });
-        Cookies.set(
-          "cse_forums_refresh_token",
-          response.data.data.refreshToken,
-          { expires: 1, path: "/" }
-        );
-        // //console.log("Stored token:", Cookies.get("token"));
-        // localStorage.setItem("username", response.data.data.username);
-        localStorage.setItem("userId", response.data.data.id);
-        router.push("/");
-      }
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        setError(
-          error.response.data.message || "signup failed. Please try again."
-        );
-        //console.error("signyp failed:", error.response.data.message);
-      } else if (error.request) {
-        // The request was made but no response was received
-        setError("No response from the server. Please try again.");
-        //console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an error
-        setError("An unexpected error occurred. Please try again.");
-        //console.error("Error:", error.message);
-      }
+    const result = await signup(userData);
+
+    if (result.success) {
+      // Signup successful - redirect is handled by the hook
+      console.log('Signup successful');
+    } else {
+      // Error is already set by the hook
+      console.log('Signup failed:', result.error);
     }
   };
-
 
   return (
     <div className="h-screen flex flex-col sm:flex-row bg-primary-900">
@@ -197,8 +172,12 @@ export const SignUp = () => {
               </label>
             </div>
 
-            <button className="w-full my-3 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg">
-              Sign Up
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full my-3 bg-secondary-500 text-white font-semibold rounded-md py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
 

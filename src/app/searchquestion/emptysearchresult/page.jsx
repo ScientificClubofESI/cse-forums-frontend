@@ -33,18 +33,24 @@ export const EmptySearchPage = ({ search }) => {
           <div className="flex justify-center items-center flex-col text-center gap-3 mb-9 lg:mb-12">
             <div className="text-base sm:text-lg lg:text-2xl leading-6 font-normal flex flex-col sm:flex-row items-center gap-1">
               <span className="whitespace-nowrap">
-                We couldn&apos;t find anything for
+                We couldn&apos;t find anything
+                {search && <span className="whitespace-nowrap"> for</span>}
               </span>
-              <div className="flex font-semibold lg:font-serif lg:font-bold font-sans">
-                <span className="truncate max-w-xs lg:max-w-lg inline-block overflow-hidden text-ellipsis">
-                  {`“${capitalizedSearch}`}
-                </span>
-                <span>”</span>
+              {search && (
+                <div className="flex font-semibold lg:font-serif lg:font-bold font-sans">
+                  <span className="truncate max-w-xs lg:max-w-lg inline-block overflow-hidden text-ellipsis">
+                    {`“${capitalizedSearch}`}
+                  </span>
+                  <span>”</span>
+                </div>
+              )}
+            </div>
+            {search && (
+              <div className="text-base sm:text-lg lg:text-2xl leading-6 font-normal w-5/6 sm:w-8/12">
+                Try asking a question or using different keywords for your search
               </div>
-            </div>
-            <div className="text-base sm:text-lg lg:text-2xl leading-6 font-normal w-5/6 sm:w-8/12">
-              Try asking a question or using different keywords for your search
-            </div>
+            )}
+
           </div>
 
           {/* <Link

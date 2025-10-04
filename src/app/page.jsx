@@ -8,21 +8,16 @@ import Footer from "../components/pages/landing/footer";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import { useState, useEffect } from "react";
 
+// the auth hook
+import useAuth from "@/hooks/Auth";
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userId = localStorage.getItem("userId");
-      if (userId) {
-        setIsAuthenticated(true);
-      }
-    }
-  }, []);
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="overflow-x-hidden">
       {/* <Question/> */}
-      {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+      {!isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <Hero />
       <Offers />
       <About />

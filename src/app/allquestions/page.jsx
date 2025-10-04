@@ -21,156 +21,116 @@ import Search from "@/components/search/search";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";
 
+// import the cusotm hooks
+import useAuth from "@/hooks/Auth";
+import { useQuestions, useSaveThread, useSavedThreads } from "@/hooks/Questions";
+
+
 export const AllQuestions = () => {
+
+  // Hooks
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+  const { questions, loading: questionsLoading, error: questionsError, refetch } = useQuestions();
+  const { savedThreads, loading: savedLoading } = useSavedThreads(userId);
+  const { toggleSaveThread, loading: saveLoading } = useSaveThread();
+
+  const router = useRouter();
+
+  // Local state
   const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [threads, setthreads] = useState([]);
-  const [savedThreads, setSavedThreads] = useState(new Set()); // Store saved thread IDs
-  const [userId, setUserId] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [threadId, setthreadId] = useState(0);
+
+  // Pagination
   const itemsPerPage = 2;
   const indexOfLastCard = currentPage * itemsPerPage;
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
-  const currentThreads = threads.slice(indexOfFirstCard, indexOfLastCard);
-  const router = useRouter();
+  const currentThreads = questions.slice(indexOfFirstCard, indexOfLastCard);
+  const totalPages = Math.ceil(questions.length / itemsPerPage);
 
-  const totalPages = Math.ceil(threads.length / itemsPerPage);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [threadId, setthreadId] = useState(0);
+  // Popup handlers
   const openPopup = () => setIsPopupOpen(true);
   const closePopup = () => setIsPopupOpen(false);
-  {
-    /*  const startIndex = (currentPage - 1) * 4;
-  const endIndex = Math.min(startIndex + 4, questions.length);
-  const displayedQuestions = questions.slice(startIndex, endIndex);*/
+
+  // Event handlers
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    // TODO: Implement filtering logic
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handleNavigation = (thread) => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
+    router.push(
+      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
+    );
+  };
+
+  const handleSaveThread = async (threadId) => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    try {
+      const isSaved = savedThreads.has(threadId);
+      const result = await toggleSaveThread(threadId, userId, isSaved);
+
+      if (result.success) {
+        // Optionally show success message
+        console.log(isSaved ? 'Thread unsaved' : 'Thread saved');
+        // The savedThreads will be updated when the useSavedThreads hook refetches
+        window.location.reload(); // Quick fix to refresh saved threads - can be improved
+      } else {
+        console.error('Failed to toggle save:', result.error);
+      }
+    } catch (error) {
+      console.error('Failed to save thread:', error);
+    }
+  };
+
+  const handleAddAnswer = (questionId) => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+    openPopup();
+    setthreadId(questionId);
+  };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-lg">Checking authentication...</div>
+      </div>
+    );
   }
 
-  // const handleFilterChange = (filter) => {
-  //   setActiveFilter(filter);
-  // };
-
-  // const handlePageChange = (newPage) => {
-  //   if (newPage >= 1 && newPage <= totalPages) {
-  //     setCurrentPage(newPage);
-  //   }
-  // };
-
-  // const handlePrevPage = () => {
-  //   if (currentPage > 1) {
-  //     setCurrentPage(currentPage - 1);
-  //   }
-  // };
-
-  // const handleNextPage = () => {
-  //   if (currentPage < totalPages) {
-  //     setCurrentPage(currentPage + 1);
-  //   }
-  // };
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const storedUserId = localStorage.getItem("userId");
-  //     if (storedUserId) {
-  //       setUserId(storedUserId);
-  //       setIsAuthenticated(true);
-  //     }
-  //     setIsAuthenticated(false);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   if (userId) {
-  //     setIsAuthenticated(true);
-  //     getQuestions();
-  //     getSavedQuestions(userId); // Pass userId correctly
-  //   }
-  // }, [userId]); // Add userId as a dependency
-
-  // const getSavedQuestions = async (userId) => {
-  //   if (!userId) return;
-  //   try {
-  //     const response = await api.get(`/threads/saved?user=${userId}`);
-  //     //console.log("Fetched saved threads:", response.data.data); // Debugging log
-  //     const savedThreadIds = new Set(
-  //       response.data.data.map((thread) => thread.id)
-  //     );
-  //     setSavedThreads(savedThreadIds);
-  //   } catch (error) {
-  //     //console.error("Failed to fetch saved threads:", error);
-  //   }
-  // };
-
-  // const getQuestions = async () => {
-  //   try {
-  //     const response = await api.get("/threads/all");
-  //     //console.log("threads : ", response.data);
-  //     setthreads(response.data.data);
-  //   } catch (error) {
-  //     //console.error(error);
-  //   }
-  // };
-
-  // const toggleSaveThread = async (threadId) => {
-  //   if (!userId) {
-  //     alert("You must be logged in to save a thread.");
-  //     return;
-  //   }
-
-  //   try {
-  //     if (savedThreads.has(threadId)) {
-  //       await api.delete(`/threads/${threadId}/save`, {
-  //         data: { user_id: Number(userId) },
-  //       });
-  //       setSavedThreads((prev) => {
-  //         const newSet = new Set(prev);
-  //         newSet.delete(threadId);
-  //         return newSet;
-  //       });
-  //     } else {
-  //       await api.post(`/threads/${threadId}/save`, {
-  //         user_id: Number(userId),
-  //       });
-  //       setSavedThreads((prev) => new Set(prev).add(threadId));
-  //     }
-  //   } catch (error) {
-  //     //console.error("Failed to toggle save:", error);
-  //   }
-  // };
-
-  // const handleSaveThread = async (threadId) => {
-  //   try {
-  //     if (!userId) {
-  //       alert("You must be logged in to save a thread.");
-  //       return;
-  //     }
-
-  //     const response = await api.post(`/threads/${threadId}/save`, {
-  //       user_id: Number(userId), // Send the user_id in the request body
-  //     });
-
-  //     //console.log("Thread saved successfully:", response.data);
-  //     alert("Thread saved successfully!"); // Show a success message
-  //   } catch (error) {
-  //     //console.error("Failed to save thread:", error);
-  //     alert("Failed to save thread. Please try again."); // Show an error message
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   //console.log("Saved Threads:", savedThreads);
-  // }, [savedThreads]);
-
-  // const handleNavigation = (thread) => {
-  //   sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-  //   router.push(
-  //     `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
-  //   );
-  // };
-
-
   return (
-    <div className=" bg-neutral-50b">
+    <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full mt-6">
@@ -184,7 +144,7 @@ export const AllQuestions = () => {
             >
               Ask a Question ?
             </Link>
-            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden"/>
+            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden" />
           </div>
           {/* this should be removed in the all questions page */}
           {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
@@ -194,40 +154,40 @@ export const AllQuestions = () => {
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "all"
-                    ? "bg-primary-500 text-white"
-                    : "bg-neutral-100"
+                  ? "bg-primary-500 text-white"
+                  : "bg-neutral-100"
                   }`}
-                // onClick={() => handleFilterChange("all")}
+                onClick={() => handleFilterChange("all")}
               >
                 All
               </Link>
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Popular"
-                    ? "bg-primary-500 text-white"
-                    : "bg-neutral-100"
+                  ? "bg-primary-500 text-white"
+                  : "bg-neutral-100"
                   }`}
-                // onClick={() => handleFilterChange("Popular")}
+                onClick={() => handleFilterChange("Popular")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Newest"
-                    ? "bg-primary-500 text-white"
-                    : "bg-neutral-100"
+                  ? "bg-primary-500 text-white"
+                  : "bg-neutral-100"
                   }`}
-                // onClick={() => handleFilterChange("Newest")}
+                onClick={() => handleFilterChange("Newest")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
                 className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most Answered"
-                    ? "bg-primary-500 text-white"
-                    : "bg-neutral-100"
+                  ? "bg-primary-500 text-white"
+                  : "bg-neutral-100"
                   }`}
-                // onClick={() => handleFilterChange("Most Answered")}
+                onClick={() => handleFilterChange("Most Answered")}
               >
                 Most Answered
               </Link>
@@ -245,119 +205,134 @@ export const AllQuestions = () => {
             </div>
           </div>
 
-          {/*white card */}
-          {threads.length == 0 ? (
-            <EmptySearchPage />
-          ) : (
-            currentThreads?.map((question, index) => (
-              <div
-                key={index}
-                className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+          {/* Loading state */}
+          {questionsLoading && (
+            <div className="text-center py-8">
+              <div className="text-lg">Loading questions...</div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {questionsError && (
+            <div className="text-center py-8 text-red-600">
+              <div>Error: {questionsError}</div>
+              <button
+                onClick={refetch}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
-                <div
-                  className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8"
-                  // onClick={() => handleNavigation(question)}
-                >
-                  <div className="flex flex-row items-center justify-between gap-1">
-                    <Image
-                      src={UpDown}
-                      alt="Lines"
-                      className="h-full w-4 lg:w-8"
-                    />
-                    <div className="font-sans text-sm lg:text-3xl text-neutral-900">
-                      {" "}
-                      {question.upvotes}{" "}
+                Retry
+              </button>
+            </div>
+          )}
+
+
+         {/* Questions list */}
+          {!questionsLoading && !questionsError && (
+            <>
+              {questions.length === 0 ? (
+                <EmptySearchPage />
+              ) : (
+                currentThreads?.map((question, index) => (
+                  <div
+                    key={question.id || index}
+                    className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+                  >
+                    <div
+                      className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8"
+                      onClick={() => handleNavigation(question)}
+                    >
+                      <div className="flex flex-row items-center justify-between gap-1">
+                        <Image
+                          src={UpDown}
+                          alt="Lines"
+                          className="h-full w-4 lg:w-8"
+                        />
+                        <div className="font-sans text-sm lg:text-3xl text-neutral-900">
+                          {question.upvotes || 0}
+                        </div>
+                      </div>
+                      <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                        {question.title}
+                      </h1>
+                    </div>
+
+                    <div className="w-full flex flex-row justify-between items-center gap-2">
+                      <div className="flex-1 w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
+                      <div className="flex-shrink-0 w-fit font-serif lg:text-lg text-xs text-neutral-300">
+                        {moment(question.date).format("MMMM D, YYYY")}
+                      </div>
+                    </div>
+
+                    <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
+                      <p>{question.content}</p>
+                    </div>
+
+                    <div className="w-full flex flex-row justify-between items-center gap-6">
+                      {/* Drop answer + number of answer buttons */}
+                      <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
+                        <button
+                          onClick={() => handleAddAnswer(question.id)}
+                          className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                        >
+                          <Image
+                            src={plus}
+                            alt="Add answer"
+                            className="lg:p-1 w-5"
+                          />
+                          <span>Drop an Answer</span>
+                        </button>
+
+                        <Link
+                          href="/"
+                          className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                        >
+                          {question.answers_count || 0} answer
+                        </Link>
+                      </div>
+
+                      {/* Share and Save buttons */}
+                      <div className="flex flex-row items-end justify-end gap-4">
+                        {/* Share button */}
+                        <button className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
+                          <Image
+                            src={share}
+                            alt="share icon"
+                            className="w-[13px] lg:w-[24px]"
+                          />
+                          Share
+                        </button>
+
+                        {/* Save button */}
+                        <button
+                          className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
+                          onClick={() => handleSaveThread(question.id)}
+                          disabled={saveLoading}
+                        >
+                          <Image
+                            src={savedThreads.has(question.id) ? saveblack : save}
+                            alt="save icon"
+                            className="w-[13px] lg:w-[24px]"
+                          />
+                          {saveLoading ? 'Saving...' : 'Save'}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
-                    {question.title}
-                  </h1>
-                </div>
-
-                <div className="w-full flex flex-row justify-between items-center gap-0">
-                  <div className=" w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
-                  <div className="font-serif lg:text-lg text-xs text-neutral-300">
-                    {moment(question.date).format("MMMM D, YYYY")}
-                  </div>
-                </div>
-
-                <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
-                  <p>{question.content}</p>
-                </div>
-
-                <div className="w-full flex flex-row justify-between items-center gap-6">
-                  {/*drop answer + number of answer buttons */}
-                  <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
-                    <button
-                      // onClick={() => {
-                      //   openPopup();
-                      //   setthreadId(question.id);
-                      // }}
-                      className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                    >
-                      <Image
-                        src={plus}
-                        alt="Add answer"
-                        className="lg:p-1 w-5"
-                      />
-                      <span>Drop an Answer</span>
-                    </button>
-
-                    <Link
-                      href="/"
-                      className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                    >
-                      {question.answers_count} answer
-                    </Link>
-                  </div>
-
-                  {/* buttons of share and save */}
-                  <div className="flex flex-row items-end justify-end gap-4">
-                    {/*share button */}
-                    <Link
-                      className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center  gap-1 lg:gap-2"
-                      href="#"
-                    >
-                      <Image
-                        src={share}
-                        alt="share icon"
-                        className="w-[13px] lg:w-[24px] "
-                      />
-                      Share
-                    </Link>
-
-                    {/*save button */}
-                    <button
-                      className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                      // href="#"
-                      // onClick={() => toggleSaveThread(question.id)}
-                    >
-                      <Image
-                        src={savedThreads.has(question.id) ? saveblack : save}
-                        alt="save icon"
-                        className="w-[13px] lg:w-[24px]"
-                      />
-                      Save
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
+                ))
+              )}
+            </>
           )}
+
+          {/* Popup */}
           {isPopupOpen && (
             <PopUp
               isOpen={isPopupOpen}
               onClose={closePopup}
               threadId={threadId}
-              // onSubmit={async(content) => {
-
-              //   closePopup(); // Close the popup after submission
-              // }}
-              // getQuestions={getQuestions}
             />
           )}
 
-          {/*ask a question button */}
+          {/* Ask question button */}
           <Link
             className="w-full bg-secondary-500 font-sans text-xl lg:text-3xl rounded-lg text-[#FFF] text-center py-2"
             href="/ask-question"
@@ -365,38 +340,39 @@ export const AllQuestions = () => {
             Ask a Question ?
           </Link>
 
-          {/*Pages*/}
-          <div className="flex flex-row justify-between items-center gap-4 lg:gap-2">
-            <button
-              disabled={currentPage === 1}
-              // onClick={handlePrevPage}
-              className="disabled:opacity-50"
-            >
-              <Image src={left} alt="left icon" width={24} height={24} />
-            </button>
-            <div className="flex items-center text-neutral-700">
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index}
-                  className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                      ? "bg-secondary-500 text-white"
-                      : "bg-neutral-200 text-neutral-900"
-                    }`}
-                  // onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-              {/* <span>{totalPages}</span> */}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex flex-row justify-between items-center gap-4 lg:gap-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={handlePrevPage}
+                className="disabled:opacity-50"
+              >
+                <Image src={left} alt="left icon" width={24} height={24} />
+              </button>
+              <div className="flex items-center text-neutral-700">
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    className={`py-2 px-4 rounded-md ${currentPage === index + 1
+                        ? "bg-secondary-500 text-white"
+                        : "bg-neutral-200 text-neutral-900"
+                      }`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+              </div>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={handleNextPage}
+                className="disabled:opacity-50"
+              >
+                <Image src={right} alt="right icon" width={24} height={24} />
+              </button>
             </div>
-            <button
-              disabled={currentPage === totalPages}
-              // onClick={handleNextPage}
-              className="disabled:opacity-100"
-            >
-              <Image src={right} alt="right icon" width={24} height={24} />
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

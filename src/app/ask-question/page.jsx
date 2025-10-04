@@ -30,6 +30,11 @@ import { IoIosClose } from "react-icons/io";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import api from "@/lib/api";
 
+// the custom hooks
+import useAuth from "@/hooks/Auth";
+import { useCreateThread } from "@/hooks/Questions";
+
+
 const AskQuestion = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [questionTitle, setQuestionTitle] = useState("");
@@ -39,13 +44,9 @@ const AskQuestion = () => {
   const [error, setError] = useState(null);
   const [iconSize, setIconSize] = useState(25);
   const [isAnswerPopupOpen, setIsAnswerPopupOpen] = useState(false);
-  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+  const { createThread, loading: createLoading, error: createError, clearError } = useCreateThread();
 
   const handleAnswerSubmit = (answerHtml) => {
     //console.log('Answer submitted:', answerHtml);
@@ -224,6 +225,45 @@ const AskQuestion = () => {
     }
   }, [editor]);
 
+
+
+  const handleThreadSubmit = async () => {
+    // Clear any previous errors
+    clearError();
+
+    // Validation
+    if (!questionTitle.trim()) {
+      setError("Title cannot be empty!");
+      return;
+    }
+
+    if (!editor.getHTML().trim() || editor.getHTML() === '<p></p>') {
+      setError("Content cannot be empty!");
+      return;
+    }
+
+    // Prepare thread data
+    const threadData = {
+      title: questionTitle.trim(),
+      content: editor.getHTML(),
+    };
+
+    // Create the thread
+    const result = await createThread(threadData);
+
+    if (result.success) {
+      // Success - clear form
+      setQuestionTitle("");
+      editor.commands.clearContent();
+      setTags([]);
+      setTagInput("");
+    } else {
+      // Error is already set by the hook
+      console.error('Failed to create thread:', result.error);
+    }
+  };
+
+
   if (isLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -236,36 +276,7 @@ const AskQuestion = () => {
     return null;
   }
 
-  const handleThreadSubmit = async () => {
-    if (!questionTitle.trim() || !editor.getHTML().trim()) {
-      setError("Title and content cannot be empty!");
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const { data } = await api.post("/threads/create", {
-        user_id: userId, // Get user ID
-        title: questionTitle,
-        content: editor.getHTML(), // Get the HTML content from TipTap
-      });
-
-      if (data.success) {
-        alert("Thread created successfully!");
-        setQuestionTitle(""); // Reset input
-        editor.commands.clearContent(); // Clear editor content
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || "Error creating thread");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  
   return (
     <>
       <Navbarsignedin />

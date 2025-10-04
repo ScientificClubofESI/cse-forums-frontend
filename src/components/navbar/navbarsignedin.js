@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import user from "../../../public/pages/nav-bar/icons/User.svg";
+import User from "../../../public/pages/nav-bar/icons/User.svg";
 import notification from "../../../public/pages/nav-bar/icons/Frame33603.svg";
 import settings from "../../../public/pages/nav-bar/icons/Frame33604.svg";
 import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
@@ -10,46 +10,30 @@ import api from "@/lib/api";
 import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
 
+// the lgout hook
+import useAuth, { useLogout } from "@/hooks/Auth";
+
 
 export const Navbarsignedin = () => {
+
+  const { user, userId, username, isAuthenticated } = useAuth();
+  const { logout, loading: logoutLoading } = useLogout();
+
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const router = useRouter();
 
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
-
+  // Handle logout
   const handleLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    try {
-      // Call logout API
-      await authApi.post("/auth/logout", {
-        userId,
-      });
-      localStorage.clear();
-      sessionStorage.clear();
-            
-      // Redirect to login page
-      router.push("/auth/login");
-      
-    } catch (error) {
-      console.error("Logout error:", error);
-      
-      // Even if API call fails, clear local data and redirect
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      router.push("/auth/login");
-    } finally {
-      setIsLoggingOut(false);
+    const result = await logout();
+    if (result.success) {
+      console.log('Successfully logged out');
+    } else {
+      console.error('Logout failed');
     }
   };
+
   const [searchQuery, setsearchQuery] = useState("");
   useEffect(() => {
     const fetchSearchThreads = async () => {
@@ -142,7 +126,7 @@ export const Navbarsignedin = () => {
           </Link>
           <Link href="/profile/myquestions">
             <Image
-              src={user}
+              src={User}
               alt="User"
               width={40}
               height={40}
