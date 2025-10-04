@@ -6,7 +6,7 @@ import Card from "./card";
 import empty from "../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
 
-export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
+export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
   const [activeTab, setActiveTab] = useState("Recent"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -17,7 +17,7 @@ export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
 
   const totalPages = Math.ceil(myQuestions.length / itemsPerPage);
 
-  
+
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -28,7 +28,7 @@ export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
     // Add logic to fetch data for the selected tab if needed
   };
 
-  
+
 
   return (
     <div className="flex flex-col gap-[48px]">
@@ -39,11 +39,10 @@ export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
             <div
               key={tab}
               onClick={() => handleTabClick(tab)}
-              className={`py-[4px] md:py-[8px] px-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
-                activeTab === tab
+              className={`py-[4px] md:py-[8px] px-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${activeTab === tab
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100 text-neutral-900"
-              }`}
+                }`}
             >
               {tab}
             </div>
@@ -94,11 +93,10 @@ export const MyQuestionsList = ({ myQuestions,setmyquestions, }) => {
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index}
-            className={`py-2 px-4 rounded-md ${
-              currentPage === index + 1
+            className={`py-2 px-4 rounded-md ${currentPage === index + 1
                 ? "bg-secondary-500 text-white"
                 : "bg-neutral-200 text-neutral-900"
-            }`}
+              }`}
             onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}

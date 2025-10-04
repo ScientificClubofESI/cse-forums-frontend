@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import MyquestionsList from "./questionslist";
+import MyquestionsList from "../../../components/pages/profile/myquestions/questionslist";
 import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";

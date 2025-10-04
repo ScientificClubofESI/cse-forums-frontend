@@ -38,11 +38,10 @@ export const MyReplies = ({ answers }) => {
           <div
             key={tab}
             onClick={() => handleTabClick(tab)}
-            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${
-              activeTab === tab
+            className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${activeTab === tab
                 ? "bg-primary-500 text-white"
                 : "bg-neutral-100 text-neutral-900"
-            }`}
+              }`}
           >
             {tab}
           </div>
@@ -84,11 +83,10 @@ export const MyReplies = ({ answers }) => {
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index}
-            className={`py-2 px-4 rounded-md ${
-              currentPage === index + 1
+            className={`py-2 px-4 rounded-md ${currentPage === index + 1
                 ? "bg-secondary-500 text-white"
                 : "bg-neutral-200 text-neutral-900"
-            }`}
+              }`}
             onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}

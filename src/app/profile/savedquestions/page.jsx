@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import MySavedList from "./savedlist";
+import MySavedList from "../../../components/pages/profile/savedquestions/savedlist";
 import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";

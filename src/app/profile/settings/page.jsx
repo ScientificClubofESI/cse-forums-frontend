@@ -15,12 +15,9 @@ import useAuth, { useUserProfile } from "@/hooks/Auth";
 
 export const Settings = () => {
 
-  console.log("Rendering Settings component");
   // Authentication and profile hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  console.log('User from useAuth:', user);
   const { profile, loading: profileLoading, error: profileError, updateProfile } = useUserProfile(userId);
-  console.log('Profile from useUserProfile:', profile);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -52,7 +49,7 @@ export const Settings = () => {
     const result = await updateProfile({
       username: formData.userName,
       email: formData.email,
-      fullname: formData.fullName, // Include full name if your backend supports it
+      fullname: formData.fullName,
     });
 
     if (result.success) {
@@ -182,5 +179,5 @@ export const Settings = () => {
   );
 
 
-  
+
 export default Settings;

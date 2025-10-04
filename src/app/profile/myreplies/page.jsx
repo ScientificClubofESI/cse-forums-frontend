@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import MyRepliesList from "./replieslist";
+import MyRepliesList from "../../../components/pages/profile/myreplies/replieslist";
 import Sidebar from "@/components/profile/sidebar";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
