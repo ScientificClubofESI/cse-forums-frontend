@@ -16,3 +16,6 @@ authApi.interceptors.response.use(
 );
 
 export default authApi;
+
+
+// use this instance for all functionalities that doesnt require authentication
