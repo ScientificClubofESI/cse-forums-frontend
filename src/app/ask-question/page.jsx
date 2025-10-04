@@ -481,12 +481,6 @@ const AskQuestion = () => {
           <span className="text-sm md:text-base">Post Your Question</span>
           <Send size={iconSize} color="#d9e3f0" variant="Bold" />
         </button>
-
-        {/* <PopUp
-        isOpen={isAnswerPopupOpen}
-        onClose={() => setIsAnswerPopupOpen(false)}
-        onSubmit={handleAnswerSubmit}
-      /> */}
       </main>
     </>
   );

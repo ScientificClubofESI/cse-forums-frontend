@@ -322,3 +322,59 @@ export const useVoteThread = () => {
     clearError: () => setError(null),
   };
 };
+
+export const useAddAnswer = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const addAnswer = async (threadId, content) => {
+    if (!threadId || !content) {
+      setError('Thread ID and content are required');
+      return { success: false, error: 'Thread ID and content are required' };
+    }
+
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const response = await api.post(`/threads/${threadId}/answers/create`, {
+        content: content.trim(),
+      });
+
+      if (response.data.success) {
+        setSuccess(true);
+        console.log('Answer added successfully:', response.data);
+        return { 
+          success: true, 
+          data: response.data.data,
+          message: 'Answer added successfully!' 
+        };
+      } else {
+        const errorMessage = response.data.message || 'Failed to add answer';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to add answer';
+      setError(errorMessage);
+      console.error('Error adding answer:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearError = () => setError(null);
+  const clearSuccess = () => setSuccess(false);
+
+  return {
+    addAnswer,
+    loading,
+    error,
+    success,
+    clearError,
+    clearSuccess,
+  };
+}

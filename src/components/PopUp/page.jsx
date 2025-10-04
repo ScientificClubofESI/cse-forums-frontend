@@ -28,20 +28,21 @@ import { common, createLowlight } from "lowlight";
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
 import api from "@/lib/api";
 
+// Import the custom hook
+import { useAddAnswer } from "@/hooks/Questions";
+import useAuth from "@/hooks/Auth";
+
 export default function PopUp({
   isOpen,
   onClose,
   threadId,
-  getQuestions,
+  onAnswerAdded,
 }) {
   const [iconSize, setIconSize] = useState(20);
-  const [userId, setUserId] = useState(null);
+  const { user, userId, isAuthenticated } = useAuth();
+  const { addAnswer, loading: submitting, error: submitError, success, clearError } = useAddAnswer();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
+  const [error, setError] = useState(null);
 
   const editor = useEditor({
     extensions: [
@@ -88,30 +89,56 @@ export default function PopUp({
     }
   }, [editor]);
 
-  if (!isOpen) return null;
-  if (!editor) return null;
+  // Clear editor when popup closes
+  useEffect(() => {
+    if (!isOpen && editor) {
+      editor.commands.clearContent();
+      clearError();
+    }
+  }, [isOpen, editor, clearError]);
 
 
-  const handleAnswerCreation = async () => {
+  const handleAnswerSubmit = async () => {
+    if (!editor) return;
+
+    const content = editor.getHTML();
+
+    // Validation
+    if (!content || content === '<p></p>' || content.trim() === '') {
+      setError('Please enter an answer before submitting.');
+      return;
+    }
+
     try {
-      //console.log("threadid : ", threadId);
+      const result = await addAnswer(threadId, content);
 
-      const response = await api.post(
-        `/threads/${threadId}/answers/create`,
-        {
-          user_id: userId,
-          content: editor.getHTML(),
-        },
-        {
-          withCredentials: true,
+      if (result.success) {
+        // Clear the editor
+        editor.commands.clearContent();
+
+        // Call the callback to refresh questions/answers
+        if (onAnswerAdded) {
+          onAnswerAdded();
         }
-      );
-      //console.log("Answer Created:", response.data);
-      // window.location.reload();
+
+        // Close the popup
+        onClose();
+
+        // Optional: Show success message
+        console.log('Answer submitted successfully!');
+      } else {
+        // Error is already set by the hook
+        console.error('Failed to submit answer:', result.error);
+      }
     } catch (error) {
-      //console.error("Failed to create answer:", error);
+      console.error('Unexpected error:', error);
     }
   };
+
+
+  if (!isOpen) return null;
+
+  if (!editor) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -119,6 +146,17 @@ export default function PopUp({
         <div className="text-lg font-serif font-bold border-b pb-2">
           Type your Answer Here
         </div>
+
+        {error && (
+          <div className="bg-red-100 text-red-700 p-2 rounded mb-2">
+            {error}
+          </div>
+        )}
+        {submitError && (
+          <div className="bg-red-100 text-red-700 p-2 rounded mb-2">
+            {submitError}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <div className="flex flex-col items-center">
@@ -230,7 +268,7 @@ export default function PopUp({
             onClick={() => {
               if (editor) {
                 // onSubmit(editor.getHTML());
-                handleAnswerCreation();
+                handleAnswerSubmit();
                 getQuestions();
                 onClose();
               }

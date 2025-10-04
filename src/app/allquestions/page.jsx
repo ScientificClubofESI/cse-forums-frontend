@@ -16,7 +16,7 @@ import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import api from "@/lib/api";
 import moment from "moment";
-import PopUp from "../PopUp/page";
+import PopUp from "../../components/PopUp/page";
 import Search from "@/components/search/search";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";

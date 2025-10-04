@@ -134,7 +134,7 @@ export const LogIn = () => {
 
       <div className="w-full sm:w-1/2  h-full sm:h-full px-8 sm:px-36 pt-4 pb-16 sm:pb-36 bg-primary-900 rounded-tr-[40px] rounded-tl-[40px] sm:rounded-tl-[80px] sm:rounded-tr-none ">
         <div className="flex justify-end mt-4">
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center cursor-pointer" onClick={() => router.push('/')}>
             <Image
               src={logo}
               alt="logo"

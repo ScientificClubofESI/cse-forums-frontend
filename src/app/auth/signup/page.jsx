@@ -52,7 +52,7 @@ export const SignUp = () => {
 
       <div className="sm:w-1/2 flex flex-col justify-start relative" style={{ backgroundColor: '#FFFBFE' }}>
         <div className="flex flex-col pt-6 justify-between bg-primary-900 sm:rounded-tr-[80px] rounded-bl-[40px] rounded-br-[40px] sm:rounded-bl-none  sm:rounded-br-none rounded-tl-none px-8 sm:px-36 min-h-full pb-6 sm:pb-24">
-          <div className="flex flex-row items-start">
+          <div className="flex flex-row items-start cursor-pointer" onClick={() => router.push('/')}>
             <Image
               src={logo}
               alt="logo"
