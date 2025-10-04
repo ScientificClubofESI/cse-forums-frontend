@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* <Question/> */}
-      {!isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+     {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <Hero />
       <Offers />
       <About />

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import authApi from "@/lib/authApi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api";
 
 // Custom hook for authentication
 export const useAuth = () => {
@@ -244,4 +245,89 @@ export const useLogout = () => {
     clearError: () => setError(""),
   };
 };
+export const useUserProfile = (userId) => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const getUserProfile = async (targetUserId = userId) => {
+    if (!targetUserId) {
+      setProfile(null);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.get(`/user/${targetUserId}`);
+      console.log(response);
+      if (response.data.success) {
+        setProfile(response.data.data);
+        return { success: true, data: response.data.data };
+      } else {
+        const errorMessage = response.data.message || 'Failed to fetch profile';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch profile';
+      setError(errorMessage);
+      console.error('Get profile error:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async (updateData) => {
+    if (!userId) {
+      const errorMessage = 'User ID is required for profile update';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.put(`/user/${userId}`, updateData);
+
+      if (response.data.success) {
+        // Refresh profile data after successful update
+        await getUserProfile(userId);
+        return { success: true, data: response.data.data };
+      } else {
+        const errorMessage = response.data.message || 'Failed to update profile';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update profile';
+      setError(errorMessage);
+      console.error('Update profile error:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch profile on hook initialization or when userId changes
+  useEffect(() => {
+    if (userId) {
+      getUserProfile(userId);
+    }
+  }, [userId]);
+
+  return {
+    profile,
+    loading,
+    error,
+    getUserProfile,
+    updateProfile,
+    refetch: () => getUserProfile(userId),
+    clearError: () => setError(null),
+  };
+};
+
 export default useAuth;
