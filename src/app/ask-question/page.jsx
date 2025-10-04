@@ -29,6 +29,7 @@ import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
 import { IoIosClose } from "react-icons/io";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import api from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 // the custom hooks
 import useAuth from "@/hooks/Auth";
@@ -36,6 +37,7 @@ import { useCreateThread } from "@/hooks/Questions";
 
 
 const AskQuestion = () => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [questionTitle, setQuestionTitle] = useState("");
   const [tags, setTags] = useState([]);
@@ -257,6 +259,7 @@ const AskQuestion = () => {
       editor.commands.clearContent();
       setTags([]);
       setTagInput("");
+      router.push('/allquestions'); // Redirect to all questions page
     } else {
       // Error is already set by the hook
       console.error('Failed to create thread:', result.error);

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import unsaved from "../../../../public/icons/save.png";
+import unsaved from "../../../../../public/icons/save.png";
 
 const Card = ({ id, title, content, onDelete }) => {
   //console.log(id, title, content);

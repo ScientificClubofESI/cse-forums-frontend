@@ -24,10 +24,7 @@ const Hero = () => {
   const { userId, isAuthenticated } = useAuth();
 
   const handleNavigate = (thread) => {
-    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-    router.push(
-      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
-    );
+    router.push(`/question/${thread.id}`);
   };
 
   useEffect(() => {

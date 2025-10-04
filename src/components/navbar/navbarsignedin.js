@@ -103,9 +103,7 @@ export const Navbarsignedin = () => {
               {searchResults.slice(0, 6).map((thread) => (
                 <Link
                   key={thread.id}
-                  href={`/questionPage/${
-                    thread.user_id == userId ? `asker` : `viewer`
-                  }`}
+                  href={`/question/${thread.id}`}
                   className="block px-4 py-2 hover:bg-gray-200"
                 >
                   {thread.title}

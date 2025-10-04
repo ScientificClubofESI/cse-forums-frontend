@@ -78,14 +78,7 @@ export const AllQuestions = () => {
   };
 
   const handleNavigation = (thread) => {
-    if (!isAuthenticated) {
-      router.push('/auth/login');
-      return;
-    }
-    sessionStorage.setItem("selectedThread", JSON.stringify(thread));
-    router.push(
-      `/questionPage/${thread.user_id == userId ? "asker" : "viewer"}`
-    );
+    router.push(`/allquestions/${thread.id}`);
   };
 
   const handleSaveThread = async (threadId) => {
@@ -226,7 +219,7 @@ export const AllQuestions = () => {
           )}
 
 
-         {/* Questions list */}
+          {/* Questions list */}
           {!questionsLoading && !questionsError && (
             <>
               {questions.length === 0 ? (
@@ -350,13 +343,13 @@ export const AllQuestions = () => {
               >
                 <Image src={left} alt="left icon" width={24} height={24} />
               </button>
-              <div className="flex items-center text-neutral-700">
+              <div className="flex gap-2 items-center text-neutral-700">
                 {[...Array(totalPages)].map((_, index) => (
                   <button
                     key={index}
                     className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                        ? "bg-secondary-500 text-white"
-                        : "bg-neutral-200 text-neutral-900"
+                      ? "bg-secondary-500 text-white"
+                      : "bg-neutral-200 text-neutral-900"
                       }`}
                     onClick={() => handlePageChange(index + 1)}
                   >

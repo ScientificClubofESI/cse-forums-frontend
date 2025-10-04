@@ -92,11 +92,11 @@ export const LogIn = () => {
                 className="absolute top-[45px] md:top-1/2 right-3 w-5 h-5"
                 onClick={togglePasswordVisibility}
               />
-              {/**TODO take to change password page*/}
+              {/* *TODO take to change password page
               <a href="dfghj" className="font-serif text-neutral-200 text-sm">
                 {" "}
                 Forget your password?
-              </a>
+              </a> */}
             </div>
 
             <div className="text-neutral-900 py-2 ">

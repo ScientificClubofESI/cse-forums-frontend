@@ -86,7 +86,7 @@ export const useLogin = () => {
       if (response.status === 200) {
         // Set tokens in cookies
         const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 15); // 15 minutes for access token
+        expirationDate.setMinutes(expirationDate.getMinutes() + 120); // 120 minutes for access token
 
         Cookies.set("token", response.data.token, {
           expires: expirationDate,

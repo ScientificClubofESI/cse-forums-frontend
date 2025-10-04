@@ -35,6 +35,41 @@ export const useQuestions = () => {
   };
 };
 
+export const useQuestion = (id) => {
+  const [question, setQuestion] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchQuestion = async () => {
+    if (!id) return;
+    
+    setLoading(true);
+    setError(null);
+    try {
+      // Using authApi since this is now a public endpoint
+      const response = await authApi.get(`/threads/${id}`);
+      console.log(response)
+      setQuestion(response.data.data);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || 'Failed to fetch question');
+      console.error('Failed to fetch question:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+  }, [id]);
+
+  return {
+    question,
+    loading,
+    error,
+    refetch: fetchQuestion,
+  };
+};
+
 
 export const useSavedThreads = (userId) => {
      const [savedThreads, setSavedThreads] = useState(new Set());
@@ -168,6 +203,120 @@ export const useCreateThread = () => {
 
   return {
     createThread,
+    loading,
+    error,
+    clearError: () => setError(null),
+  };
+};
+
+export const useDeleteThread = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const deleteThread = async (threadId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.delete(`/threads/${threadId}`);
+      if (response.status === 200) {
+        return { success: true, message: 'Thread deleted successfully!' };
+      } else {
+        const errorMessage = response.data.message || 'Failed to delete thread';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to delete thread';
+      setError(errorMessage);
+      console.error('Error deleting thread:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    deleteThread,
+    loading,
+    error,
+  };
+}
+
+export const useUpdateThread = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const updateThread = async (threadId, threadData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.put(`/threads/${threadId}`, {
+        title: threadData.title,
+        content: threadData.content
+      });
+
+      if (response.data.success) {
+        return { 
+          success: true, 
+          data: response.data.data,
+          message: 'Thread updated successfully!'
+        };
+      } else {
+        const errorMessage = response.data.message || 'Failed to update thread';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to update thread';
+      setError(errorMessage);
+      console.error('Update thread error:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    updateThread,
+    loading,
+    error,
+    clearError: () => setError(null),
+  };
+};
+
+export const useVoteThread = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const voteThread = async (threadId, voteType) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.post(`/threads/${threadId}/vote`, {
+        voteType // 'up' or 'down'
+      });
+
+      if (response.data.success) {
+        return { 
+          success: true, 
+          data: response.data.data,
+          message: 'Vote recorded successfully!'
+        };
+      } else {
+        const errorMessage = response.data.message || 'Failed to vote';
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to vote';
+      setError(errorMessage);
+      console.error('Vote error:', err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    voteThread,
     loading,
     error,
     clearError: () => setError(null),

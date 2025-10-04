@@ -1,15 +1,18 @@
 "use client";
 import { useState } from "react";
+import { useRouter} from "next/navigation";
 import Image from "next/image";
 import Card from "./card";
 // import cardData from "./cardData";
-import empty from "../../../../public/images/illustrations/emtyProfil.png";
+import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
+import { useDeleteThread } from "@/hooks/Questions";
 
 export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Recent"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { deleteThread, loading: deleteLoading } = useDeleteThread();
   const itemsPerPage = 6;
   const indexOfLastCard = currentPage * itemsPerPage;
   const indexOfFirstCard = indexOfLastCard - itemsPerPage;
@@ -29,19 +32,36 @@ export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
   };
 
 
+  const handleEdit = (id) => {
+    // Navigate to the edit page for the specific question
+    router.push(`/allquestions/${id}/edit`);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const result = await deleteThread(id);
+      if (result.success) {
+        router.push('/allquestions');
+      }
+    } catch (err) {
+      console.error('Error deleting question:', err);
+
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
-      <div className="flex flex-row gap-[7px] md:gap-[14px]">
+      <div className="flex flex-col sm:flex-row gap-[7px] md:gap-[14px]">
         {["Recent", "Most Rated", "Recently Answered", "Most Answered"].map(
           (tab) => (
             <div
               key={tab}
               onClick={() => handleTabClick(tab)}
               className={`py-[4px] md:py-[8px] px-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${activeTab === tab
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100 text-neutral-900"
+                ? "bg-primary-500 text-white"
+                : "bg-neutral-100 text-neutral-900"
                 }`}
             >
               {tab}
@@ -59,8 +79,8 @@ export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
           </div>
         </div>
       ) : (
-        <div className="p-4 sm:p-6 lg:p-8">
-          <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8">
+        <div className="py-4 sm:py-6 lg:py-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {currentCards.map((card, index) => (
               <div
                 key={index}
@@ -72,8 +92,8 @@ export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
                   content={card.content}
                   // newAnswersCount={card.newAnswersCount}
                   // answersCount={card.answers_count}
-                  onEdit={() => alert("Edit clicked!")}
-                  onDelete={() => alert("Delete clicked!")} // Pass delete function
+                  onEdit={() => handleEdit(card.id)} // Pass edit function
+                  onDelete={() => handleDelete(card.id)} // Pass delete function
                 />
               </div>
             ))}
@@ -94,8 +114,8 @@ export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
           <button
             key={index}
             className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                ? "bg-secondary-500 text-white"
-                : "bg-neutral-200 text-neutral-900"
+              ? "bg-secondary-500 text-white"
+              : "bg-neutral-200 text-neutral-900"
               }`}
             onClick={() => handlePageChange(index + 1)}
           >
