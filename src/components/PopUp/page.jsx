@@ -269,7 +269,7 @@ export default function PopUp({
               if (editor) {
                 // onSubmit(editor.getHTML());
                 handleAnswerSubmit();
-                getQuestions();
+                // getQuestions();
                 onClose();
               }
             }}

@@ -275,12 +275,11 @@ export const AllQuestions = () => {
                           <span>Drop an Answer</span>
                         </button>
 
-                        <Link
-                          href="/"
+                        <div
                           className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
                         >
                           {question.answers_count || 0} answer
-                        </Link>
+                        </div>
                       </div>
 
                       {/* Share and Save buttons */}
