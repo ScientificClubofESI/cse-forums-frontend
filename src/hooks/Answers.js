@@ -208,7 +208,7 @@ export const useDisapproveAnswer = () => {
 export const useLikeAnswer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const likeAnswer = async (threadId, answerId) => {
+  const likeAnswer = async (threadId , answerId) => {
     setLoading(true);
     setError(null);
     try {
@@ -337,3 +337,5 @@ export const useUpdateAnswer = () => {
     error,
   };
 }
+
+// to do, a function that checks if the user already liked a question
