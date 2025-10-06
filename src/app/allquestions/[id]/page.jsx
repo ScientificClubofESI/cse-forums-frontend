@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "../../../hooks/Auth";
 import { useQuestion, useSaveThread, useVoteThread, useDeleteThread } from "../../../hooks/Questions";
 import { useAddAnswer, useGetAllAnswers, useApproveAnswer, useDisapproveAnswer, useLikeAnswer, useUnlikeAnswer, useDeleteAnswer, useCheckIfLiked } from "../../../hooks/Answers";
+import { useGetAllReplies, useAddReply, useDeleteReply, useLikeReply, useUnlikeReply, useCheckIfLikedReply } from "../../../hooks/Replies";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import BulletList from "@tiptap/extension-bullet-list";
