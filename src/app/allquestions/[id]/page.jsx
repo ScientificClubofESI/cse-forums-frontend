@@ -75,6 +75,42 @@ const QuestionPage = () => {
     const [iconSize, setIconSize] = useState(25);
     const fileInputRef = useRef(null);
 
+    const [showReplies, setShowReplies] = useState({});
+    const [repliesData, setRepliesData] = useState({});
+
+    const replyHooks = useRef({});
+
+    // Function to get or create reply hook for specific answer
+    const getReplyHook = useCallback((answerId) => {
+        if (!replyHooks.current[answerId]) {
+            replyHooks.current[answerId] = {
+                id: answerId,
+                shouldFetch: false
+            };
+        }
+        return replyHooks.current[answerId];
+    }, []);
+
+    const handleShowReplies = useCallback((answerId) => {
+        if (showReplies[answerId]) {
+            // Hide replies
+            setShowReplies(prev => ({ ...prev, [answerId]: false }));
+        } else {
+            // Show replies and trigger fetch
+            setShowReplies(prev => ({ ...prev, [answerId]: true }));
+
+            // Mark this answer for fetching replies
+            const replyHook = getReplyHook(answerId);
+            replyHook.shouldFetch = true;
+
+            // Store the answerId to fetch replies for
+            setRepliesData(prev => ({
+                ...prev,
+                [answerId]: { shouldFetch: true }
+            }));
+        }
+    }, [showReplies, getReplyHook]);
+
     // Check if the answer is liked for all answers
     useEffect(() => {
         const fetchAllLikeStatuses = async () => {
@@ -687,108 +723,21 @@ const QuestionPage = () => {
                         {answers.length > 0 ? (
                             <div className="flex flex-col gap-10">
                                 {answers.map((answer) => (
-                                    <div key={answer.id} className="py-8 px-12 bg-white rounded-lg">
-                                        <div className="flex justify-between items-center mb-4">
-                                            <div className="text-secondary-500 md:text-xl text-base font-medium flex items-center gap-2">
-                                                <ImageComponent
-                                                    src={UserpicIcon.src}
-                                                    alt="user"
-                                                    width={27}
-                                                    height={27}
-                                                    className="w-[27px] h-[27px] md:w-[40px] md:h-[40px]"
-                                                />
-                                                {answer.user?.username || 'User'}
-                                                <span className="text-sm text-gray-500 ml-2">
-                                                    {new Date(answer.date).toLocaleDateString()}
-                                                </span>
-                                            </div>
-
-                                            <div className="flex items-center gap-3">
-                                                {/* Approval status/button */}
-
-                                                <button
-                                                    onClick={() => handleApproveAnswer(answer.id, answer.approved)}
-                                                    className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.approved
-                                                        ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                        }`}
-                                                >
-                                                    <ImageComponent
-                                                        src={answer.approved ? ApprovedIcon.src : ApproveIcon.src}
-                                                        alt={answer.approved ? 'approved' : 'approve'}
-                                                        width={16}
-                                                        height={16}
-                                                        className="w-4 h-4"
-                                                    />
-                                                    {answer.approved ? 'Approved' : 'Approve'}
-                                                </button>
-
-
-                                                {/* Like button */}
-                                                <button
-                                                    onClick={() => {
-                                                        const isLiked = answerLikes[answer.id];
-                                                        if (isLiked) {
-                                                            handleUnlikeAnswer(params.id, answer.id);
-                                                        } else {
-                                                            handleLikeAnswer(params.id, answer.id);
-                                                        }
-                                                    }}
-                                                    className={`flex items-center gap-1 transition-colors ${answerLikes[answer.id]
-                                                            ? 'text-blue-600'
-                                                            : 'text-gray-600 hover:text-blue-600'
-                                                        }`}
-                                                    disabled={!isAuthenticated}
-                                                >
-                                                    <ImageComponent
-                                                        src={UpIcon.src}
-                                                        alt="like"
-                                                        width={16}
-                                                        height={16}
-                                                        className={`w-4 h-4 ${answerLikes[answer.id] ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
-                                                    />
-                                                    <span className="text-sm">{answer.likes_count || 0}</span>
-                                                </button>
-
-                                                {/* Delete button for answer owner or question owner */}
-                                                {(isAuthenticated && ((user?.id === answer.user_id) || isOwner)) && (
-                                                    <button
-                                                        onClick={() => handleDeleteAnswer(answer.id)}
-                                                        className="text-red-600 hover:text-red-800 transition-colors"
-                                                    >
-                                                        <ImageComponent
-                                                            src={TrashIcon.src}
-                                                            alt="delete"
-                                                            width={16}
-                                                            height={16}
-                                                            className="w-4 h-4"
-                                                        />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* Answer content with rich text rendering */}
-                                        <div
-                                            className="prose prose-sm max-w-none text-neutral-900 leading-relaxed"
-                                            dangerouslySetInnerHTML={{ __html: answer.content }}
-                                        />
-
-                                        {/* Answer replies if any */}
-                                        {answer.replies && answer.replies.length > 0 && (
-                                            <div className="bg-gray-50 p-4 rounded-lg mt-4">
-                                                <h5 className="font-medium text-gray-700 mb-2">Replies:</h5>
-                                                {answer.replies.map((reply, index) => (
-                                                    <div key={index} className="mb-2 last:mb-0">
-                                                        <span className="font-medium text-gray-600">
-                                                            {reply.user?.username || 'User'}:
-                                                        </span>
-                                                        <span className="ml-2 text-gray-700">{reply.content}</span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                                    <AnswerWithReplies
+                                        key={answer.id}
+                                        answer={answer}
+                                        threadId={params.id}
+                                        isOwner={isOwner}
+                                        user={user}
+                                        isAuthenticated={isAuthenticated}
+                                        answerLikes={answerLikes}
+                                        showReplies={showReplies}
+                                        onShowReplies={handleShowReplies}
+                                        onApproveAnswer={handleApproveAnswer}
+                                        onLikeAnswer={handleLikeAnswer}
+                                        onUnlikeAnswer={handleUnlikeAnswer}
+                                        onDeleteAnswer={handleDeleteAnswer}
+                                    />
                                 ))}
                             </div>
                         ) : (
@@ -806,4 +755,517 @@ const QuestionPage = () => {
     );
 };
 
+
+const AnswerWithReplies = ({
+    answer,
+    threadId,
+    isOwner,
+    user,
+    isAuthenticated,
+    answerLikes,
+    showReplies,
+    onShowReplies,
+    onApproveAnswer,
+    onLikeAnswer,
+    onUnlikeAnswer,
+    onDeleteAnswer
+}) => {
+    const {
+        replies,
+        loading: repliesLoading,
+        error: repliesError,
+        refetch: refetchReplies
+    } = useGetAllReplies(threadId, answer.id);
+
+    const [showAnswerReplyForm, setShowAnswerReplyForm] = useState(false);
+    const [answerReplyContent, setAnswerReplyContent] = useState('');
+
+    const { addReply: addAnswerReply, loading: addAnswerReplyLoading } = useAddReply(threadId, answer.id, answerReplyContent, null);
+
+
+    const answerReplyEditor = useEditor({
+        content: '',
+        extensions: [
+            StarterKit.configure({
+                codeBlock: false,
+            }),
+            Placeholder.configure({
+                placeholder: "Write your reply to this answer...",
+                emptyEditorClass: "is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none",
+            }),
+        ],
+        onUpdate: ({ editor }) => {
+            setAnswerReplyContent(editor.getHTML());
+        },
+    });
+
+    const shouldShowReplies = showReplies[answer.id];
+
+    const handleAddAnswerReply = async () => {
+        if (!answerReplyContent || answerReplyContent.trim() === '<p></p>' || !answerReplyContent.trim()) {
+            alert('Please write a reply before submitting.');
+            return;
+        }
+
+        try {
+            const result = await addAnswerReply();
+            if (result.success) {
+                // Clear the editor and hide form
+                answerReplyEditor?.commands.clearContent();
+                setAnswerReplyContent('');
+                setShowAnswerReplyForm(false);
+                refetchReplies(); // Refresh to show new reply
+            } else {
+                alert('Failed to add reply: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error adding reply:', error);
+            alert('An error occurred while adding the reply.');
+        }
+    };
+
+    const handleCancelAnswerReply = () => {
+        answerReplyEditor?.commands.clearContent();
+        setAnswerReplyContent('');
+        setShowAnswerReplyForm(false);
+    };
+
+    return (
+        <div className="py-8 px-12 bg-white rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+                <div className="text-secondary-500 md:text-xl text-base font-medium flex items-center gap-2">
+                    <ImageComponent
+                        src={UserpicIcon.src}
+                        alt="user"
+                        width={27}
+                        height={27}
+                        className="w-[27px] h-[27px] md:w-[40px] md:h-[40px]"
+                    />
+                    {answer.user?.username || 'User'}
+                    <span className="text-sm text-gray-500 ml-2">
+                        {new Date(answer.date).toLocaleDateString()}
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    {/* Approval button */}
+                    {isOwner && (
+                        <button
+                            onClick={() => onApproveAnswer(answer.id, answer.approved)}
+                            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.approved
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                }`}
+                        >
+                            <ImageComponent
+                                src={answer.approved ? ApprovedIcon.src : ApproveIcon.src}
+                                alt={answer.approved ? 'approved' : 'approve'}
+                                width={16}
+                                height={16}
+                                className="w-4 h-4"
+                            />
+                            {answer.approved ? 'Approved' : 'Approve'}
+                        </button>
+                    )}
+
+                    {/* Show approved status for non-owners */}
+                    {!isOwner && answer.approved && (
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-100 text-green-700">
+                            <ImageComponent
+                                src={ApprovedIcon.src}
+                                alt="approved"
+                                width={16}
+                                height={16}
+                                className="w-4 h-4"
+                            />
+                            Approved
+                        </div>
+                    )}
+
+                    {/* Like button */}
+                    <button
+                        onClick={() => {
+                            const isLiked = answerLikes[answer.id];
+                            if (isLiked) {
+                                onUnlikeAnswer(threadId, answer.id);
+                            } else {
+                                onLikeAnswer(threadId, answer.id);
+                            }
+                        }}
+                        className={`flex items-center gap-1 transition-colors ${answerLikes[answer.id]
+                            ? 'text-blue-600'
+                            : 'text-gray-600 hover:text-blue-600'
+                            }`}
+                        disabled={!isAuthenticated}
+                    >
+                        <ImageComponent
+                            src={UpIcon.src}
+                            alt="like"
+                            width={16}
+                            height={16}
+                            className="w-4 h-4"
+                        />
+                        <span className="text-sm">{answer.likes_count || 0}</span>
+                    </button>
+
+                    {/* Delete button */}
+                    {(isAuthenticated && ((user?.id === answer.user_id) || isOwner)) && (
+                        <button
+                            onClick={() => onDeleteAnswer(answer.id)}
+                            className="text-red-600 hover:text-red-800 transition-colors"
+                        >
+                            <ImageComponent
+                                src={TrashIcon.src}
+                                alt="delete"
+                                width={16}
+                                height={16}
+                                className="w-4 h-4"
+                            />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Answer content */}
+            <div
+                className="prose prose-sm max-w-none text-neutral-900 leading-relaxed mb-4"
+                dangerouslySetInnerHTML={{ __html: answer.content }}
+            />
+
+            {isAuthenticated && (
+                <div className="flex items-center gap-3 mb-4">
+                    <button
+                        onClick={() => setShowAnswerReplyForm(!showAnswerReplyForm)}
+                        className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                        {showAnswerReplyForm ? 'Cancel Reply' : '↳ Reply to this answer'}
+                    </button>
+                </div>
+            )}
+
+            {showAnswerReplyForm && (
+                <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="mb-2">
+                        <span className="text-sm text-gray-600">
+                            Replying to {answer.user?.username || 'User'}'s answer
+                        </span>
+                    </div>
+
+                    <EditorContent
+                        className="w-full min-h-[100px] rounded-md p-3 bg-white border border-gray-200 resize-none outline-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-3 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none"
+                        editor={answerReplyEditor}
+                    />
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleAddAnswerReply}
+                            disabled={addAnswerReplyLoading}
+                            className="bg-orange-500 text-white px-4 py-2 rounded text-sm hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {addAnswerReplyLoading ? 'Submitting...' : 'Submit Reply'}
+                        </button>
+                        <button
+                            onClick={handleCancelAnswerReply}
+                            className="bg-gray-400 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Show Replies Section */}
+            <div className="mt-4 border-t pt-4">
+                <button
+                    onClick={() => onShowReplies(answer.id)}
+                    className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 transition-colors"
+                    disabled={repliesLoading}
+                >
+                    {repliesLoading ? (
+                        <span>Loading replies...</span>
+                    ) : (
+                        <>
+                            <span>
+                                {shouldShowReplies ? 'Hide' : 'Show'} replies
+                                {replies && replies.length > 0 && ` (${replies.length})`}
+                            </span>
+                            <span className={`transition-transform ${shouldShowReplies ? 'rotate-90' : ''}`}>
+                                →
+                            </span>
+                        </>
+                    )}
+                </button>
+
+                {/* Display replies when shown */}
+                {shouldShowReplies && (
+                    <div className="mt-4">
+                        {repliesError ? (
+                            <p className="text-red-500 text-sm">Error loading replies: {repliesError}</p>
+                        ) : replies && replies.length > 0 ? (
+                            <div className="space-y-3 pl-4 border-l-2 border-gray-200">
+                                {replies.map((reply) => (
+                                    <ReplyComponent
+                                        key={reply.id}
+                                        reply={reply}
+                                        threadId={threadId}
+                                        answerId={answer.id}
+                                        user={user}
+                                        isAuthenticated={isAuthenticated}
+                                        onRefetch={refetchReplies}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-gray-500 text-sm italic pl-4">No replies yet.</p>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+
+
+// Reply component using proper hooks
+const ReplyComponent = ({
+    reply,
+    threadId,
+    answerId,
+    user,
+    isAuthenticated,
+    onRefetch,
+    depth = 0
+}) => {
+    // Use proper reply hooks
+    const { deleteReply, loading: deleteLoading } = useDeleteReply(threadId, answerId, reply.id);
+    const { likeReply, loading: likeLoading } = useLikeReply(threadId, answerId, reply.id);
+    const { unlikeReply, loading: unlikeLoading } = useUnlikeReply(threadId, answerId, reply.id);
+
+    const { checkIfLikedReply } = useCheckIfLikedReply(threadId, answerId, reply.id);
+
+    const [showReplyForm, setShowReplyForm] = useState(false);
+    const [replyContent, setReplyContent] = useState('');
+    const [isLiked, setIsLiked] = useState(false);
+
+
+    const { addReply, loading: addReplyLoading } = useAddReply(threadId, answerId, replyContent, reply.id);
+
+    useEffect(() => {
+        const checkLikeStatus = async () => {
+            if (isAuthenticated && user) {
+                try {
+                    const isLikedResult = await checkIfLikedReply();
+                    if (isLikedResult !== undefined) {
+                    setIsLiked(isLikedResult); 
+                }
+                } catch (error) {
+                    console.error('Error checking reply like status:', error);
+                }
+            }
+        };
+
+        checkLikeStatus();
+    }, [isAuthenticated, user, threadId, answerId, reply.id]);
+
+    const replyEditor = useEditor({
+        content: '',
+        extensions: [
+            StarterKit.configure({
+                codeBlock: false,
+            }),
+            Placeholder.configure({
+                placeholder: "Write your reply...",
+                emptyEditorClass: "is-editor-empty first:before:block before:content-[attr(data-placeholder)] before:text-[#adb5bd] before:float-left before:h-0 before:pointer-events-none",
+            }),
+        ],
+        onUpdate: ({ editor }) => {
+            setReplyContent(editor.getHTML());
+        },
+    });
+
+    const handleDeleteReply = async () => {
+        if (confirm('Are you sure you want to delete this reply?')) {
+            const result = await deleteReply();
+            if (result.success) {
+                onRefetch(); // Refresh replies after deletion
+            }
+        }
+    };
+
+    const handleLikeReply = async () => {
+        try {
+            if (isLiked) {
+                const result = await unlikeReply();
+                if (result.success) {
+                    setIsLiked(false);
+                    onRefetch();
+                }
+            } else {
+                const result = await likeReply();
+                if (result.success) {
+                    setIsLiked(true);
+                    onRefetch();
+                }
+            }
+        } catch (error) {
+            console.error('Error toggling like:', error);
+        }
+    };
+
+    const handleUnlikeReply = async () => {
+        const result = await unlikeReply();
+        if (result.success) {
+            onRefetch(); // Refresh to show updated like count
+        }
+    };
+
+    const handleAddReply = async () => {
+        if (!replyContent || replyContent.trim() === '<p></p>' || !replyContent.trim()) {
+            alert('Please write a reply before submitting.');
+            return;
+        }
+
+        try {
+            const result = await addReply();
+            if (result.success) {
+                // Clear the editor and hide form
+                replyEditor?.commands.clearContent();
+                setReplyContent('');
+                setShowReplyForm(false);
+                onRefetch(); // Refresh to show new reply
+            } else {
+                alert('Failed to add reply: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Error adding reply:', error);
+            alert('An error occurred while adding the reply.');
+        }
+    };
+
+    const handleCancelReply = () => {
+        replyEditor?.commands.clearContent();
+        setReplyContent('');
+        setShowReplyForm(false);
+    };
+
+    return (
+        <div
+            className="p-3 bg-gray-50 rounded-lg"
+            style={{ marginLeft: `${depth * 20}px` }}
+        >
+            <div className="flex justify-between items-start mb-2">
+                <div className="flex items-center gap-2">
+                    <span className="font-medium text-sm text-gray-700">
+                        {reply.user?.username || 'User'}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                        {new Date(reply.date).toLocaleDateString()}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                        {reply.likes_count || 0} likes
+                    </span>
+                </div>
+
+                {/* Reply actions */}
+                <div className="flex items-center gap-2">
+                    {/* Like button */}
+                    <button
+                        onClick={handleLikeReply}
+                        disabled={!isAuthenticated || likeLoading || unlikeLoading}
+                        className={`flex items-center gap-1 transition-colors ${isLiked
+                            ? 'text-blue-600'
+                            : 'text-gray-600 hover:text-blue-600'
+                            }`}
+                    >
+                        <ImageComponent
+                            src={UpIcon.src}
+                            alt="like"
+                            width={14}
+                            height={14}
+                            className="w-[14px] h-[14px]"
+                        />
+                        <span className="text-xs">{reply.likes_count || 0}</span>
+                    </button>
+                    {/* Delete button for reply owner */}
+                    {isAuthenticated && user?.id === reply.user_id && (
+                        <button
+                            onClick={handleDeleteReply}
+                            disabled={deleteLoading}
+                            className="text-xs text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+
+                        </button>
+                    )}
+                </div>
+            </div>
+            <div
+                className="text-sm text-gray-800 mb-2 prose prose-xs max-w-none"
+                dangerouslySetInnerHTML={{ __html: reply.content }}
+            />
+
+            {isAuthenticated && depth < 3 && ( // Limit nesting to 3 levels
+                <div className="flex items-center gap-3 mt-2 mb-3">
+                    <button
+                        onClick={() => setShowReplyForm(!showReplyForm)}
+                        className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                        {showReplyForm ? 'Cancel Reply' : '↳ Reply'}
+                    </button>
+                </div>
+            )}
+
+            {showReplyForm && (
+                <div className="mt-3 mb-3 p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="mb-2">
+                        <span className="text-xs text-gray-500">
+                            Replying to {reply.user?.username || 'User'}
+                        </span>
+                    </div>
+
+                    {/* Simple Editor for Replies */}
+                    <EditorContent
+                        className="w-full min-h-[80px] rounded-md p-2 bg-gray-50 border border-gray-200 resize-none outline-none focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 mb-3 [&_.ProseMirror]:outline-none [&_.ProseMirror]:focus:outline-none"
+                        editor={replyEditor}
+                    />
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleAddReply}
+                            disabled={addReplyLoading}
+                            className="bg-orange-500 text-white px-3 py-1 rounded text-xs hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {addReplyLoading ? 'Submitting...' : 'Submit Reply'}
+                        </button>
+                        <button
+                            onClick={handleCancelReply}
+                            className="bg-gray-400 text-white px-3 py-1 rounded text-xs hover:bg-gray-500 transition-colors"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Display nested replies if they exist */}
+            {reply.children && reply.children.length > 0 && (
+                <div className="mt-2 space-y-2">
+                    {reply.children.map((childReply) => (
+                        <ReplyComponent
+                            key={childReply.id}
+                            reply={childReply}
+                            threadId={threadId}
+                            answerId={answerId}
+                            user={user}
+                            isAuthenticated={isAuthenticated}
+                            onRefetch={onRefetch}
+                            depth={depth + 1}
+                        />
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 export default QuestionPage;

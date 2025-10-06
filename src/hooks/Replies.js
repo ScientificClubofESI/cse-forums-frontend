@@ -60,7 +60,7 @@ export const useAddReply = (threadId, answerId, content, parentId ) => {
       // if the parent id is null we set the parent id to be the answer id
       const response = await api.post(`/threads/${threadId}/answers/${answerId}/replies/create`, {
         content: content.trim(),
-        parent_id: parentId || answerId
+        parent_id: parentId || null
       });
       if (response.data.success) {
         setSuccess(true);
