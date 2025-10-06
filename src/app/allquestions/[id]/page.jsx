@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "../../../hooks/Auth";
 import { useQuestion, useSaveThread, useVoteThread, useDeleteThread } from "../../../hooks/Questions";
-import { useAddAnswer, useGetAllAnswers, useApproveAnswer, useDisapproveAnswer, useLikeAnswer, useDeleteAnswer } from "../../../hooks/Answers";
+import { useAddAnswer, useGetAllAnswers, useApproveAnswer, useDisapproveAnswer, useLikeAnswer, useUnlikeAnswer, useDeleteAnswer, useCheckIfLiked } from "../../../hooks/Answers";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import BulletList from "@tiptap/extension-bullet-list";
@@ -59,18 +59,45 @@ const QuestionPage = () => {
     // Answer hooks
     const { addAnswer, loading: addAnswerLoading } = useAddAnswer();
     const { answers: answersData, loading: answersLoading, refetch: refetchAnswers } = useGetAllAnswers(params.id);
-    console.log(answersData)
     const { approveAnswer } = useApproveAnswer();
     const { disapproveAnswer } = useDisapproveAnswer();
     const { likeAnswer } = useLikeAnswer();
+    const { unlikeAnswer } = useUnlikeAnswer();
     const { deleteAnswer } = useDeleteAnswer();
+    const { checkIfLiked } = useCheckIfLiked();
 
+    const [answerLikes, setAnswerLikes] = useState({}); // Object: { answerId: boolean }
     const [answers, setAnswers] = useState([]);
     const [votes, setVotes] = useState(0);
     const [isSaved, setIsSaved] = useState(false);
     const [showAnswerEditor, setShowAnswerEditor] = useState(false);
     const [iconSize, setIconSize] = useState(25);
     const fileInputRef = useRef(null);
+
+    // Check if the answer is liked for all answers
+    useEffect(() => {
+        const fetchAllLikeStatuses = async () => {
+            if (isAuthenticated && user && answersData && answersData.length > 0) {
+                const likeStatuses = {};
+
+                // Check each answer individually
+                for (const answer of answersData) {
+                    try {
+                        const isLiked = await checkIfLiked(params.id, answer.id);
+                        likeStatuses[answer.id] = isLiked;
+                    } catch (error) {
+                        console.error(`Error checking like status for answer ${answer.id}:`, error);
+                        likeStatuses[answer.id] = false;
+                    }
+                }
+
+                setAnswerLikes(likeStatuses);
+            }
+        };
+
+        fetchAllLikeStatuses();
+    }, [isAuthenticated, user?.id, answersData?.length, params.id]);
+
 
     // Update icon size on mount and window resize
     useEffect(() => {
@@ -312,10 +339,35 @@ const QuestionPage = () => {
         }
 
         try {
-            await likeAnswer(questionId, answerId);
-            refetchAnswers(); // Refresh answers list
+            const result = await likeAnswer(questionId, answerId);
+            if (result.success) {
+                setAnswerLikes(prev => ({
+                    ...prev,
+                    [answerId]: true
+                }));
+                refetchAnswers(); // Refresh answers list
+            }
         } catch (err) {
             console.error('Error liking answer:', err);
+        }
+    };
+
+    const handleUnlikeAnswer = async (questionId, answerId) => {
+        if (!isAuthenticated) {
+            router.push('/auth/login');
+            return;
+        }
+        try {
+            const result = await unlikeAnswer(questionId, answerId);
+            if (result.success) {
+                setAnswerLikes(prev => ({
+                    ...prev,
+                    [answerId]: false
+                }));
+                refetchAnswers(); // Refresh answers list
+            }
+        } catch (err) {
+            console.error('Error unliking answer:', err);
         }
     };
 
@@ -673,8 +725,18 @@ const QuestionPage = () => {
 
                                                 {/* Like button */}
                                                 <button
-                                                    onClick={() => handleLikeAnswer(question.id, answer.id)}
-                                                    className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors"
+                                                    onClick={() => {
+                                                        const isLiked = answerLikes[answer.id];
+                                                        if (isLiked) {
+                                                            handleUnlikeAnswer(params.id, answer.id);
+                                                        } else {
+                                                            handleLikeAnswer(params.id, answer.id);
+                                                        }
+                                                    }}
+                                                    className={`flex items-center gap-1 transition-colors ${answerLikes[answer.id]
+                                                            ? 'text-blue-600'
+                                                            : 'text-gray-600 hover:text-blue-600'
+                                                        }`}
                                                     disabled={!isAuthenticated}
                                                 >
                                                     <ImageComponent
@@ -682,7 +744,7 @@ const QuestionPage = () => {
                                                         alt="like"
                                                         width={16}
                                                         height={16}
-                                                        className="w-4 h-4"
+                                                        className={`w-4 h-4 ${answerLikes[answer.id] ? 'text-blue-600' : 'text-gray-600 hover:text-blue-600'}`}
                                                     />
                                                     <span className="text-sm">{answer.likes_count || 0}</span>
                                                 </button>

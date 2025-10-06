@@ -338,4 +338,35 @@ export const useUpdateAnswer = () => {
   };
 }
 
-// to do, a function that checks if the user already liked a question
+// hook to check if the user liked the answer
+export const useCheckIfLiked = (threadId, answerId) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const checkIfLiked = async () => {
+    if (!threadId || !answerId) {
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/threads/${threadId}/answers/${answerId}/like`);
+      if (response.data.success) {
+        return response.data.data.isLiked;
+      } else {
+        const errorMessage = response.data.message || "Failed to check if liked";
+        setError(errorMessage);
+        console.error("Failed to check if liked:", errorMessage);
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to check if liked";
+      setError(errorMessage);
+      console.error("Error checking if liked:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { checkIfLiked, loading, error };
+};
