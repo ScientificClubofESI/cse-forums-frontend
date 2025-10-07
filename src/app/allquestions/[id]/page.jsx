@@ -540,7 +540,7 @@ const QuestionPage = () => {
                 {/* Owner Actions */}
                 {
                     isOwner && (
-                        <div className="w-full flex justify-end items-center gap-6 md:mr-10">
+                        <div className="w-full flex justify-end items-center p-6 gap-6 ">
                             <button
                                 onClick={handleEdit}
                                 className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"

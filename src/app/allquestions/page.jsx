@@ -31,8 +31,8 @@ export const AllQuestions = () => {
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { questions, loading: questionsLoading, error: questionsError, refetch } = useQuestions();
-  const { savedThreads, loading: savedLoading } = useSavedThreads(userId);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
+  const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
 
   const router = useRouter();
 
@@ -301,7 +301,7 @@ export const AllQuestions = () => {
                           disabled={saveLoading}
                         >
                           <Image
-                            src={savedThreads.has(question.id) ? saveblack : save}
+                            src={save}
                             alt="save icon"
                             className="w-[13px] lg:w-[24px]"
                           />

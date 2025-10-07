@@ -68,11 +68,11 @@ export const SavedQuestions = ({ savedQuestions }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentCards.map((card, index) => (
             <Card
-              user_id={card.user_id}
+              id={card.id}
               key={index}
-              title={card.Thread?.title}
-              content={card.Thread?.content}
-              answersCount={card.Thread?.answers_count}
+              title={card.title}
+              content={card.content}
+              answersCount={card.answers_count}
               onDelete={handleDelete}
             />
           ))}

@@ -15,11 +15,10 @@ export default function Profil() {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { savedQuestions, loading, error, refetch } = useGetUserSavedQuestions();
 
-  console.log("object", savedQuestions);
   return (
     <>
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-      <div className="w-full h-full bg-background-light">
+      <div className="min-h-screen w-full h-full bg-background-light">
         <div className="flex flex-col md:flex-row justify-center items-center sm:items-start gap-[48px] p-8 md:p-20">
           {/* Sidebar */}
           <Sidebar />

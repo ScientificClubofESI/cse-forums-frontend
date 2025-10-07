@@ -51,7 +51,7 @@ export const useQuestion = (id) => {
     setError(null);
     try {
       // Using authApi since this is now a public endpoint
-      const response = await authApi.get(`/threads/${id}`);
+      const response = await authApi.get(`/threads/thread/${id}`);
       console.log(response);
       setQuestion(response.data.data);
     } catch (err) {

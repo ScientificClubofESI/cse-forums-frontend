@@ -18,7 +18,7 @@ export default function Profil() {
   return (
     <>
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-      <div className="w-full h-full bg-background-light">
+      <div className="min-h-screen w-full h-full bg-background-light">
         <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20">
           {/* Sidebar */}
           <Sidebar />
