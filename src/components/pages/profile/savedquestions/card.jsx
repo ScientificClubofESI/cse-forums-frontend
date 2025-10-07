@@ -39,7 +39,7 @@ const Card = ({ id, title, content, answersCount, onDelete }) => {
         dangerouslySetInnerHTML={{ __html: content }} 
       />
       <div className="flex flex-row justify-between">
-        <span className="py-[4px] px-[24px] md:text-lg font-nunito bg-slate-100">
+        <span className="py-[4px] px-[24px] md:text-lg font-nunito bg-slate-100 cursor-pointer" onClick={() => router.push(`/allquestions/${id}`)}>
           {answersCount} Answers
         </span>
 
