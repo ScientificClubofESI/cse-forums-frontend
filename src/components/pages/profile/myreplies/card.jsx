@@ -15,9 +15,10 @@ const Card = ({ title, content, approved, onDelete }) => {
         <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">
           Answer:{" "}
         </h3>
-        <p className="text-neutral-600 font-light text-lg md:text-xl font-nunito">
-          {content}
-        </p>
+        <div 
+        className="text-neutral-600 font-light text-lg md:text-xl font-nunito prose prose-lg max-w-none"
+        dangerouslySetInnerHTML={{ __html: content }} 
+      />
       </div>
 
       <div className="flex flex-row justify-between">

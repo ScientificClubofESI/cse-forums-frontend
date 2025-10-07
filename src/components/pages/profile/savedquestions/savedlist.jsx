@@ -6,7 +6,7 @@ import Card from "./card";
 import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
 
-export const SavedQuestions = ({ savedQuestions }) => {
+export const SavedQuestions = ({ savedQuestions ,  onRefresh, loading, error }) => {
   const [activeTab, setActiveTab] = useState("Recent"); // Track active tab
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -26,15 +26,13 @@ export const SavedQuestions = ({ savedQuestions }) => {
     // Add filtering logic for cardData based on selected tab
   };
 
-  const handleEdit = () => {
-    alert("Edit clicked!");
-  };
-
-  const handleDelete = () => {
-    alert("Delete clicked!");
-  };
-
   //console.log(currentCards)
+  const handleDelete = async (threadId) => {
+    // Refresh the list after successful deletion
+    if (onRefresh) {
+      onRefresh();
+    }
+  };
 
   return (
     <div className="flex flex-col gap-[48px]">

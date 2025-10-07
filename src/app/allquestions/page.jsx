@@ -256,9 +256,10 @@ export const AllQuestions = () => {
                       </div>
                     </div>
 
-                    <div className="text-neutral-500 font-serif text-sm lg:text-2xl">
-                      <p>{question.content}</p>
-                    </div>
+                    <div
+                      className="text-neutral-600 font-light text-lg md:text-xl font-nunito prose prose-lg max-w-none"
+                      dangerouslySetInnerHTML={{ __html: question.content }}
+                    />
 
                     <div className="w-full flex flex-row justify-between items-center gap-6">
                       {/* Drop answer + number of answer buttons */}

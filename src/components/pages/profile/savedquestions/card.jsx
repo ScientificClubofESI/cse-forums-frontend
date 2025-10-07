@@ -2,23 +2,42 @@ import React from "react";
 import Image from "next/image";
 import unsaved from "../../../../../public/icons/save.png";
 import { useSaveThread } from "@/hooks/Questions";
-
+import { useState } from "react";
 const Card = ({ id, title, content, answersCount, onDelete }) => {
+   const { unsaveThread, loading } = useSaveThread();
+  const [isUnsaving, setIsUnsaving] = useState(false);
+
   //console.log(id, title, content);
   // logic for unsave thread
-  const { unsaveThread, isSaved, loading } = useSaveThread(id);
 
-  const handle_unsaveThread = () => {
-    unsaveThread(id);
+   const handle_unsaveThread = async () => {
+    setIsUnsaving(true);
+    try {
+      const result = await unsaveThread(id);
+      if (result.success) {
+        // Call onDelete to refresh the parent list
+        onDelete && onDelete(id);
+      } else {
+        alert('Failed to unsave thread: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error unsaving thread:', error);
+      alert('An error occurred while unsaving the thread.');
+    } finally {
+      setIsUnsaving(false);
+    }
   };
+
+
   return (
     <div className="flex flex-col py-[12px] md:py-[16px] px-[18px] md:px-[24px] bg-white rounded-[8px] gap-[8px] shadow-[0px_0px_64px_0px_#D8D8D866]">
       <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">
         {title}
       </h3>
-      <p className="text-neutral-600 font-light text-lg md:text-xl font-nunito">
-        {content}
-      </p>
+       <div 
+        className="text-neutral-600 font-light text-lg md:text-xl font-nunito prose prose-lg max-w-none"
+        dangerouslySetInnerHTML={{ __html: content }} 
+      />
       <div className="flex flex-row justify-between">
         <span className="py-[4px] px-[24px] md:text-lg font-nunito bg-slate-100">
           {answersCount} Answers
@@ -27,6 +46,7 @@ const Card = ({ id, title, content, answersCount, onDelete }) => {
         <button
           className="px-[16px] py-[4px] text-white bg-neutral-700 flex items-center gap-[8px]"
           onClick={handle_unsaveThread}
+          disabled={isUnsaving || loading}
         >
           Unsave
           <Image src={unsaved} alt="Trash icon" width={16} height={16} />

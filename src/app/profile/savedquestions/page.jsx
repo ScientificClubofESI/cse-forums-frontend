@@ -47,7 +47,10 @@ export default function Profil() {
             </div>
 
             <div>
-              <MySavedList savedQuestions={savedQuestions} />
+              <MySavedList  savedQuestions={savedQuestions} 
+                onRefresh={refetch}
+                loading={loading}
+                error={error} />
             </div>
           </div>
         </div>
