@@ -38,6 +38,39 @@ export const useQuestions = () => {
     setQuestions, // For external updates (like search results)
   };
 };
+// hook to get all questions but when the user is authenticated
+export const useAuthenticatedQuestions = () => {
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchQuestions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      // Using api instance for authenticated endpoints
+      const response = await api.get("/threads/all_authenticated");
+      setQuestions(response.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch questions"
+      );
+      console.error("Failed to fetch questions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+  return {
+    questions,
+    loading,
+    error,
+    refetch: fetchQuestions,
+  };
+}
 
 export const useQuestion = (id) => {
   const [question, setQuestion] = useState(null);

@@ -20,6 +20,7 @@ import PopUp from "../../components/PopUp/page";
 import Search from "@/components/search/search";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";
+import { useAuthenticatedQuestions } from "@/hooks/Questions";
 
 // import the cusotm hooks
 import useAuth from "@/hooks/Auth";
@@ -30,10 +31,16 @@ export const AllQuestions = () => {
 
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions, loading: questionsLoading, error: questionsError, refetch } = useQuestions();
+  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic } = useQuestions();
+  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth } = useAuthenticatedQuestions();
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
   const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
 
+  const questions = isAuthenticated ? authQuestions : publicQuestions;
+  const questionsLoading = isAuthenticated ? questionsAuthLoading : publicLoading;
+  const questionsError = isAuthenticated ? authError : publicError;
+  const refetch = isAuthenticated ? refetchAuth : refetchPublic;
+  
   const router = useRouter();
 
   // Local state
@@ -81,21 +88,17 @@ export const AllQuestions = () => {
     router.push(`/allquestions/${thread.id}`);
   };
 
-  const handleSaveThread = async (threadId) => {
+  const handleSaveThread = async (threadId, isSaved) => {
     if (!isAuthenticated) {
       router.push('/auth/login');
       return;
     }
 
     try {
-      const isSaved = savedThreads.has(threadId);
       const result = await toggleSaveThread(threadId, userId, isSaved);
 
       if (result.success) {
-        // Optionally show success message
-        console.log(isSaved ? 'Thread unsaved' : 'Thread saved');
-        // The savedThreads will be updated when the useSavedThreads hook refetches
-        window.location.reload(); // Quick fix to refresh saved threads - can be improved
+        refetch();
       } else {
         console.error('Failed to toggle save:', result.error);
       }
@@ -112,15 +115,6 @@ export const AllQuestions = () => {
     openPopup();
     setthreadId(questionId);
   };
-
-  // Show loading while checking authentication
-  if (authLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-lg">Checking authentication...</div>
-      </div>
-    );
-  }
 
   return (
     <div className=" bg-gray-100 min-h-screen">
@@ -298,7 +292,7 @@ export const AllQuestions = () => {
                         {/* Save button */}
                         <button
                           className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                          onClick={() => handleSaveThread(question.id)}
+                          onClick={() => handleSaveThread(question.id, question.isSaved)}
                           disabled={saveLoading}
                         >
                           <Image
@@ -306,7 +300,7 @@ export const AllQuestions = () => {
                             alt="save icon"
                             className="w-[13px] lg:w-[24px]"
                           />
-                          {saveLoading ? 'Saving...' : 'Save'}
+                          {saveLoading ? 'Processing...' : (question.isSaved ? 'Unsave' : 'Save')}
                         </button>
                       </div>
                     </div>

@@ -29,7 +29,7 @@ import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
 import api from "@/lib/api";
 
 // Import the custom hook
-import { useAddAnswer } from "@/hooks/Questions";
+import { useAddAnswer } from "@/hooks/Answers";
 import useAuth from "@/hooks/Auth";
 
 export default function PopUp({
