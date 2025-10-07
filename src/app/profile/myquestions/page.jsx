@@ -5,7 +5,6 @@ import Sidebar from "@/components/profile/sidebar";
 import { useState, useEffect } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import api from "@/lib/api";
 
 // import the auth hook
 import useAuth from "@/hooks/Auth";

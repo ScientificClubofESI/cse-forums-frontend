@@ -7,7 +7,6 @@ import settings from "../../../public/pages/nav-bar/icons/Frame33604.svg";
 import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
 import logo from '../../../public/pages/nav-bar/icons/Logo.svg'
 import api from "@/lib/api";
-import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
 
 // the lgout hook

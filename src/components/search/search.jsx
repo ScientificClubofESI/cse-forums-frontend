@@ -1,7 +1,6 @@
 import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import api from "@/lib/api";
 import icon from  "../../../public/pages/nav-bar/icons/Icon.svg";
 
 

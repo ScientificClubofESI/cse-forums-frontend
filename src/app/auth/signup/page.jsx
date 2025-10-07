@@ -1,13 +1,11 @@
 "use client";
 import { useState } from "react";
-import Cookies from "js-cookie";
 import Image from "next/image";
 import logo from "../../../../public/icons/Subtract.png";
 import pic from "../../../../public/images/illustrations/Code typing-sis.png";
 import linkedin from "../../../../public/icons/linkedin icone.png";
 import emailIcone from "../../../../public/icons/emailIcone.png";
 import userIcone from "../../../../public/icons/userIcone.png";
-import authApi from "@/lib/authApi";
 import { useRouter } from "next/navigation";
 
 

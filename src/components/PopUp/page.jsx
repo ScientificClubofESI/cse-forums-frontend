@@ -26,7 +26,6 @@ import {
 } from "iconsax-react";
 import { common, createLowlight } from "lowlight";
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
-import api from "@/lib/api";
 
 // Import the custom hook
 import { useAddAnswer } from "@/hooks/Answers";

@@ -4,8 +4,6 @@ import MyRepliesList from "../../../components/pages/profile/myreplies/repliesli
 import Sidebar from "@/components/profile/sidebar";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import { useState, useEffect } from "react";
-import api from "@/lib/api";
 
 // import the auth hook
 import useAuth from "@/hooks/Auth";

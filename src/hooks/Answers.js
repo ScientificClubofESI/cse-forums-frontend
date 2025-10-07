@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import authApi from "@/lib/authApi"; // Using authApi for public endpoints
 import api from "@/lib/api";
-
 
 
 export const useAddAnswer = () => {

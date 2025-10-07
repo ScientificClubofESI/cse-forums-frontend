@@ -5,7 +5,6 @@ import Image from "next/image";
 import User from "../../../public/images/avatars/Icon.png";
 // import Myquestions from "./myquestions/page";
 import { useEffect, useState, useCallback } from "react";
-import api from "@/lib/api";
 // Import the hooks
 import useAuth, { useUserProfile } from "@/hooks/Auth";
 

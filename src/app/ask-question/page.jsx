@@ -28,7 +28,6 @@ import { common, createLowlight } from "lowlight";
 import { TfiAlignLeft, TfiListOl, TfiAlignRight } from "react-icons/tfi";
 import { IoIosClose } from "react-icons/io";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 // the custom hooks

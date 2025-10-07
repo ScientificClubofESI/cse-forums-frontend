@@ -3,11 +3,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import userpicture from "../../../../public/images/avatars/userpicture.svg"; // Importing a user picture (SVG file)
-import api from "@/lib/api";
 import { useEffect } from "react";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
-import Link from "next/link";
 
 // Import the hooks
 import useAuth, { useUserProfile } from "@/hooks/Auth";

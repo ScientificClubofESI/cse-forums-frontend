@@ -1,13 +1,11 @@
 "use client";
 import { useState } from "react";
-import Cookies from "js-cookie";
 import Image from "next/image";
 import logo from "../../../../public/icons/Subtract.png";
 import pic from "../../../../public/images/illustrations/Coding workshop-pana.png";
 import emailIcone from "../../../../public/icons/emailIcone.png";
 import eyeclosed from "../../../../public/icons/eye-closed.png";
 import { useRouter } from "next/navigation";
-import authApi from "@/lib/authApi";
 
 // the login hook 
 import { useLogin } from "@/hooks/Auth";
