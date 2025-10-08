@@ -30,6 +30,7 @@ export const MyReplies = ({ answers }) => {
     alert("Delete clicked!");
   };
 
+  console.log("answers in my replies:", answers);
   return (
     <div className="flex flex-col gap-[48px]">
       {/* Tabs */}
@@ -62,7 +63,7 @@ export const MyReplies = ({ answers }) => {
             <Card
               user_id={card.user_id}
               key={index}
-              title={card.threadTitle}
+              title={card.Thread.title}
               content={card.content}
               approved={card.isApproved}
               onDelete={() => alert("Delete clicked!")}

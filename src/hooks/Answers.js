@@ -59,20 +59,16 @@ export const useAddAnswer = () => {
   };
 };
 
-export const useUserAnswers = (userId) => {
+export const useUserAnswers = () => {
   const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchUserAnswers = async () => {
-    if (!userId) {
-      setAnswers([]);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(`/users/${userId}/answers`);
+      const response = await api.get(`/user/profile/answers`);
       setAnswers(response.data.data);
     } catch (err) {
       setError(
@@ -87,7 +83,7 @@ export const useUserAnswers = (userId) => {
   };
   useEffect(() => {
     fetchUserAnswers();
-  }, [userId]);
+  }, []);
 
   return {
     answers,

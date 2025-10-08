@@ -7,11 +7,13 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 
 // import the auth hook
 import useAuth from "@/hooks/Auth";
-import { useUserAnswers } from "@/hooks/Questions";
+import { useUserAnswers } from "@/hooks/Answers";
 
 export default function Profil() {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { answers, loading, error } = useUserAnswers(userId);
+  const { answers, loading, error } = useUserAnswers();
+
+  console.log("answers: ", answers);
 
   return (
     <>
