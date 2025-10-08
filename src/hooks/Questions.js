@@ -72,6 +72,42 @@ export const useAuthenticatedQuestions = () => {
   };
 }
 
+export const useAuthenticatedQuestion = (id) => {
+  const [question, setQuestion] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchQuestion = async () => {
+
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Using api instance for authenticated endpoints
+      const response = await api.get(`/threads/authenticated/${id}`);
+      console.log(response);
+      setQuestion(response.data.data);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || err.message || "Failed to fetch question"
+      );
+      console.error("Failed to fetch question:", err);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+  }, [id]);
+  return {
+    question,
+    loading,
+    error,
+    refetch: fetchQuestion,
+  };
+}
+
 export const useQuestion = (id) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -332,12 +368,12 @@ export const useVoteThread = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const voteThread = async (threadId, voteType) => {
+  const voteThread = async (threadId, type) => {
     setLoading(true);
     setError(null);
     try {
       const response = await api.post(`/threads/${threadId}/vote`, {
-        voteType, // 'up' or 'down'
+        type, // 'up' or 'down'
       });
 
       if (response.data.success) {
@@ -370,6 +406,38 @@ export const useVoteThread = () => {
   };
 };
 
+export const useUnvoteThread = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const unvoteThread = async (threadId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.delete(`/threads/${threadId}/vote`);
+      if (response.data.success) {
+        return { success: true, message: "Vote removed successfully!" };
+      } else {
+        const errorMessage = response.data.message || "Failed to remove vote";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to remove vote";
+      setError(errorMessage);
+      console.error("Error removing vote:", err);
+      return { success: false, error: errorMessage };
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+  return {
+    unvoteThread,
+    loading,
+    error,
+  };
+};
 export const useGetUserSavedQuestions = () => {
   const [savedQuestions, setSavedQuestions] = useState([]);
   const [loading, setLoading] = useState(false);

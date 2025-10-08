@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "../../../hooks/Auth";
-import { useQuestion, useSaveThread, useVoteThread, useDeleteThread } from "../../../hooks/Questions";
+import { useQuestion, useSaveThread, useVoteThread, useDeleteThread, useUnvoteThread, useAuthenticatedQuestion } from "../../../hooks/Questions";
 import { useAddAnswer, useGetAllAnswers, useApproveAnswer, useDisapproveAnswer, useLikeAnswer, useUnlikeAnswer, useDeleteAnswer, useCheckIfLiked } from "../../../hooks/Answers";
 import { useGetAllReplies, useAddReply, useDeleteReply, useLikeReply, useUnlikeReply, useCheckIfLikedReply } from "../../../hooks/Replies";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -46,16 +46,28 @@ import SaveIcon from "../../../../public/pages/questionPage/save.svg";
 import UserpicIcon from "../../../../public/pages/questionPage/userpic.svg";
 import TrashIcon from "../../../../public/pages/questionPage/trash.svg";
 
+
 const QuestionPage = () => {
     const router = useRouter();
     const params = useParams();
     const { user, isAuthenticated } = useAuth();
 
     // Use custom hooks
-    const { question, loading, error } = useQuestion(params.id);
-    const { voteThread, loading: voteLoading } = useVoteThread();
+    const { question: publicQuestion, loading: publicLoading, error: publicError, refetch: refetchPublic } = useQuestion(params.id);
+    const { question: authenticatedQuestion, loading: authLoading, error: authError, refetch: refetchAuth } = useAuthenticatedQuestion(params.id);
+
     const { toggleSaveThread, loading: saveLoading } = useSaveThread();
     const { deleteThread, loading: deleteLoading } = useDeleteThread();
+    const { voteThread, loading: voteLoading } = useVoteThread();
+    const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
+
+    const question = isAuthenticated ? authenticatedQuestion : publicQuestion;
+    const loading = isAuthenticated ? authLoading : publicLoading;
+    const error = isAuthenticated ? authError : publicError;
+    const refetch = isAuthenticated ? refetchAuth : refetchPublic;
+
+
+
 
     // Answer hooks
     const { addAnswer, loading: addAnswerLoading } = useAddAnswer();
@@ -79,6 +91,14 @@ const QuestionPage = () => {
     const [repliesData, setRepliesData] = useState({});
 
     const replyHooks = useRef({});
+
+
+    useEffect(() => {
+        if (question) {
+            setVotes((question.upvotes || 0) - (question.downvotes || 0));
+            setIsSaved(question.isSaved || false);
+        }
+    }, [question]);
 
     // Function to get or create reply hook for specific answer
     const getReplyHook = useCallback((answerId) => {
@@ -285,22 +305,6 @@ const QuestionPage = () => {
         }
     }, [answersData]);
 
-    const handleVote = async (type) => {
-        if (!isAuthenticated) {
-            router.push('/auth/login');
-            return;
-        }
-        try {
-            const result = await voteThread(params.id, type);
-            if (result.success) {
-                const newVotes = type === 'up' ? votes + 1 : votes - 1;
-                setVotes(newVotes);
-            }
-        } catch (err) {
-            console.error('Error voting:', err);
-        }
-    };
-
     const handleSave = async () => {
         if (!isAuthenticated) {
             router.push('/auth/login');
@@ -419,6 +423,39 @@ const QuestionPage = () => {
         }
     };
 
+    const handleVote = async (threadId, voteType, currentUserVote) => {
+        if (!isAuthenticated) {
+            router.push('/auth/login');
+            return;
+        }
+
+        try {
+            let result;
+
+            // If user already voted with the same type, remove the vote
+            if (currentUserVote === voteType) {
+                result = await unvoteThread(threadId);
+                console.log('Vote removed');
+            } else {
+                // delete the old vote if exists and add the new vote
+                if (currentUserVote) {
+                    await unvoteThread(threadId);
+                }
+                result = await voteThread(threadId, voteType);
+                console.log(`${voteType} vote recorded`);
+            }
+            if (result.success) {
+                refetch();
+            } else {
+                console.error('Failed to vote:', result.error);
+                alert('Failed to vote: ' + result.error);
+            }
+        } catch (error) {
+            console.error('Failed to vote:', error);
+            alert('An error occurred while voting.');
+        }
+    };
+
     const isOwner = isAuthenticated && user && question && user.id === question.user_id;
 
     if (loading) {
@@ -458,32 +495,81 @@ const QuestionPage = () => {
                 {/* Question Card */}
                 <div className="bg-white w-[23rem] md:w-[77rem] flex flex-col items-start font-medium text-xl md:font-semibold md:text-5xl py-8 rounded-lg p-6 gap-4">
                     {/* Title and Votes */}
-                    <div className="text-neutral-900 md:ml-[1.8rem] flex items-center">
-                        <div className="flex flex-col">
-                            <button onClick={() => handleVote('up')}>
-                                <ImageComponent
-                                    src={UpIcon.src}
-                                    alt="upvote"
-                                    width={16}
-                                    height={16}
-                                    className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]"
-                                />
-                            </button>
-                            <button onClick={() => handleVote('down')}>
-                                <ImageComponent
-                                    src={DownIcon.src}
-                                    alt="downvote"
-                                    width={16}
-                                    height={16}
-                                    className="w-[16px] h-[16px] md:w-[32px] md:h-[32px]"
-                                />
-                            </button>
+                    <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8">
+                        {/* Enhanced voting section with separate up/down buttons */}
+                        <div className="flex flex-col items-center gap-2">
+                            {/* Upvote button */}
+                            {isAuthenticated ? (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleVote(question.id, 'upvote', question?.userVote);
+                                    }}
+                                    disabled={voteLoading || unvoteLoading}
+                                    className={`p-1 rounded transition-colors ${question?.hasUpvoted
+                                        ? 'text-green-600 bg-green-100 hover:bg-green-200'
+                                        : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
+                                        } disabled:opacity-50`}
+                                >
+                                    <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+                                    </svg>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        router.push('/auth/login');
+                                    }}
+                                    className="p-1 rounded text-gray-600 hover:text-green-600"
+                                >
+                                    <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                    </svg>
+                                </button>
+                            )}
+
+                            {/* Vote count */}
+                            <div className="font-sans text-sm lg:text-2xl text-neutral-900 font-semibold">
+                                {(question?.upvotes || 0) - (question?.downvotes || 0)}
+                            </div>
+
+                            {/* Downvote button */}
+                            {isAuthenticated ? (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleVote(question.id, 'downvote', question?.userVote);
+                                    }}
+                                    disabled={voteLoading || unvoteLoading}
+                                    className={`p-1 rounded transition-colors ${question?.hasDownvoted
+                                        ? 'text-red-600 bg-red-100 hover:bg-red-200'
+                                        : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
+                                        } disabled:opacity-50`}
+                                >
+                                    <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                                    </svg>
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        router.push('/auth/login');
+                                    }}
+                                    className="p-1 rounded text-gray-600 hover:text-red-600"
+                                >
+                                    <svg className="w-6 h-6 lg:w-8 lg:h-8 rotate-180" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                    </svg>
+                                </button>
+                            )}
                         </div>
-                        <div className="md:text-3xl md:font-medium font-medium text-sm md:ml-[0.5rem] text-neutral-900">
-                            {votes}
-                        </div>
-                        <div className="text-neutral-900 md:ml-[1.5rem] ml-[0.7rem] md:text-5xl md:font-semibold font-medium">
-                            {question?.title}
+
+                        <div>
+                            <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                                {question?.title}
+                            </h1>
                         </div>
                     </div>
                     {/* Posted Date */}
@@ -1057,8 +1143,8 @@ const ReplyComponent = ({
                 try {
                     const isLikedResult = await checkIfLikedReply();
                     if (isLikedResult !== undefined) {
-                    setIsLiked(isLikedResult); 
-                }
+                        setIsLiked(isLikedResult);
+                    }
                 } catch (error) {
                     console.error('Error checking reply like status:', error);
                 }

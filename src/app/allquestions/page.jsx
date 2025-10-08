@@ -20,7 +20,7 @@ import { useAuthenticatedQuestions } from "@/hooks/Questions";
 
 // import the cusotm hooks
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useSaveThread, useSavedThreads } from "@/hooks/Questions";
+import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
 
 
 export const AllQuestions = () => {
@@ -31,12 +31,14 @@ export const AllQuestions = () => {
   const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth } = useAuthenticatedQuestions();
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
   const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
+  const { voteThread, loading: voteLoading } = useVoteThread();
+  const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
 
   const questions = isAuthenticated ? authQuestions : publicQuestions;
   const questionsLoading = isAuthenticated ? questionsAuthLoading : publicLoading;
   const questionsError = isAuthenticated ? authError : publicError;
   const refetch = isAuthenticated ? refetchAuth : refetchPublic;
-  
+
   const router = useRouter();
 
   // Local state
@@ -110,6 +112,39 @@ export const AllQuestions = () => {
     }
     openPopup();
     setthreadId(questionId);
+  };
+
+  const handleVote = async (threadId, voteType, currentUserVote) => {
+    if (!isAuthenticated) {
+      router.push('/auth/login');
+      return;
+    }
+
+    try {
+      let result;
+
+      // If user already voted with the same type, remove the vote
+      if (currentUserVote === voteType) {
+        result = await unvoteThread(threadId);
+        console.log('Vote removed');
+      } else {
+        // delete the old vote if exists and add the new vote
+        if (currentUserVote) {
+          await unvoteThread(threadId);
+        }
+        result = await voteThread(threadId, voteType);
+        console.log(`${voteType} vote recorded`);
+      }
+      if (result.success) {
+        refetch();
+      } else {
+        console.error('Failed to vote:', result.error);
+        alert('Failed to vote: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Failed to vote:', error);
+      alert('An error occurred while voting.');
+    }
   };
 
   return (
@@ -220,23 +255,82 @@ export const AllQuestions = () => {
                     key={question.id || index}
                     className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
                   >
-                    <div
-                      className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8"
-                      onClick={() => handleNavigation(question)}
-                    >
-                      <div className="flex flex-row items-center justify-between gap-1">
-                        <Image
-                          src={UpDown}
-                          alt="Lines"
-                          className="h-full w-4 lg:w-8"
-                        />
-                        <div className="font-sans text-sm lg:text-3xl text-neutral-900">
-                          {question.upvotes || 0}
+                    <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8">
+                      {/* Enhanced voting section with separate up/down buttons */}
+                      <div className="flex flex-col items-center gap-2">
+                        {/* Upvote button */}
+                        {isAuthenticated ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVote(question.id, 'upvote', question.userVote);
+                            }}
+                            disabled={voteLoading || unvoteLoading}
+                            className={`p-1 rounded transition-colors ${question.hasUpvoted
+                              ? 'text-green-600 bg-green-100 hover:bg-green-200'
+                              : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
+                              } disabled:opacity-50`}
+                          >
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push('/auth/login');
+                            }}
+                            className="p-1 rounded text-gray-600 hover:text-green-600"
+                          >
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                          </button>
+                        )}
+
+                        {/* Vote count */}
+                        <div className="font-sans text-sm lg:text-2xl text-neutral-900 font-semibold">
+                          {(question.upvotes || 0) - (question.downvotes || 0)}
                         </div>
+
+                        {/* Downvote button */}
+                        {isAuthenticated ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleVote(question.id, 'downvote', question.userVote);
+                            }}
+                            disabled={voteLoading || unvoteLoading}
+                            className={`p-1 rounded transition-colors ${question.hasDownvoted
+                              ? 'text-red-600 bg-red-100 hover:bg-red-200'
+                              : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
+                              } disabled:opacity-50`}
+                          >
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push('/auth/login');
+                            }}
+                            className="p-1 rounded text-gray-600 hover:text-red-600"
+                          >
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8 rotate-180" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
-                      <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
-                        {question.title}
-                      </h1>
+
+                      <div onClick={() => handleNavigation(question)}>
+                        <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                          {question.title}
+                        </h1>
+                      </div>
                     </div>
 
                     <div className="w-full flex flex-row justify-between items-center gap-2">
