@@ -108,17 +108,6 @@ export const Navbarsignedin = () => {
             />
           </Link>
 
-          <Link href="/notifications">
-            <Image
-              src={notification}
-              alt="Frame 33603"
-              width={40}
-              height={40}
-              style={{ width: "auto", height: "auto" }}
-              className="hover:opacity-80"
-            />
-          </Link>
-
           <Link href="/profile/settings">
             <Image
               src={settings}
