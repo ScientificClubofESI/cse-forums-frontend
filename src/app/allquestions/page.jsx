@@ -144,6 +144,17 @@ export const AllQuestions = () => {
     }
   };
 
+
+  const handleShareQuestion = async (questionId) => {
+  try {
+    const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+    await navigator.clipboard.writeText(questionUrl);
+    alert('Question link copied to clipboard!');
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+};
+
   return (
     <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
@@ -367,7 +378,7 @@ export const AllQuestions = () => {
                       {/* Share and Save buttons */}
                       <div className="flex flex-row items-end justify-end gap-4">
                         {/* Share button */}
-                        <button className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
+                        <button  onClick={() => handleShareQuestion(question.id)} className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
                           <Image
                             src={share}
                             alt="share icon"

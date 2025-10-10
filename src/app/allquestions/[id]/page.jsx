@@ -456,6 +456,17 @@ const QuestionPage = () => {
         }
     };
 
+    const handleShareQuestion = async (questionId) => {
+        try {
+            const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+            await navigator.clipboard.writeText(questionUrl);
+            alert('Question link copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+
+        }
+    };
+
     const isOwner = isAuthenticated && user && question && user.id === question.user_id;
 
     if (loading) {
@@ -597,7 +608,7 @@ const QuestionPage = () => {
                             {question?.answers_count || 0} Answers
                         </div>
                         <div className="flex space-x-4">
-                            <button className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">
+                            <button onClick={() => handleShareQuestion(question.id)} className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">
                                 <ImageComponent
                                     src={ShareIcon.src}
                                     alt="share"
