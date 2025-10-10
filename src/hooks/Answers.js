@@ -89,6 +89,7 @@ export const useUserAnswers = () => {
     answers,
     loading,
     error,
+    refetch: fetchUserAnswers,
   };
 };
 
@@ -296,6 +297,7 @@ export const useDeleteAnswer = () => {
     deleteAnswer,
     loading,
     error,
+    clearError: () => setError(null),
   };
 }
 

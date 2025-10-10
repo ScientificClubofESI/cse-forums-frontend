@@ -5,10 +5,13 @@ import Card from "./card";
 // import cardData from "./cardData";
 import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
+import { useDeleteAnswer } from "@/hooks/Answers";
 
-export const MyReplies = ({ answers }) => {
+export const MyReplies = ({ answers, refetch }) => {
   const [activeTab, setActiveTab] = useState("All"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);
+  // hook for deleting an answer
+  const { deleteAnswer, loading: deleteLoading, error: deleteError } = useDeleteAnswer();
 
   const itemsPerPage = 6;
   const indexOfLastCard = currentPage * itemsPerPage;
@@ -26,8 +29,24 @@ export const MyReplies = ({ answers }) => {
     // Add filtering logic for cardData based on selected tab if needed
   };
 
-  const handleDelete = () => {
-    alert("Delete clicked!");
+  const handleDelete = async (threadId, answerId) => { 
+    try {
+      const result = await deleteAnswer(threadId, answerId); 
+      if (result && result.success) {
+        if (refetch) {
+          await refetch();
+        }
+        const remainingAnswers = answers.length - 1;
+        const newTotalPages = Math.ceil(remainingAnswers / itemsPerPage);
+        if (currentPage > newTotalPages && newTotalPages > 0) {
+          setCurrentPage(1);
+        }
+      } else {
+        console.error("Failed to delete answer:", result?.error);
+      }
+    } catch (error) {
+      console.error("Error deleting answer:", error);
+    }
   };
 
   console.log("answers in my replies:", answers);
@@ -40,8 +59,8 @@ export const MyReplies = ({ answers }) => {
             key={tab}
             onClick={() => handleTabClick(tab)}
             className={`w-full md:w-fit text-xs md:text-lg py-[4px] md:py-[8px] md:px-[16px] text-center cursor-pointer font-oswald ${activeTab === tab
-                ? "bg-primary-500 text-white"
-                : "bg-neutral-100 text-neutral-900"
+              ? "bg-primary-500 text-white"
+              : "bg-neutral-100 text-neutral-900"
               }`}
           >
             {tab}
@@ -66,7 +85,8 @@ export const MyReplies = ({ answers }) => {
               title={card.Thread.title}
               content={card.content}
               approved={card.isApproved}
-              onDelete={() => alert("Delete clicked!")}
+              onDelete={() => handleDelete(card.thread_id, card.id)}
+              isDeleting={deleteLoading}
             />
           ))}
         </div>
@@ -80,13 +100,14 @@ export const MyReplies = ({ answers }) => {
       </Link>
 
       {/* Pagination */}
+      {totalPages > 1 && (
       <div className="flex justify-center gap-[10px] mt-[20px]">
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={index}
             className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                ? "bg-secondary-500 text-white"
-                : "bg-neutral-200 text-neutral-900"
+              ? "bg-secondary-500 text-white"
+              : "bg-neutral-200 text-neutral-900"
               }`}
             onClick={() => handlePageChange(index + 1)}
           >
@@ -94,7 +115,9 @@ export const MyReplies = ({ answers }) => {
           </button>
         ))}
       </div>
+      )}
     </div>
+
   );
 };
 
