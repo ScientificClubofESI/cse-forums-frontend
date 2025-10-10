@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import user from "../../../../../public/Icon.png";
-import empty from "../../../../../public/emtyProfil.png";
+import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Sidebar from "@/components/profile/sidebar";
 
 export default function Profil() {

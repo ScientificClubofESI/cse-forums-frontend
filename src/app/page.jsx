@@ -1,32 +1,23 @@
 "use client";
-import Image from "next/image";
 import Navbar from "@/components/navbar/navbarnotsignedin";
-import Hero from "./landing/hero";
-import Offers from "./landing/offers";
-import About from "./landing/about";
-import Feedback from "./landing/feedback";
-import Footer from "./landing/footer";
-import SignUp from "./auth/signup/page";
-import LogIn from "./auth/login/page";
+import Hero from "../components/pages/landing/hero";
+import Offers from "../components/pages/landing/offers";
+import About from "../components/pages/landing/about";
+import Feedback from "../components/pages/landing/feedback";
+import Footer from "../components/pages/landing/footer";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import Profil from "./profile/page";
 import { useState, useEffect } from "react";
-import AllQuestions from "./allquestions/page";
+
+// the auth hook
+import useAuth from "@/hooks/Auth";
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const userId = localStorage.getItem("userId");
-      if (userId) {
-        setIsAuthenticated(true);
-      }
-    }
-  }, []);
+  const { isAuthenticated } = useAuth();
+
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* <Question/> */}
-      {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+     {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       <Hero />
       <Offers />
       <About />

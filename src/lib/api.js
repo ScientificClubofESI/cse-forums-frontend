@@ -75,3 +75,7 @@ const refreshToken = async () => {
 };
 
 export default api;
+
+
+
+//  use this instance for all functionalities that require authentication

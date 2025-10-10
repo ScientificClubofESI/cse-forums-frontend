@@ -1,8 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
+import logo from "../../../public/pages/nav-bar/icons/Logo.svg";
+import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const Navbarnotsignedin = () => {
-  
+  const router = useRouter();
+  const [searchQuery, setsearchQuery] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(
+        `/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`
+      );
+    }
+  };
+
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-5 sm:px-12 py-3 border-b-2 rounded-b-lg">
@@ -10,7 +25,7 @@ const Navbarnotsignedin = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={logo}
               alt="Logo"
               width={64}
               height={64}
@@ -21,24 +36,35 @@ const Navbarnotsignedin = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-8 hidden md:block">
-          <div className="relative max-w-2xl mx-auto">
-            {/* Search Icon */}
-            <Image
-              src={"/nav-bar/Icon.svg"}
-              alt="search"
-              width={20}
-              height={20}
-              style={{ width: "auto", height: "auto" }}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            />
+          <div className="flex-1 mx-8 hidden md:block">
+          <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
+            {/* Search icon as submit button */}
+            <button
+              type="submit"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!searchQuery.trim()}
+            >
+              <Image
+                src={icon}
+                alt="search"
+                width={20}
+                height={20}
+                style={{ width: "auto", height: "auto" }}
+                className="cursor-pointer"
+              />
+            </button>
+
             {/* Input Field */}
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setsearchQuery(e.target.value);
+              }}
               placeholder="Search CSE Forums ..."
               className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
             />
-          </div>
+          </form>
         </div>
 
         {/* Navigation Links */}

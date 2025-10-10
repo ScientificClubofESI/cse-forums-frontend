@@ -1,50 +1,24 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
-import user from "../../../../public/Icon.png";
-import MyRepliesList from "./replieslist";
+import MyRepliesList from "../../../components/pages/profile/myreplies/replieslist";
 import Sidebar from "@/components/profile/sidebar";
 import Navbar from "@/components/navbar/navbar";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
-import { useState, useEffect } from "react";
-import api from "@/lib/api";
+
+// import the auth hook
+import useAuth from "@/hooks/Auth";
+import { useUserAnswers } from "@/hooks/Answers";
 
 export default function Profil() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [Answers, setAnswers] = useState([]);
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+  const { answers, loading, error, refetch } = useUserAnswers();
 
-  useEffect(() => {
-    let userId = null;
-    if (typeof window !== "undefined") {
-      userId = localStorage.getItem("userId");
-    }
-    if (userId) {
-      setIsAuthenticated(true);
-    }
-
-    const fetchUserAnswers = async () => {
-      try {
-        const response = await api.get(`/user/${userId}/answers`);
-        //console.log("User answers data:", response.data);
-
-        setAnswers(response.data.data); // Update the state
-      } catch (error) {
-        //console.error("Failed to fetch user answers:", error);
-      }
-    };
-
-    fetchUserAnswers();
-  }, []);
-
-  // Log the updated Answers state
-  useEffect(() => {
-    //console.log("answers: ", Answers);
-  }, [Answers]); // This runs whenever Answers changes
+  // console.log("answers: ", answers);
 
   return (
     <>
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-      <div className="w-full h-full bg-background-light">
+      <div className="min-h-screen w-full h-full bg-background-light">
         <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] p-8 md:p-20">
           {/* Sidebar */}
           <Sidebar />
@@ -73,7 +47,7 @@ export default function Profil() {
             </div>
 
             <div>
-              <MyRepliesList answers={Answers} /> {/* Pass Answers as a prop */}
+              <MyRepliesList answers={answers} refetch={refetch} /> {/* Pass Answers as a prop */}
             </div>
           </div>
         </div>

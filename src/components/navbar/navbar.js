@@ -1,8 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
-import search from "../search/search";
+import logo from "../../../public/pages/nav-bar/icons/Logo.svg";
+import { useRouter } from "next/navigation";
+import api from "@/lib/api";
+import { useState, useEffect } from "react";
+import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
+
 
 const Navbar = () => {
+
+  const [searchQuery, setsearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const router = useRouter();
+  
+  useEffect(() => {
+    const fetchSearchThreads = async () => {
+      if (!searchQuery.trim()) {
+        setSearchResults([]);
+        setShowDropdown(false);
+        return;
+      }
+      //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
+      try {
+        const response = await api.get(
+          `/threads/search?searchQuery=${searchQuery}`
+        );
+        //console.log("search response : ", response.data);
+        setSearchResults(response.data.data);
+        setShowDropdown(true);
+        //setthreads(response.data.data);
+      } catch (error) {
+        //console.error("error fetching search : ", error);
+      }
+    };
+    fetchSearchThreads();
+  }, [searchQuery]);
+
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-5 sm:px-12 py-3 border-b-2 rounded-b-lg">
@@ -10,7 +45,7 @@ const Navbar = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={logo}
               alt="Logo"
               width={64}
               height={64}
@@ -20,7 +55,44 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-        <search />
+             {/* Search Bar */}
+        <div className="flex-1 mx-8 hidden md:block">
+          <div className="relative max-w-2xl mx-auto">
+            {/* Search Icon */}
+            <Image
+              src={icon}
+              alt="search"
+              width={20}
+              height={20}
+              style={{ width: "auto", height: "auto" }}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2"
+            />
+            {/* Input Field */}
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setsearchQuery(e.target.value);
+              }}
+              placeholder="Search CSE Forums ..."
+              className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
+            />
+          </div>
+          {/* Dropdown Results */}
+          {showDropdown && searchResults.length > 0 && (
+            <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
+              {searchResults.slice(0, 6).map((thread) => (
+                <Link
+                  key={thread.id}
+                  href={`/question/${thread.id}`}
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  {thread.title}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">

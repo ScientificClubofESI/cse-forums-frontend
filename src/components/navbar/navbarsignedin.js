@@ -1,75 +1,43 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import user from "../../../public/nav-bar/User.svg";
-import notification from "../../../public/nav-bar/Frame33603.svg";
-import settings from "../../../public/nav-bar/Frame33604.svg";
+import User from "../../../public/pages/nav-bar/icons/User.svg";
+import notification from "../../../public/pages/nav-bar/icons/Frame33603.svg";
+import settings from "../../../public/pages/nav-bar/icons/Frame33604.svg";
+import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
+import logo from "../../../public/pages/nav-bar/icons/Logo.svg";
 import api from "@/lib/api";
-import authApi from "@/lib/authApi";
 import { useState, useEffect } from "react";
 
+// the lgout hook
+import useAuth, { useLogout } from "@/hooks/Auth";
+
 export const Navbarsignedin = () => {
-  const [searchResults, setSearchResults] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
+  const [searchQuery, setsearchQuery] = useState("");
+  const { logout, loading: logoutLoading } = useLogout();
 
-  const [userId, setUserId] = useState(null);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUserId(localStorage.getItem("userId"));
-    }
-  }, []);
-
+  // Handle logout
   const handleLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
-    try {
-      // Call logout API
-      await authApi.post("/auth/logout", {
-        userId,
-      });
-      localStorage.clear();
-      sessionStorage.clear();
-            
-      // Redirect to login page
-      router.push("/auth/login");
-      
-    } catch (error) {
-      console.error("Logout error:", error);
-      
-      // Even if API call fails, clear local data and redirect
-      localStorage.clear();
-      sessionStorage.clear();
-      
-      router.push("/auth/login");
-    } finally {
-      setIsLoggingOut(false);
+    const result = await logout();
+    if (result.success) {
+      console.log("Successfully logged out");
+    } else {
+      console.error("Logout failed");
     }
   };
-  const [searchQuery, setsearchQuery] = useState("");
-  useEffect(() => {
-    const fetchSearchThreads = async () => {
-      if (!searchQuery.trim()) {
-        setSearchResults([]);
-        setShowDropdown(false);
-        return;
-      }
-      //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
-      try {
-        const response = await api.get(
-          `/threads/search?searchQuery=${searchQuery}`
-        );
-        //console.log("search response : ", response.data);
-        setSearchResults(response.data.data);
-        setShowDropdown(true);
-        //setthreads(response.data.data);
-      } catch (error) {
-        //console.error("error fetching search : ", error);
-      }
-    };
-    fetchSearchThreads();
-  }, [searchQuery]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to search page with query
+      router.push(
+        `/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`
+      );
+    }
+  };
+
+
   return (
     <div className="bg-gray-100">
       <nav className="bg-primary-700 flex items-center justify-between px-6 py-3 border-b-2 rounded-b-lg">
@@ -77,7 +45,7 @@ export const Navbarsignedin = () => {
         <Link href="/" className="flex items-center">
           <div className="w-8 h-8 flex items-center justify-center">
             <Image
-              src="/nav-bar/logo.svg"
+              src={logo}
               alt="Logo"
               width={64}
               height={64}
@@ -89,16 +57,23 @@ export const Navbarsignedin = () => {
 
         {/* Search Bar */}
         <div className="flex-1 mx-8 hidden md:block">
-          <div className="relative max-w-2xl mx-auto">
-            {/* Search Icon */}
-            <Image
-              src={"/nav-bar/Icon.svg"}
-              alt="search"
-              width={20}
-              height={20}
-              style={{ width: "auto", height: "auto" }}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            />
+          <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
+            {/* ✅ Search icon as submit button */}
+            <button
+              type="submit"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!searchQuery.trim()}
+            >
+              <Image
+                src={icon}
+                alt="search"
+                width={20}
+                height={20}
+                style={{ width: "auto", height: "auto" }}
+                className="cursor-pointer"
+              />
+            </button>
+
             {/* Input Field */}
             <input
               type="text"
@@ -109,23 +84,7 @@ export const Navbarsignedin = () => {
               placeholder="Search CSE Forums ..."
               className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
             />
-          </div>
-          {/* Dropdown Results */}
-          {showDropdown && searchResults.length > 0 && (
-            <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              {searchResults.slice(0, 6).map((thread) => (
-                <Link
-                  key={thread.id}
-                  href={`/questionPage/${
-                    thread.user_id == userId ? `asker` : `viewer`
-                  }`}
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  {thread.title}
-                </Link>
-              ))}
-            </div>
-          )}
+          </form>
         </div>
 
         {/* User Icon */}
@@ -139,7 +98,7 @@ export const Navbarsignedin = () => {
           </Link>
           <Link href="/profile/myquestions">
             <Image
-              src={user}
+              src={User}
               alt="User"
               width={40}
               height={40}
