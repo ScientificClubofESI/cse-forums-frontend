@@ -472,3 +472,41 @@ export const useGetUserSavedQuestions = () => {
     refetch: fetchSavedQuestions,
   };
 };
+
+export const useSearchQuestions = (query) => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchSearchThreads = async () => {
+      if (!query || !query.trim()) {
+        setSearchResults([]);
+        return;
+      }
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await api.get(
+          `/threads/search?searchQuery=${query}`
+        );
+        setSearchResults(response.data.data);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || 
+            err.message ||
+            "Failed to fetch search results"
+        );
+        console.error("Failed to fetch search results:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSearchThreads();
+  }, [query]);
+  
+  return {
+    searchResults,
+    loading,
+    error,
+  };
+}
