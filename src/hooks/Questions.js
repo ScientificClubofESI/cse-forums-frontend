@@ -530,3 +530,76 @@ export const useGetMyQuestions = (filter = "recent", page = 1, limit = 10) => {
     refetch: fetchMyQuestions,
   };
 };
+
+export const useAddTags = (threadId) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const addTags = async (tags) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // takes an array of strings wihich are the name of each tag
+      const response = await api.post(`/threads/${threadId}/tags`, {
+        tags,
+      });
+      if (response.data.success){
+        return { success: true, data: response.data.data };
+      }
+      else {
+        const errorMessage = response.data.message || "Failed to add tags";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to add tags";
+      setError(errorMessage);
+      console.error("Error adding tags:", err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    addTags,
+    loading,
+    error,
+  };
+};
+
+export const useDeleteTags = (threadId) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const deleteTags = async (tags) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.delete(`/threads/${threadId}/tags`, {
+        data: { tags },
+      });
+      if (response.data.success){
+        return { success: true, data: response.data.data };
+      }
+      else {
+        const errorMessage = response.data.message || "Failed to delete tags";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to delete tags";
+      setError(errorMessage);
+      console.error("Error deleting tags:", err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    deleteTags,
+    loading,
+    error,
+  };
+};
