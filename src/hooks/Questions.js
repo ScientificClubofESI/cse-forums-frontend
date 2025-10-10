@@ -13,7 +13,9 @@ export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
     setError(null);
     try {
       // Using authApi since this is a public endpoint (no authentication required),
-      const response = await authApi.get(`/threads/all?filter=${filter}&page=${page}&limit=${limit}`);
+      const response = await authApi.get(
+        `/threads/all?filter=${filter}&page=${page}&limit=${limit}`
+      );
       console.log(response.data.data.threads);
       setQuestions(response.data.data.threads);
       setPagination(response.data.data.pagination); // Add pagination data
@@ -407,7 +409,11 @@ export const useUnvoteThread = () => {
     error,
   };
 };
-export const useGetUserSavedQuestions = (filter = "recent", page = 1, limit = 10) => {
+export const useGetUserSavedQuestions = (
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [savedQuestions, setSavedQuestions] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -534,19 +540,25 @@ export const useGetMyQuestions = (filter = "recent", page = 1, limit = 10) => {
 export const useAddTags = (threadId) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const addTags = async (tags) => {
+  const addTags = async (tags, passedThreadId = threadId) => {
+    const finalThreadId = passedThreadId || threadId;
     setLoading(true);
     setError(null);
+    if (!finalThreadId) {
+      const errorMessage = "Thread ID is required to add tags";
+      setError(errorMessage);
+      setLoading(false);
+      return { success: false, error: errorMessage };
+    }
 
     try {
       // takes an array of strings wihich are the name of each tag
-      const response = await api.post(`/threads/${threadId}/tags`, {
+      const response = await api.post(`/threads/${finalThreadId}/tags`, {
         tags,
       });
-      if (response.data.success){
+      if (response.data.success) {
         return { success: true, data: response.data.data };
-      }
-      else {
+      } else {
         const errorMessage = response.data.message || "Failed to add tags";
         setError(errorMessage);
         return { success: false, error: errorMessage };
@@ -578,14 +590,12 @@ export const useDeleteTags = (threadId) => {
       const response = await api.delete(`/threads/${threadId}/tags`, {
         data: { tags },
       });
-      if (response.data.success){
+      if (response.data.success) {
         return { success: true, data: response.data.data };
-      }
-      else {
+      } else {
         const errorMessage = response.data.message || "Failed to delete tags";
         setError(errorMessage);
         return { success: false, error: errorMessage };
-
       }
     } catch (err) {
       const errorMessage =

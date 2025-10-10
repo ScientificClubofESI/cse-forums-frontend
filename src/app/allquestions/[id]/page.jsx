@@ -467,6 +467,8 @@ const QuestionPage = () => {
         }
     };
 
+    console.log('Question data:', question);
+    
     const isOwner = isAuthenticated && user && question && user.id === question.user_id;
 
     if (loading) {
