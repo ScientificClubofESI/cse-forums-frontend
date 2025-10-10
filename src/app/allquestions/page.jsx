@@ -20,22 +20,21 @@ import { useAuthenticatedQuestions } from "@/hooks/Questions";
 
 // import the cusotm hooks
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
+import { useQuestions, useSaveThread, useGetUserSavedQuestions, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
 
 
 export const AllQuestions = () => {
   // Local state
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState("recent");
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [threadId, setthreadId] = useState(0);
 
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions("recent", currentPage, 2);
-  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, "recent", currentPage, 2);
+  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions(activeFilter, currentPage, 2);
+  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, activeFilter, currentPage, 2);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
-  const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
   const { voteThread, loading: voteLoading } = useVoteThread();
   const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
 
@@ -169,41 +168,41 @@ export const AllQuestions = () => {
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "all"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("all")}
+                onClick={() => handleFilterChange("recent")}
               >
                 All
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Popular"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "most-rated"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Popular")}
+                onClick={() => handleFilterChange("most-rated")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Newest"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Newest")}
+                onClick={() => handleFilterChange("recent")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most Answered"
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most-Answered"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Most Answered")}
+                onClick={() => handleFilterChange("Most-Answered")}
               >
                 Most Answered
               </Link>

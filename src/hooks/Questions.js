@@ -61,7 +61,7 @@ export const useAuthenticatedQuestions = (
       const response = await api.get(
         `/threads/all_authenticated?filter=${filter}&page=${page}&limit=${limit}`
       );
-      setQuestions(response.data.data);
+      setQuestions(response.data.data.threads);
       setPagination(response.data.data.pagination); // Add pagination data
     } catch (err) {
       setError(
@@ -154,55 +154,6 @@ export const useQuestion = (id) => {
     loading,
     error,
     refetch: fetchQuestion,
-  };
-};
-
-export const useSavedThreads = ( userId,filter = "recent",page = 1,limit = 10) => {
-  const [savedThreads, setSavedThreads] = useState(new Set());
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchSavedThreads = async () => {
-    if (!userId) {
-      setSavedThreads(new Set());
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      // Using api instance for authenticated endpoints
-      const response = await api.get(
-        `/threads/saved?filter=${filter}&page=${page}&limit=${limit}`
-      );
-      const savedIds = new Set(
-        response.data.data.threads.map((thread) => thread.id)
-      );
-      setSavedThreads(savedIds);
-      setPagination(response.data.data.pagination);
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to fetch saved threads"
-      );
-      console.error("Failed to fetch saved threads:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSavedThreads();
-  }, [userId, filter, page, limit]);
-
-  return {
-    savedThreads,
-    loading,
-    error,
-    pagination,
-    refetch: fetchSavedThreads,
   };
 };
 
@@ -469,9 +420,8 @@ export const useGetUserSavedQuestions = (filter = "recent", page = 1, limit = 10
       const response = await api.get(
         `/threads/saved?filter=${filter}&page=${page}&limit=${limit}`
       );
-      console.log(response);
       setPagination(response.data.data.pagination);
-      setSavedQuestions(response.data.data);
+      setSavedQuestions(response.data.data.threads);
     } catch (err) {
       setError(
         err.response?.data?.message ||

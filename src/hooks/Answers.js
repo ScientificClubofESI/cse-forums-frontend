@@ -59,8 +59,9 @@ export const useAddAnswer = () => {
   };
 };
 
-export const useUserAnswers = () => {
+export const useUserAnswers = (filter = "recent", page = 1, limit = 10) => {
   const [answers, setAnswers] = useState([]);
+  const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -68,8 +69,9 @@ export const useUserAnswers = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(`/user/profile/answers`);
-      setAnswers(response.data.data);
+      const response = await api.get(`/user/profile/answers?filter=${filter}&page=${page}&limit=${limit}`);
+      setAnswers(response.data.data.answers);
+      setPagination(response.data.data.pagination);
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -83,9 +85,10 @@ export const useUserAnswers = () => {
   };
   useEffect(() => {
     fetchUserAnswers();
-  }, []);
+  }, [filter, page, limit]);
 
   return {
+    pagination,
     answers,
     loading,
     error,
