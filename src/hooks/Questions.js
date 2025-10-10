@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import authApi from "@/lib/authApi"; // Using authApi for public endpoints
 import api from "@/lib/api";
 
-export const useQuestions = () => {
+export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
   const [questions, setQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -12,8 +13,10 @@ export const useQuestions = () => {
     setError(null);
     try {
       // Using authApi since this is a public endpoint (no authentication required)
-      const response = await authApi.get("/threads/all");
-      setQuestions(response.data.data);
+      const response = await authApi.get(`/threads/all?orderby=recent`);
+      console.log(response.data.data.threads);
+      setQuestions(response.data.data.threads);
+      setPagination(response.data.data.pagination); // Add pagination data
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -28,10 +31,11 @@ export const useQuestions = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [filter, page, limit]);
 
   return {
     questions,
+    pagination,
     loading,
     error,
     refetch: fetchQuestions,
@@ -39,11 +43,12 @@ export const useQuestions = () => {
   };
 };
 // hook to get all questions but when the user is authenticated
-export const useAuthenticatedQuestions = () => {
+export const useAuthenticatedQuestions = (isAuthenticated) => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fetchQuestions = async () => {
+    if (!isAuthenticated) return;
     setLoading(true);
     setError(null);
     try {
@@ -63,21 +68,20 @@ export const useAuthenticatedQuestions = () => {
   };
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [isAuthenticated]);
   return {
     questions,
     loading,
     error,
     refetch: fetchQuestions,
   };
-}
+};
 
 export const useAuthenticatedQuestion = (id) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fetchQuestion = async () => {
-
     if (!id) return;
     setLoading(true);
     setError(null);
@@ -91,8 +95,7 @@ export const useAuthenticatedQuestion = (id) => {
         err.response?.data?.message || err.message || "Failed to fetch question"
       );
       console.error("Failed to fetch question:", err);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -106,7 +109,7 @@ export const useAuthenticatedQuestion = (id) => {
     error,
     refetch: fetchQuestion,
   };
-}
+};
 
 export const useQuestion = (id) => {
   const [question, setQuestion] = useState(null);
@@ -161,7 +164,7 @@ export const useSavedThreads = (userId) => {
     try {
       // Using api instance for authenticated endpoints
       const response = await api.get(`/threads/saved`);
-      const savedIds = new Set(response.data.data.map((thread) => thread.id));
+      const savedIds = new Set(response.data.data.threads.map((thread) => thread.id));
       setSavedThreads(savedIds);
     } catch (err) {
       setError(
@@ -427,8 +430,7 @@ export const useUnvoteThread = () => {
       setError(errorMessage);
       console.error("Error removing vote:", err);
       return { success: false, error: errorMessage };
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -486,13 +488,11 @@ export const useSearchQuestions = (query) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(
-          `/threads/search?searchQuery=${query}`
-        );
+        const response = await api.get(`/threads/search?searchQuery=${query}`);
         setSearchResults(response.data.data);
       } catch (err) {
         setError(
-          err.response?.data?.message || 
+          err.response?.data?.message ||
             err.message ||
             "Failed to fetch search results"
         );
@@ -503,10 +503,10 @@ export const useSearchQuestions = (query) => {
     };
     fetchSearchThreads();
   }, [query]);
-  
+
   return {
     searchResults,
     loading,
     error,
   };
-}
+};
