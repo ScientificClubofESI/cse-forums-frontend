@@ -21,7 +21,7 @@ export const Navbarsignedin = () => {
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
-      router.push("/login");
+      router.push("auth/login");
       console.log("Successfully logged out");
     } else {
       console.error("Logout failed");
@@ -59,7 +59,7 @@ export const Navbarsignedin = () => {
         {/* Search Bar */}
         <div className="flex-1 mx-8 hidden md:block">
           <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-            {/* ✅ Search icon as submit button */}
+            {/* Search icon as submit button */}
             <button
               type="submit"
               className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
