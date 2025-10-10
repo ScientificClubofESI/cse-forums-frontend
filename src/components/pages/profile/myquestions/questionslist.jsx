@@ -8,7 +8,7 @@ import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
 import { useDeleteThread } from "@/hooks/Questions";
 
-export const MyQuestionsList = ({ myQuestions, setmyquestions, }) => {
+export const MyQuestionsList = ({ myQuestions }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("Recent"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);

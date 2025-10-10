@@ -1,14 +1,27 @@
 "use client";
 import Link from "next/link";
 import Sidebar from "@/components/profile/sidebar";
-
+import { useAuth } from "@/hooks/Auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 export default function Profil() {
+  const router = useRouter();
+  // if the user is not authenticated redirect to the login
+  const { isAuthenticated, loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, loading, router]);
   
+
+
 
   return (
     <div className="flex flex-col md:flex-row justify-center items-start gap-[48px] m-8 md:m-20">
       {/* Sidebar */}
-      <Sidebar/>
+      <Sidebar />
 
       {/* Navigation */}
       <div className="basis-3/4">

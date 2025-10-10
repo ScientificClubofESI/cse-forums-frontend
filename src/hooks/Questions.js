@@ -12,8 +12,8 @@ export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
     setLoading(true);
     setError(null);
     try {
-      // Using authApi since this is a public endpoint (no authentication required)
-      const response = await authApi.get(`/threads/all?orderby=recent`);
+      // Using authApi since this is a public endpoint (no authentication required),
+      const response = await authApi.get(`/threads/all?orderby=${filter}`);
       console.log(response.data.data.threads);
       setQuestions(response.data.data.threads);
       setPagination(response.data.data.pagination); // Add pagination data
@@ -42,10 +42,15 @@ export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
     setQuestions, // For external updates (like search results)
   };
 };
-// hook to get all questions but when the user is authenticated
-export const useAuthenticatedQuestions = (isAuthenticated) => {
+export const useAuthenticatedQuestions = (
+  isAuthenticated,
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState(null);
   const [error, setError] = useState(null);
   const fetchQuestions = async () => {
     if (!isAuthenticated) return;
@@ -53,8 +58,11 @@ export const useAuthenticatedQuestions = (isAuthenticated) => {
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      const response = await api.get("/threads/all_authenticated");
+      const response = await api.get(
+        `/threads/all_authenticated?orderby=${filter}&page=${page}&limit=${limit}`
+      );
       setQuestions(response.data.data);
+      setPagination(response.data.data.pagination); // Add pagination data
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -68,11 +76,12 @@ export const useAuthenticatedQuestions = (isAuthenticated) => {
   };
   useEffect(() => {
     fetchQuestions();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, filter, page, limit]);
   return {
     questions,
     loading,
     error,
+    pagination,
     refetch: fetchQuestions,
   };
 };
@@ -148,8 +157,9 @@ export const useQuestion = (id) => {
   };
 };
 
-export const useSavedThreads = (userId) => {
+export const useSavedThreads = ( userId,filter = "recent",page = 1,limit = 10) => {
   const [savedThreads, setSavedThreads] = useState(new Set());
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -163,9 +173,14 @@ export const useSavedThreads = (userId) => {
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      const response = await api.get(`/threads/saved`);
-      const savedIds = new Set(response.data.data.threads.map((thread) => thread.id));
+      const response = await api.get(
+        `/threads/saved?orderby=${filter}&page=${page}&limit=${limit}`
+      );
+      const savedIds = new Set(
+        response.data.data.threads.map((thread) => thread.id)
+      );
       setSavedThreads(savedIds);
+      setPagination(response.data.data.pagination);
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -180,12 +195,13 @@ export const useSavedThreads = (userId) => {
 
   useEffect(() => {
     fetchSavedThreads();
-  }, [userId]);
+  }, [userId, filter, page, limit]);
 
   return {
     savedThreads,
     loading,
     error,
+    pagination,
     refetch: fetchSavedThreads,
   };
 };
@@ -440,8 +456,9 @@ export const useUnvoteThread = () => {
     error,
   };
 };
-export const useGetUserSavedQuestions = () => {
+export const useGetUserSavedQuestions = (filter = "recent", page = 1, limit = 10) => {
   const [savedQuestions, setSavedQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -449,8 +466,11 @@ export const useGetUserSavedQuestions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(`/threads/saved`);
+      const response = await api.get(
+        `/threads/saved?orderby=${filter}&page=${page}&limit=${limit}`
+      );
       console.log(response);
+      setPagination(response.data.data.pagination);
       setSavedQuestions(response.data.data);
     } catch (err) {
       setError(
@@ -465,18 +485,25 @@ export const useGetUserSavedQuestions = () => {
   };
   useEffect(() => {
     fetchSavedQuestions();
-  }, []);
+  }, [filter, page, limit]);
 
   return {
     savedQuestions,
+    pagination,
     loading,
     error,
     refetch: fetchSavedQuestions,
   };
 };
 
-export const useSearchQuestions = (query) => {
+export const useSearchQuestions = (
+  query,
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [searchResults, setSearchResults] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -488,8 +515,12 @@ export const useSearchQuestions = (query) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/threads/search?searchQuery=${query}`);
+        const response = await api.get(
+          `/threads/search?searchQuery=${query}&orderby=${filter}&page=${page}&limit=${limit}`
+        );
+
         setSearchResults(response.data.data);
+        setPagination(response.data.data.pagination);
       } catch (err) {
         setError(
           err.response?.data?.message ||
@@ -502,11 +533,50 @@ export const useSearchQuestions = (query) => {
       }
     };
     fetchSearchThreads();
-  }, [query]);
+  }, [query, filter, page, limit]);
 
   return {
     searchResults,
     loading,
+    pagination,
     error,
+  };
+};
+
+export const useGetMyQuestions = (filter = "recent", page = 1, limit = 10) => {
+  const [questions, setQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchMyQuestions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(
+        `/threads/my_questions?orderby=${filter}&page=${page}&limit=${limit}`
+      );
+      console.log(response);
+      setQuestions(response.data.data.threads);
+      setPagination(response.data.data.pagination);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch my questions"
+      );
+      console.error("Failed to fetch my questions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchMyQuestions();
+  }, [filter, page, limit]);
+  return {
+    questions,
+    loading,
+    error,
+    pagination,
+    refetch: fetchMyQuestions,
   };
 };
