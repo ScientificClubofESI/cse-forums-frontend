@@ -13,7 +13,7 @@ export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
     setError(null);
     try {
       // Using authApi since this is a public endpoint (no authentication required),
-      const response = await authApi.get(`/threads/all?orderby=${filter}`);
+      const response = await authApi.get(`/threads/all?filter=${filter}&page=${page}&limit=${limit}`);
       console.log(response.data.data.threads);
       setQuestions(response.data.data.threads);
       setPagination(response.data.data.pagination); // Add pagination data
@@ -59,7 +59,7 @@ export const useAuthenticatedQuestions = (
     try {
       // Using api instance for authenticated endpoints
       const response = await api.get(
-        `/threads/all_authenticated?orderby=${filter}&page=${page}&limit=${limit}`
+        `/threads/all_authenticated?filter=${filter}&page=${page}&limit=${limit}`
       );
       setQuestions(response.data.data);
       setPagination(response.data.data.pagination); // Add pagination data
@@ -174,7 +174,7 @@ export const useSavedThreads = ( userId,filter = "recent",page = 1,limit = 10) =
     try {
       // Using api instance for authenticated endpoints
       const response = await api.get(
-        `/threads/saved?orderby=${filter}&page=${page}&limit=${limit}`
+        `/threads/saved?filter=${filter}&page=${page}&limit=${limit}`
       );
       const savedIds = new Set(
         response.data.data.threads.map((thread) => thread.id)
@@ -467,7 +467,7 @@ export const useGetUserSavedQuestions = (filter = "recent", page = 1, limit = 10
     setError(null);
     try {
       const response = await api.get(
-        `/threads/saved?orderby=${filter}&page=${page}&limit=${limit}`
+        `/threads/saved?filter=${filter}&page=${page}&limit=${limit}`
       );
       console.log(response);
       setPagination(response.data.data.pagination);
@@ -516,7 +516,7 @@ export const useSearchQuestions = (
       setError(null);
       try {
         const response = await api.get(
-          `/threads/search?searchQuery=${query}&orderby=${filter}&page=${page}&limit=${limit}`
+          `/threads/search?searchQuery=${query}&filter=${filter}&page=${page}&limit=${limit}`
         );
 
         setSearchResults(response.data.data);
@@ -553,7 +553,7 @@ export const useGetMyQuestions = (filter = "recent", page = 1, limit = 10) => {
     setError(null);
     try {
       const response = await api.get(
-        `/threads/my_questions?orderby=${filter}&page=${page}&limit=${limit}`
+        `/threads/my_questions?filter=${filter}&page=${page}&limit=${limit}`
       );
       console.log(response);
       setQuestions(response.data.data.threads);

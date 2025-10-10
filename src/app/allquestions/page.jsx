@@ -24,11 +24,16 @@ import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteT
 
 
 export const AllQuestions = () => {
+  // Local state
+  const [activeFilter, setActiveFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [threadId, setthreadId] = useState(0);
 
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic } = useQuestions();
-  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth } = useAuthenticatedQuestions(isAuthenticated);
+  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions("recent", currentPage, 2);
+  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, "recent", currentPage, 2);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
   const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
   const { voteThread, loading: voteLoading } = useVoteThread();
@@ -39,20 +44,13 @@ export const AllQuestions = () => {
   const questionsError = isAuthenticated ? authError : publicError;
   const refetch = isAuthenticated ? refetchAuth : refetchPublic;
 
+  const pagination = isAuthenticated ? authPagination : publicPagination;
+  const totalPages = pagination?.totalPages || 1;
+
+
   const router = useRouter();
 
-  // Local state
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [threadId, setthreadId] = useState(0);
 
-  // Pagination
-  const itemsPerPage = 2;
-  const indexOfLastCard = currentPage * itemsPerPage;
-  const indexOfFirstCard = indexOfLastCard - itemsPerPage;
-  const currentThreads = questions.slice(indexOfFirstCard, indexOfLastCard);
-  const totalPages = Math.ceil(questions.length / itemsPerPage);
 
   // Popup handlers
   const openPopup = () => setIsPopupOpen(true);
@@ -61,7 +59,7 @@ export const AllQuestions = () => {
   // Event handlers
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
-    // TODO: Implement filtering logic
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   const handlePageChange = (newPage) => {
@@ -250,7 +248,7 @@ export const AllQuestions = () => {
               {questions.length === 0 ? (
                 <EmptySearchPage />
               ) : (
-                currentThreads?.map((question, index) => (
+                questions?.map((question, index) => (
                   <div
                     key={question.id || index}
                     className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
@@ -319,7 +317,7 @@ export const AllQuestions = () => {
                             }}
                             className="p-1 rounded text-gray-600 hover:text-red-600"
                           >
-                             <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                             </svg>
                           </button>
