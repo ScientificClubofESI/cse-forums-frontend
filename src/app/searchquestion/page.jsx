@@ -6,7 +6,6 @@ import { useState } from "react";
 import filtre from "./../../../public/pages/allQuestion/icons/filtre.svg";
 import left from "./../../../public/pages/allQuestion/icons/left.svg";
 import right from "./../../../public/pages/allQuestion/icons/right.svg";
-import UpDown from "./../../../public/pages/allQuestion/icons/UpDown.svg";
 import plus from "./../../../public/pages/allQuestion/icons/addAnswer.svg";
 import save from "./../../../public/pages/allQuestion/icons/save.svg";
 import share from "./../../../public/pages/allQuestion/icons/share.svg";
@@ -187,7 +186,6 @@ export const SearchQuestions = () => {
             >
               Ask a Question ?
             </Link>
-            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden" />
           </div>
           {/* this should be removed in the all questions page */}
           {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
