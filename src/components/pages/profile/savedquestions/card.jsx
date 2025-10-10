@@ -3,7 +3,9 @@ import Image from "next/image";
 import unsaved from "../../../../../public/icons/save.png";
 import { useSaveThread } from "@/hooks/Questions";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 const Card = ({ id, title, content, answersCount, onDelete }) => {
+  const router = useRouter();
    const { unsaveThread, loading } = useSaveThread();
   const [isUnsaving, setIsUnsaving] = useState(false);
 

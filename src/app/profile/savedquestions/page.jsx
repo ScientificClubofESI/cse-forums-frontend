@@ -10,7 +10,12 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import useAuth from "@/hooks/Auth";
 import { useGetUserSavedQuestions } from "@/hooks/Questions";
 
+// the use route
+import { useRouter } from "next/navigation";
+
 export default function Profil() {
+  const router = useRouter();
+
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { savedQuestions, loading, error, refetch } = useGetUserSavedQuestions();
 
