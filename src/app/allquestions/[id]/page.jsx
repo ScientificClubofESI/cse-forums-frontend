@@ -626,26 +626,29 @@ const QuestionPage = () => {
                 {/* Owner Actions */}
                 {
                     isOwner && (
-                        <div className="w-full flex justify-end items-center p-6 gap-6 ">
-                            <button
-                                onClick={handleEdit}
-                                className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"
-                            >
-                                Edit question
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="mt-[2rem] bg-warning-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem] gap-[4px]"
-                            >
-                                Delete question
-                                <ImageComponent
-                                    src={TrashIcon.src}
-                                    alt="delete"
-                                    width={18}
-                                    height={18}
-                                    className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]"
-                                />
-                            </button>
+                        <div className=" w-[23rem] md:w-[77rem] flex justify-center items-center p-6 gap-6 ">
+                            <div className="w-full flex items-center justify-end gap-6">
+                                <button
+                                    onClick={handleEdit}
+                                    className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"
+                                >
+                                    Edit question
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="mt-[2rem] bg-warning-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem] gap-[4px]"
+                                >
+                                    Delete question
+                                    <ImageComponent
+                                        src={TrashIcon.src}
+                                        alt="delete"
+                                        width={18}
+                                        height={18}
+                                        className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]"
+                                    />
+                                </button>
+                            </div>
+
                         </div>
                     )
                 }
