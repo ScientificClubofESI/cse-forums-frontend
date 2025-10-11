@@ -598,9 +598,17 @@ const QuestionPage = () => {
                         dangerouslySetInnerHTML={{ __html: question?.content }}
                     />
                     {/* Tags */}
-                    {question?.tags && (
+                    {question?.threads_tags && (
                         <div className="bg-neutral-50 md:w-[71rem] w-[20rem] text-neutral-900 text-sm md:p-4 p-2 md:ml-[2rem] font-light md:text-base">
-                            Tags: {question?.tags}
+                            {/* Tags: {question?.tags} iterate through the tags */}
+                            {question.threads_tags.map((tag, index) => (
+                                <span
+                                    key={index}
+                                    className="inline-block bg-primary-100 text-primary-800 rounded-full px-3 py-1 text-sm font-medium mr-2 mb-2"
+                                >
+                                    {tag.Tag.name}
+                                </span>
+                            ))}
                         </div>
                     )}
                     <div className="border-t border-neutral-100 w-[20rem] md:w-[71rem] md:ml-[2rem]"></div>
