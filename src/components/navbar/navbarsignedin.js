@@ -21,7 +21,6 @@ export const Navbarsignedin = () => {
   const handleLogout = async () => {
     const result = await logout();
     if (result.success) {
-      router.push("auth/login");
       console.log("Successfully logged out");
     } else {
       console.error("Logout failed");

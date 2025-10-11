@@ -21,14 +21,16 @@ const Card = ({ title, content, approved, onDelete }) => {
       />
       </div>
 
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between mt-3">
         {approved ? (
           <div className="px-[16px] py-[4px] text-success-500   bg-[#E9F9E8] flex items-center gap-[8px]">
             Approved
             <Image src={approve} alt="Aprroved icon" width={16} height={16} />
           </div>
         ) : (
-          <div className="px-[16px] py-[4px]"> </div>
+          <div className="py-[4px] text-ellipsis px-[16px] text-gray-500 bg-gray-200">
+            Not Approved
+          </div>
         )}
         <button
           className="px-[16px] py-[4px] text-white bg-warning-500 flex items-center gap-[8px]"
