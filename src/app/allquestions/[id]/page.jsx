@@ -363,10 +363,17 @@ const QuestionPage = () => {
     const handleApproveAnswer = async (answerId, isApproved) => {
         try {
             if (isApproved) {
-                await disapproveAnswer(answerId);
+                await disapproveAnswer(question.id, answerId);
             } else {
-                await approveAnswer(answerId);
+                await approveAnswer(question.id, answerId);
             }
+            setAnswers(prevAnswers =>
+                prevAnswers.map(answer =>
+                    answer.id === answerId
+                        ? { ...answer, isApproved: !isApproved }
+                        : answer
+                )
+            );
             refetchAnswers(); // Refresh answers list
         } catch (err) {
             console.error('Error updating answer approval:', err);
@@ -468,7 +475,7 @@ const QuestionPage = () => {
     };
 
     console.log('Question data:', question);
-    
+
     const isOwner = isAuthenticated && user && question && user.id === question.user_id;
 
     if (loading) {
@@ -892,7 +899,6 @@ const AnswerWithReplies = ({
 
     const { addReply: addAnswerReply, loading: addAnswerReplyLoading } = useAddReply(threadId, answer.id, answerReplyContent, null);
 
-
     const answerReplyEditor = useEditor({
         content: '',
         extensions: [
@@ -961,25 +967,25 @@ const AnswerWithReplies = ({
                     {/* Approval button */}
                     {isOwner && (
                         <button
-                            onClick={() => onApproveAnswer(answer.id, answer.approved)}
-                            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.approved
+                            onClick={() => onApproveAnswer(answer.id, answer.isApproved)}
+                            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.isApproved
                                 ? 'bg-green-100 text-green-700 hover:bg-green-200'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <ImageComponent
-                                src={answer.approved ? ApprovedIcon.src : ApproveIcon.src}
-                                alt={answer.approved ? 'approved' : 'approve'}
+                                src={answer.isApproved ? ApprovedIcon.src : ApproveIcon.src}
+                                alt={answer.isApproved ? 'approved' : 'approve'}
                                 width={16}
                                 height={16}
                                 className="w-4 h-4"
                             />
-                            {answer.approved ? 'Approved' : 'Approve'}
+                            {answer.isApproved ? 'Approved' : 'Approve'}
                         </button>
                     )}
 
                     {/* Show approved status for non-owners */}
-                    {!isOwner && answer.approved && (
+                    {!isOwner && answer.isApproved && (
                         <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-100 text-green-700">
                             <ImageComponent
                                 src={ApprovedIcon.src}

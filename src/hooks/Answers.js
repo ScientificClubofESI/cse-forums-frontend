@@ -143,6 +143,7 @@ export const useApproveAnswer = () => {
     setError(null);
     try {
       const response = await api.put(`/threads/${threadId}/answers/${answerId}/approve`);
+      console.log("Approve response:", response);
       if (response.data.success) {
         return { success: true, message: "Answer approved successfully" };
       }
