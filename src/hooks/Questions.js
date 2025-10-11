@@ -44,6 +44,7 @@ export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
     setQuestions, // For external updates (like search results)
   };
 };
+
 export const useAuthenticatedQuestions = (
   isAuthenticated,
   filter = "recent",
@@ -580,10 +581,16 @@ export const useAddTags = (threadId) => {
   };
 };
 
-export const useDeleteTags = (threadId) => {
+export const useDeleteTags = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const deleteTags = async (tags) => {
+  const deleteTags = async (tags, threadId) => {
+    if (!threadId) {
+      const errorMessage = "Thread ID is required to delete tags";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+
     setLoading(true);
     setError(null);
     try {
