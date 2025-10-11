@@ -11,7 +11,6 @@ import { useUserAnswers } from "@/hooks/Answers";
 
 export default function Profil() {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { answers, loading, error, refetch } = useUserAnswers();
 
   // console.log("answers: ", answers);
 
@@ -47,7 +46,7 @@ export default function Profil() {
             </div>
 
             <div>
-              <MyRepliesList answers={answers} refetch={refetch} /> {/* Pass Answers as a prop */}
+              <MyRepliesList /> {/* Pass Answers as a prop */}
             </div>
           </div>
         </div>

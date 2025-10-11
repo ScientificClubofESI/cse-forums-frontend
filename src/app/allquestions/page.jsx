@@ -20,17 +20,21 @@ import { useAuthenticatedQuestions } from "@/hooks/Questions";
 
 // import the cusotm hooks
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
+import { useQuestions, useSaveThread, useGetUserSavedQuestions, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
 
 
 export const AllQuestions = () => {
+  // Local state
+  const [activeFilter, setActiveFilter] = useState("recent");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [threadId, setthreadId] = useState(0);
 
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic } = useQuestions();
-  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth } = useAuthenticatedQuestions();
+  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions(activeFilter, currentPage, 10);
+  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, activeFilter, currentPage, 10);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
-  const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
   const { voteThread, loading: voteLoading } = useVoteThread();
   const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
 
@@ -39,20 +43,13 @@ export const AllQuestions = () => {
   const questionsError = isAuthenticated ? authError : publicError;
   const refetch = isAuthenticated ? refetchAuth : refetchPublic;
 
+  const pagination = isAuthenticated ? authPagination : publicPagination;
+  const totalPages = pagination?.totalPages || 1;
+
+
   const router = useRouter();
 
-  // Local state
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [threadId, setthreadId] = useState(0);
 
-  // Pagination
-  const itemsPerPage = 2;
-  const indexOfLastCard = currentPage * itemsPerPage;
-  const indexOfFirstCard = indexOfLastCard - itemsPerPage;
-  const currentThreads = questions.slice(indexOfFirstCard, indexOfLastCard);
-  const totalPages = Math.ceil(questions.length / itemsPerPage);
 
   // Popup handlers
   const openPopup = () => setIsPopupOpen(true);
@@ -61,7 +58,7 @@ export const AllQuestions = () => {
   // Event handlers
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
-    // TODO: Implement filtering logic
+    setCurrentPage(1); // Reset to first page on filter change
   };
 
   const handlePageChange = (newPage) => {
@@ -147,6 +144,17 @@ export const AllQuestions = () => {
     }
   };
 
+
+  const handleShareQuestion = async (questionId) => {
+  try {
+    const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+    await navigator.clipboard.writeText(questionUrl);
+    alert('Question link copied to clipboard!');
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+};
+
   return (
     <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
@@ -171,41 +179,41 @@ export const AllQuestions = () => {
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "all"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("all")}
+                onClick={() => handleFilterChange("recent")}
               >
                 All
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Popular"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "most-rated"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Popular")}
+                onClick={() => handleFilterChange("most-rated")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Newest"
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Newest")}
+                onClick={() => handleFilterChange("recent")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most Answered"
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most-Answered"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Most Answered")}
+                onClick={() => handleFilterChange("most-answered")}
               >
                 Most Answered
               </Link>
@@ -250,7 +258,7 @@ export const AllQuestions = () => {
               {questions.length === 0 ? (
                 <EmptySearchPage />
               ) : (
-                currentThreads?.map((question, index) => (
+                questions?.map((question, index) => (
                   <div
                     key={question.id || index}
                     className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
@@ -284,7 +292,7 @@ export const AllQuestions = () => {
                             className="p-1 rounded text-gray-600 hover:text-green-600"
                           >
                             <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                              <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
                             </svg>
                           </button>
                         )}
@@ -319,8 +327,8 @@ export const AllQuestions = () => {
                             }}
                             className="p-1 rounded text-gray-600 hover:text-red-600"
                           >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8 rotate-180" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                             </svg>
                           </button>
                         )}
@@ -370,7 +378,7 @@ export const AllQuestions = () => {
                       {/* Share and Save buttons */}
                       <div className="flex flex-row items-end justify-end gap-4">
                         {/* Share button */}
-                        <button className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
+                        <button  onClick={() => handleShareQuestion(question.id)} className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
                           <Image
                             src={share}
                             alt="share icon"

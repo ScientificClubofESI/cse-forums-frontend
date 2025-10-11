@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import authApi from "@/lib/authApi"; // Using authApi for public endpoints
 import api from "@/lib/api";
 
-export const useQuestions = () => {
+export const useQuestions = (filter = "recent", page = 1, limit = 10) => {
   const [questions, setQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -11,9 +12,13 @@ export const useQuestions = () => {
     setLoading(true);
     setError(null);
     try {
-      // Using authApi since this is a public endpoint (no authentication required)
-      const response = await authApi.get("/threads/all");
-      setQuestions(response.data.data);
+      // Using authApi since this is a public endpoint (no authentication required),
+      const response = await authApi.get(
+        `/threads/all?filter=${filter}&page=${page}&limit=${limit}`
+      );
+      console.log(response.data.data.threads);
+      setQuestions(response.data.data.threads);
+      setPagination(response.data.data.pagination); // Add pagination data
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -28,28 +33,39 @@ export const useQuestions = () => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [filter, page, limit]);
 
   return {
     questions,
+    pagination,
     loading,
     error,
     refetch: fetchQuestions,
     setQuestions, // For external updates (like search results)
   };
 };
-// hook to get all questions but when the user is authenticated
-export const useAuthenticatedQuestions = () => {
+
+export const useAuthenticatedQuestions = (
+  isAuthenticated,
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState(null);
   const [error, setError] = useState(null);
   const fetchQuestions = async () => {
+    if (!isAuthenticated) return;
     setLoading(true);
     setError(null);
     try {
       // Using api instance for authenticated endpoints
-      const response = await api.get("/threads/all_authenticated");
-      setQuestions(response.data.data);
+      const response = await api.get(
+        `/threads/all_authenticated?filter=${filter}&page=${page}&limit=${limit}`
+      );
+      setQuestions(response.data.data.threads);
+      setPagination(response.data.data.pagination); // Add pagination data
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -63,21 +79,21 @@ export const useAuthenticatedQuestions = () => {
   };
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [isAuthenticated, filter, page, limit]);
   return {
     questions,
     loading,
     error,
+    pagination,
     refetch: fetchQuestions,
   };
-}
+};
 
 export const useAuthenticatedQuestion = (id) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const fetchQuestion = async () => {
-
     if (!id) return;
     setLoading(true);
     setError(null);
@@ -91,8 +107,7 @@ export const useAuthenticatedQuestion = (id) => {
         err.response?.data?.message || err.message || "Failed to fetch question"
       );
       console.error("Failed to fetch question:", err);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -106,7 +121,7 @@ export const useAuthenticatedQuestion = (id) => {
     error,
     refetch: fetchQuestion,
   };
-}
+};
 
 export const useQuestion = (id) => {
   const [question, setQuestion] = useState(null);
@@ -142,48 +157,6 @@ export const useQuestion = (id) => {
     loading,
     error,
     refetch: fetchQuestion,
-  };
-};
-
-export const useSavedThreads = (userId) => {
-  const [savedThreads, setSavedThreads] = useState(new Set());
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const fetchSavedThreads = async () => {
-    if (!userId) {
-      setSavedThreads(new Set());
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      // Using api instance for authenticated endpoints
-      const response = await api.get(`/threads/saved`);
-      const savedIds = new Set(response.data.data.map((thread) => thread.id));
-      setSavedThreads(savedIds);
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to fetch saved threads"
-      );
-      console.error("Failed to fetch saved threads:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSavedThreads();
-  }, [userId]);
-
-  return {
-    savedThreads,
-    loading,
-    error,
-    refetch: fetchSavedThreads,
   };
 };
 
@@ -427,8 +400,7 @@ export const useUnvoteThread = () => {
       setError(errorMessage);
       console.error("Error removing vote:", err);
       return { success: false, error: errorMessage };
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -438,8 +410,13 @@ export const useUnvoteThread = () => {
     error,
   };
 };
-export const useGetUserSavedQuestions = () => {
+export const useGetUserSavedQuestions = (
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [savedQuestions, setSavedQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -447,9 +424,11 @@ export const useGetUserSavedQuestions = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await api.get(`/threads/saved`);
-      console.log(response);
-      setSavedQuestions(response.data.data);
+      const response = await api.get(
+        `/threads/saved?filter=${filter}&page=${page}&limit=${limit}`
+      );
+      setPagination(response.data.data.pagination);
+      setSavedQuestions(response.data.data.threads);
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -463,18 +442,25 @@ export const useGetUserSavedQuestions = () => {
   };
   useEffect(() => {
     fetchSavedQuestions();
-  }, []);
+  }, [filter, page, limit]);
 
   return {
     savedQuestions,
+    pagination,
     loading,
     error,
     refetch: fetchSavedQuestions,
   };
 };
 
-export const useSearchQuestions = (query) => {
+export const useSearchQuestions = (
+  query,
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
   const [searchResults, setSearchResults] = useState([]);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -487,12 +473,14 @@ export const useSearchQuestions = (query) => {
       setError(null);
       try {
         const response = await api.get(
-          `/threads/search?searchQuery=${query}`
+          `/threads/search?searchQuery=${query}&filter=${filter}&page=${page}&limit=${limit}`
         );
+
         setSearchResults(response.data.data);
+        setPagination(response.data.data.pagination);
       } catch (err) {
         setError(
-          err.response?.data?.message || 
+          err.response?.data?.message ||
             err.message ||
             "Failed to fetch search results"
         );
@@ -502,11 +490,133 @@ export const useSearchQuestions = (query) => {
       }
     };
     fetchSearchThreads();
-  }, [query]);
-  
+  }, [query, filter, page, limit]);
+
   return {
     searchResults,
     loading,
+    pagination,
     error,
   };
-}
+};
+
+export const useGetMyQuestions = (filter = "recent", page = 1, limit = 10) => {
+  const [questions, setQuestions] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchMyQuestions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(
+        `/threads/my_questions?filter=${filter}&page=${page}&limit=${limit}`
+      );
+      console.log(response);
+      setQuestions(response.data.data.threads);
+      setPagination(response.data.data.pagination);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch my questions"
+      );
+      console.error("Failed to fetch my questions:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchMyQuestions();
+  }, [filter, page, limit]);
+  return {
+    questions,
+    loading,
+    error,
+    pagination,
+    refetch: fetchMyQuestions,
+  };
+};
+
+export const useAddTags = (threadId) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const addTags = async (tags, passedThreadId = threadId) => {
+    const finalThreadId = passedThreadId || threadId;
+    setLoading(true);
+    setError(null);
+    if (!finalThreadId) {
+      const errorMessage = "Thread ID is required to add tags";
+      setError(errorMessage);
+      setLoading(false);
+      return { success: false, error: errorMessage };
+    }
+
+    try {
+      // takes an array of strings wihich are the name of each tag
+      const response = await api.post(`/threads/${finalThreadId}/tags`, {
+        tags,
+      });
+      if (response.data.success) {
+        return { success: true, data: response.data.data };
+      } else {
+        const errorMessage = response.data.message || "Failed to add tags";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to add tags";
+      setError(errorMessage);
+      console.error("Error adding tags:", err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    addTags,
+    loading,
+    error,
+  };
+};
+
+export const useDeleteTags = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const deleteTags = async (tags, threadId) => {
+    if (!threadId) {
+      const errorMessage = "Thread ID is required to delete tags";
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.delete(`/threads/${threadId}/tags`, {
+        data: { tags },
+      });
+      if (response.data.success) {
+        return { success: true, data: response.data.data };
+      } else {
+        const errorMessage = response.data.message || "Failed to delete tags";
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
+      }
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.message || "Failed to delete tags";
+      setError(errorMessage);
+      console.error("Error deleting tags:", err);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    deleteTags,
+    loading,
+    error,
+  };
+};

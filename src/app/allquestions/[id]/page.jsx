@@ -363,10 +363,17 @@ const QuestionPage = () => {
     const handleApproveAnswer = async (answerId, isApproved) => {
         try {
             if (isApproved) {
-                await disapproveAnswer(answerId);
+                await disapproveAnswer(question.id, answerId);
             } else {
-                await approveAnswer(answerId);
+                await approveAnswer(question.id, answerId);
             }
+            setAnswers(prevAnswers =>
+                prevAnswers.map(answer =>
+                    answer.id === answerId
+                        ? { ...answer, isApproved: !isApproved }
+                        : answer
+                )
+            );
             refetchAnswers(); // Refresh answers list
         } catch (err) {
             console.error('Error updating answer approval:', err);
@@ -455,6 +462,19 @@ const QuestionPage = () => {
             alert('An error occurred while voting.');
         }
     };
+
+    const handleShareQuestion = async (questionId) => {
+        try {
+            const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+            await navigator.clipboard.writeText(questionUrl);
+            alert('Question link copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy: ', err);
+
+        }
+    };
+
+    console.log('Question data:', question);
 
     const isOwner = isAuthenticated && user && question && user.id === question.user_id;
 
@@ -585,9 +605,17 @@ const QuestionPage = () => {
                         dangerouslySetInnerHTML={{ __html: question?.content }}
                     />
                     {/* Tags */}
-                    {question?.tags && (
+                    {question?.threads_tags && (
                         <div className="bg-neutral-50 md:w-[71rem] w-[20rem] text-neutral-900 text-sm md:p-4 p-2 md:ml-[2rem] font-light md:text-base">
-                            Tags: {question?.tags}
+                            {/* Tags: {question?.tags} iterate through the tags */}
+                            {question.threads_tags.map((tag, index) => (
+                                <span
+                                    key={index}
+                                    className="inline-block bg-primary-100 text-primary-800 rounded-full px-3 py-1 text-sm font-medium mr-2 mb-2"
+                                >
+                                    {tag.Tag.name}
+                                </span>
+                            ))}
                         </div>
                     )}
                     <div className="border-t border-neutral-100 w-[20rem] md:w-[71rem] md:ml-[2rem]"></div>
@@ -597,7 +625,7 @@ const QuestionPage = () => {
                             {question?.answers_count || 0} Answers
                         </div>
                         <div className="flex space-x-4">
-                            <button className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">
+                            <button onClick={() => handleShareQuestion(question.id)} className="flex items-center text-neutral-500 text-xs md:text-lg font-light gap-2 font-serif">
                                 <ImageComponent
                                     src={ShareIcon.src}
                                     alt="share"
@@ -626,26 +654,29 @@ const QuestionPage = () => {
                 {/* Owner Actions */}
                 {
                     isOwner && (
-                        <div className="w-full flex justify-end items-center p-6 gap-6 ">
-                            <button
-                                onClick={handleEdit}
-                                className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"
-                            >
-                                Edit question
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="mt-[2rem] bg-warning-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem] gap-[4px]"
-                            >
-                                Delete question
-                                <ImageComponent
-                                    src={TrashIcon.src}
-                                    alt="delete"
-                                    width={18}
-                                    height={18}
-                                    className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]"
-                                />
-                            </button>
+                        <div className=" w-[23rem] md:w-[77rem] flex justify-center items-center p-6 gap-6 ">
+                            <div className="w-full flex items-center justify-end gap-6">
+                                <button
+                                    onClick={handleEdit}
+                                    className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"
+                                >
+                                    Edit question
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="mt-[2rem] bg-warning-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem] gap-[4px]"
+                                >
+                                    Delete question
+                                    <ImageComponent
+                                        src={TrashIcon.src}
+                                        alt="delete"
+                                        width={18}
+                                        height={18}
+                                        className="w-[18px] h-[18px] md:w-[32px] md:h-[32px]"
+                                    />
+                                </button>
+                            </div>
+
                         </div>
                     )
                 }
@@ -868,7 +899,6 @@ const AnswerWithReplies = ({
 
     const { addReply: addAnswerReply, loading: addAnswerReplyLoading } = useAddReply(threadId, answer.id, answerReplyContent, null);
 
-
     const answerReplyEditor = useEditor({
         content: '',
         extensions: [
@@ -937,25 +967,25 @@ const AnswerWithReplies = ({
                     {/* Approval button */}
                     {isOwner && (
                         <button
-                            onClick={() => onApproveAnswer(answer.id, answer.approved)}
-                            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.approved
+                            onClick={() => onApproveAnswer(answer.id, answer.isApproved)}
+                            className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${answer.isApproved
                                 ? 'bg-green-100 text-green-700 hover:bg-green-200'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
                         >
                             <ImageComponent
-                                src={answer.approved ? ApprovedIcon.src : ApproveIcon.src}
-                                alt={answer.approved ? 'approved' : 'approve'}
+                                src={answer.isApproved ? ApprovedIcon.src : ApproveIcon.src}
+                                alt={answer.isApproved ? 'approved' : 'approve'}
                                 width={16}
                                 height={16}
                                 className="w-4 h-4"
                             />
-                            {answer.approved ? 'Approved' : 'Approve'}
+                            {answer.isApproved ? 'Approved' : 'Approve'}
                         </button>
                     )}
 
                     {/* Show approved status for non-owners */}
-                    {!isOwner && answer.approved && (
+                    {!isOwner && answer.isApproved && (
                         <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-100 text-green-700">
                             <ImageComponent
                                 src={ApprovedIcon.src}

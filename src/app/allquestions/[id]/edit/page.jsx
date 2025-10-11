@@ -34,6 +34,7 @@ import { IoIosClose } from "react-icons/io";
 import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import NextImage from "next/image";
 import BackIcon from "../../../../../public/pages/questionPage/back.svg";
+import { useAddTags, useDeleteTags } from "../../../../hooks/Questions";
 
 const EditQuestionPage = () => {
     const router = useRouter();
@@ -51,6 +52,14 @@ const EditQuestionPage = () => {
     const fileInputRef = useRef(null);
     const [error, setError] = useState(null);
     const [iconSize, setIconSize] = useState(25);
+
+    const [originalTags, setOriginalTags] = useState([]);
+    const [tagsToAdd, setTagsToAdd] = useState([]);
+    const [tagsToRemove, setTagsToRemove] = useState([]);
+
+
+    const { addTags, loading: addingTags, error: addTagsError } = useAddTags();
+    const { deleteTags, loading: deletingTags, error: deleteTagsError } = useDeleteTags();
 
 
     const editor = useEditor({
@@ -167,12 +176,26 @@ const EditQuestionPage = () => {
             }
 
             // Parse tags if they exist
-            if (question.tags) {
-                const parsedTags = question.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            if (question.threads_tags && question.threads_tags.length > 0) {
+                const parsedTags = question.threads_tags.map(threadTag => threadTag.Tag.name);
                 setTags(parsedTags);
+                setOriginalTags(parsedTags); // Store original tags
             }
         }
     }, [question, user, params.id, editor]);
+
+
+    const removeTag = (tagToRemove) => {
+        setTags(tags.filter((t) => t !== tagToRemove));
+
+        // If it was an original tag, add to removal list
+        if (originalTags.includes(tagToRemove)) {
+            setTagsToRemove(prev => [...prev, tagToRemove]);
+        }
+
+        // If it was in the add list, remove it from there
+        setTagsToAdd(prev => prev.filter(tag => tag !== tagToRemove));
+    };
 
     // Custom image handler function
     const handleImageUpload = useCallback(
@@ -190,10 +213,24 @@ const EditQuestionPage = () => {
 
     const handleKeyEvent = (e) => {
         if (e.key === "Enter" && e.target.value !== "") {
-            setTags([...tags, e.target.value]);
+            const newTag = e.target.value.trim();
+
+            if (!tags.includes(newTag)) {
+                setTags([...tags, newTag]);
+
+                // If it's not an original tag, add to addition list
+                if (!originalTags.includes(newTag)) {
+                    setTagsToAdd(prev => [...prev, newTag]);
+                }
+
+                // If it was in the removal list, remove it from there
+                setTagsToRemove(prev => prev.filter(tag => tag !== newTag));
+            }
+
             setTagInput("");
         }
     };
+
 
     const addImage = useCallback(() => {
         if (!editor) return;
@@ -247,16 +284,41 @@ const EditQuestionPage = () => {
             return;
         }
 
-        const result = await updateThread(params.id, {
-            title: questionTitle.trim(),
-            content: editor.getHTML(),
-            tags: tags.join(', '),
-        });
+        try {
+            // First update the thread
+            const result = await updateThread(params.id, {
+                title: questionTitle.trim(),
+                content: editor.getHTML(),
+            });
 
-        if (result.success) {
+            if (!result.success) {
+                setError(result.error || 'Failed to update question');
+                return;
+            }
+
+            // Handle tag operations
+            if (tagsToRemove.length > 0) {
+                console.log('Removing tags:', tagsToRemove);
+                const removeResult = await deleteTags(tagsToRemove, params.id);
+                if (!removeResult.success) {
+                    console.error('Failed to remove tags:', removeResult.error);
+                }
+            }
+
+            if (tagsToAdd.length > 0) {
+                console.log('Adding tags:', tagsToAdd);
+                const addResult = await addTags(tagsToAdd, params.id);
+                if (!addResult.success) {
+                    console.error('Failed to add tags:', addResult.error);
+                }
+            }
+
+            // Success - navigate back
             router.push(`/allquestions/${params.id}`);
-        } else {
-            setError(result.error || 'Failed to update question');
+
+        } catch (err) {
+            console.error('Update error:', err);
+            setError('An error occurred while updating the question');
         }
     };
 
@@ -444,8 +506,10 @@ const EditQuestionPage = () => {
                         </div>
                     </div>
 
-                    {(error || updateError) && (
-                        <div className="text-red-500 mb-2">{error || updateError}</div>
+                    {(error || updateError || addTagsError || deleteTagsError) && (
+                        <div className="text-red-500 mb-2">
+                            {error || updateError || addTagsError || deleteTagsError}
+                        </div>
                     )}
 
                     <EditorContent
@@ -469,7 +533,7 @@ const EditQuestionPage = () => {
                             >
                                 <span
                                     className="cursor-pointer"
-                                    onClick={() => setTags(tags.filter((t) => t !== tag))}
+                                    onClick={() => removeTag(tag)}
                                 >
                                     <IoIosClose size={iconSize} color="white" />
                                 </span>
@@ -492,12 +556,11 @@ const EditQuestionPage = () => {
                     <button
                         className="bg-secondary-500 flex-1 h-12 md:h-14 text-center font-sans text-white rounded-md flex items-center justify-center gap-2 md:gap-4 p-2 md:p-4 hover:bg-secondary-300 transition duration-300"
                         onClick={handleUpdate}
-                        disabled={saving}
+                        disabled={saving || addingTags || deletingTags}
                     >
                         <span className="text-sm md:text-base">
-                            {saving ? 'Updating...' : 'Update Question'}
+                            {(saving || addingTags || deletingTags) ? 'Updating...' : 'Update Question'}
                         </span>
-                
                     </button>
                     <button
                         className="bg-gray-300 w-32 h-12 md:h-14 text-center font-sans text-gray-700 rounded-md flex items-center justify-center p-2 md:p-4 hover:bg-gray-400 transition duration-300"

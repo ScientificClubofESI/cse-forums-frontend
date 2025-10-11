@@ -6,37 +6,18 @@ import api from "@/lib/api";
 import { useState, useEffect } from "react";
 import icon from "../../../public/pages/nav-bar/icons/Icon.svg";
 
-
 const Navbar = () => {
-
+  const router = useRouter();
   const [searchQuery, setsearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-    const [showDropdown, setShowDropdown] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const router = useRouter();
-  
-  useEffect(() => {
-    const fetchSearchThreads = async () => {
-      if (!searchQuery.trim()) {
-        setSearchResults([]);
-        setShowDropdown(false);
-        return;
-      }
-      //setCurrentPage(1); // crucial because even if an element of another page  is found, it stays on the current page
-      try {
-        const response = await api.get(
-          `/threads/search?searchQuery=${searchQuery}`
-        );
-        //console.log("search response : ", response.data);
-        setSearchResults(response.data.data);
-        setShowDropdown(true);
-        //setthreads(response.data.data);
-      } catch (error) {
-        //console.error("error fetching search : ", error);
-      }
-    };
-    fetchSearchThreads();
-  }, [searchQuery]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(
+        `/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`
+      );
+    }
+  };
 
   return (
     <div className="bg-gray-100">
@@ -55,18 +36,24 @@ const Navbar = () => {
         </Link>
 
         {/* Search Bar */}
-             {/* Search Bar */}
         <div className="flex-1 mx-8 hidden md:block">
-          <div className="relative max-w-2xl mx-auto">
-            {/* Search Icon */}
-            <Image
-              src={icon}
-              alt="search"
-              width={20}
-              height={20}
-              style={{ width: "auto", height: "auto" }}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            />
+          <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
+            {/* Search icon as submit button */}
+            <button
+              type="submit"
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={!searchQuery.trim()}
+            >
+              <Image
+                src={icon}
+                alt="search"
+                width={20}
+                height={20}
+                style={{ width: "auto", height: "auto" }}
+                className="cursor-pointer"
+              />
+            </button>
+
             {/* Input Field */}
             <input
               type="text"
@@ -77,28 +64,14 @@ const Navbar = () => {
               placeholder="Search CSE Forums ..."
               className="w-full pl-10 pr-4 py-2 rounded bg-white text-gray-800 focus:outline-none font-serif"
             />
-          </div>
-          {/* Dropdown Results */}
-          {showDropdown && searchResults.length > 0 && (
-            <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-              {searchResults.slice(0, 6).map((thread) => (
-                <Link
-                  key={thread.id}
-                  href={`/question/${thread.id}`}
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  {thread.title}
-                </Link>
-              ))}
-            </div>
-          )}
+          </form>
         </div>
 
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
           <Link
             // href="/questionPage/asker"
-              href="/allquestions"
+            href="/allquestions"
             className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
           >
             All Questions

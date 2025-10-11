@@ -6,10 +6,19 @@ import Card from "./card";
 import empty from "../../../../../public/images/illustrations/emtyProfil.png";
 import Link from "next/link";
 import { useDeleteAnswer } from "@/hooks/Answers";
+import { useUserAnswers } from "@/hooks/Answers";
 
-export const MyReplies = ({ answers, refetch }) => {
-  const [activeTab, setActiveTab] = useState("All"); // State for active tab
+export const MyReplies = () => {
+    const filterMap = {
+    "Recent": "recent",
+    "Approved": "approved"
+  };
+
+
+  const [activeTab, setActiveTab] = useState("recent"); // State for active tab
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { answers, loading: answersLoading, error: answersError, pagination } = useUserAnswers(filterMap[activeTab], currentPage, 6);
   // hook for deleting an answer
   const { deleteAnswer, loading: deleteLoading, error: deleteError } = useDeleteAnswer();
 
@@ -26,7 +35,7 @@ export const MyReplies = ({ answers, refetch }) => {
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    // Add filtering logic for cardData based on selected tab if needed
+    setCurrentPage(1); // Reset to first page on tab change
   };
 
   const handleDelete = async (threadId, answerId) => { 
@@ -35,11 +44,6 @@ export const MyReplies = ({ answers, refetch }) => {
       if (result && result.success) {
         if (refetch) {
           await refetch();
-        }
-        const remainingAnswers = answers.length - 1;
-        const newTotalPages = Math.ceil(remainingAnswers / itemsPerPage);
-        if (currentPage > newTotalPages && newTotalPages > 0) {
-          setCurrentPage(1);
         }
       } else {
         console.error("Failed to delete answer:", result?.error);
@@ -78,10 +82,11 @@ export const MyReplies = ({ answers, refetch }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {currentCards.map((card, index) => (
+          {answers.map((card, index) => (
             <Card
               user_id={card.user_id}
               key={index}
+              thread_id={card.thread_id}
               title={card.Thread.title}
               content={card.content}
               approved={card.isApproved}
