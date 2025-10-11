@@ -418,19 +418,6 @@ const AskQuestion = () => {
                 Inserts
               </h3>
               <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-                <button
-                  onClick={handleFileInputClick}
-                  className="bg-transparent border-0 p-0 cursor-pointer"
-                >
-                  <Document color="#000000" size={iconSize} />
-                  <input
-                    onChange={handleFileSelection}
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    style={{ display: "none" }}
-                  />
-                </button>
                 <span onClick={addImage} className="cursor-pointer">
                   <GalleryImport color="#000000" size={iconSize} />
                 </span>
