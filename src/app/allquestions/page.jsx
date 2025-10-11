@@ -32,8 +32,8 @@ export const AllQuestions = () => {
 
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions(activeFilter, currentPage, 2);
-  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, activeFilter, currentPage, 2);
+  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions(activeFilter, currentPage, 10);
+  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, activeFilter, currentPage, 10);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
   const { voteThread, loading: voteLoading } = useVoteThread();
   const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
@@ -213,7 +213,7 @@ export const AllQuestions = () => {
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
-                onClick={() => handleFilterChange("Most-Answered")}
+                onClick={() => handleFilterChange("most-answered")}
               >
                 Most Answered
               </Link>
