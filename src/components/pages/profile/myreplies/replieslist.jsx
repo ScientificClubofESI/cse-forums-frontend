@@ -86,6 +86,7 @@ export const MyReplies = () => {
             <Card
               user_id={card.user_id}
               key={index}
+              thread_id={card.thread_id}
               title={card.Thread.title}
               content={card.content}
               approved={card.isApproved}
