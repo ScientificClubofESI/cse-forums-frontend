@@ -46,7 +46,7 @@ export const SignUp = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col sm:flex-row bg-primary-900">
+    <div className="min-h-screen flex flex-col sm:flex-row bg-primary-900">
 
       <div className="sm:w-1/2 flex flex-col justify-start relative" style={{ backgroundColor: '#FFFBFE' }}>
         <div className="flex flex-col pt-6 justify-between bg-primary-900 sm:rounded-tr-[80px] rounded-bl-[40px] rounded-br-[40px] sm:rounded-bl-none  sm:rounded-br-none rounded-tl-none px-8 sm:px-36 min-h-full pb-6 sm:pb-24">
@@ -85,7 +85,7 @@ export const SignUp = () => {
 
       <div className="sm:w-1/2 flex flex-col justify-start relative bg-primary-900">
         <div className="sm:rounded-bl-[80px] sm:px-36 min-h-full px-8 flex flex-col justify-start pb-24" style={{ backgroundColor: '#FFFBFE' }}>
-          <h1 className="text-primary-900 font-sans font-bold text-2xl text-center sm:text-[44px] mt-16 mb-16">
+          <h1 className="text-primary-900 font-sans font-bold text-2xl text-center sm:text-[44px] mt-14 mb-14">
             Create New Account
           </h1>
           <form onSubmit={handleSubmit}>
@@ -155,19 +155,11 @@ export const SignUp = () => {
               />
             </div>
 
-            <div className="text-neutral-900 py-2">
-              <label className="items-center text-l font-serif text-neutral-900 ">
-                <input
-                  type="checkbox"
-                  className="bg-white appearance-none w-4 h-4 mr-2 border-2 border-orange-300 rounded-sm cursor-pointer checked:bg-orange-300 checked:checkmark-color-white "
-                />
-                I agree all statements in
-                <a href="trm" className="ml-1 text-secondary-500">
-                  {" "}
-                  Terms of service
-                </a>
-                {/**TODO link to terms of service page*/}
-              </label>
+            <div className="text-neutral-900 py-1">
+                <p
+                  className="font-serif text-neutral-900 leading-relaxed text-center"
+                >By creating an account, you agree to follow our general terms of good and respectful use of this application.
+                </p>
             </div>
 
             <button
@@ -194,14 +186,14 @@ export const SignUp = () => {
               />
               Google
             </button>
-            <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
+            {/* <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
               <Image
                 src={linkedin}
                 alt="LinkedIn Icon"
                 className="w-5 h-5 mr-3"
               />
               LinkedIn
-            </button>
+            </button> */}
           </div>
 
           <div className="flex justify-center items-center mt-2">
