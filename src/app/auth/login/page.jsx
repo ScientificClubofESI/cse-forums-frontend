@@ -6,6 +6,8 @@ import pic from "../../../../public/images/illustrations/Coding workshop-pana.pn
 import emailIcone from "../../../../public/icons/emailIcone.png";
 import eyeclosed from "../../../../public/icons/eye-closed.png";
 import { useRouter } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
+import authApi from "@/lib/authApi";
 
 // the login hook 
 import { useLogin } from "@/hooks/Auth";
@@ -47,7 +49,7 @@ export const LogIn = () => {
           <h1 className="text-primary-900 font-sans font-bold text-2xl sm:text-[56px] mt-16 ">
             Log In
           </h1>
-          <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+          <form className="w-full flex flex-col gap-10" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                 {error}
@@ -97,7 +99,7 @@ export const LogIn = () => {
               </a> */}
             </div>
 
-            <div className="text-neutral-900 py-2 ">
+            {/* <div className="text-neutral-900 py-2 ">
               <label className="flex items-center text-l font-serif text-primary-900 ">
                 <input
                   type="checkbox"
@@ -105,7 +107,7 @@ export const LogIn = () => {
                 />
                 Remember me next time
               </label>
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -115,7 +117,7 @@ export const LogIn = () => {
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
 
-            <div className="flex justify-center items-center mb-10">
+            <div className="flex justify-center items-center">
               <p className="flex text-l font-serif text-neutral-500">
                 Don&apos;t have an account?
               </p>
@@ -124,6 +126,30 @@ export const LogIn = () => {
               </a>
             </div>
           </form>
+
+          <div className="flex flex-row items-center justify-center gap-4">
+            <div className="w-12 h-0.5 bg-neutral-300"></div>
+            <p className="mx-4 text-lg font-serif text-neutral-300">Or</p>
+            <div className="w-12 h-0.5 bg-neutral-300"></div>
+          </div>
+
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  await authApi.post(
+                    "/auth/login?provider=google",
+                    { provider: "google", token: credentialResponse.credential }
+                  );
+                  window.location.href = "/";
+                } catch (e) {
+                  alert("Google login failed");
+                }
+              }}
+              onError={() => alert("Google login failed")}
+              useOneTap
+            />
+          </div>
 
 
         </div>
