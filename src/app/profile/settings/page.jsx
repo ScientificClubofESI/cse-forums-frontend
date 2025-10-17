@@ -8,7 +8,7 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
 
 // Import the hooks
-import useAuth, { useUserProfile } from "@/hooks/Auth";
+import useAuth, { useUserProfile, useChangePassword } from "@/hooks/Auth";
 
 
 export const Settings = () => {
@@ -16,12 +16,23 @@ export const Settings = () => {
   // Authentication and profile hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, error: profileError, updateProfile } = useUserProfile(userId);
+  const { changePassword, loading: passwordLoading, error: passwordError, clearError } = useChangePassword();
 
+  const [isPasswordMode, setIsPasswordMode] = useState(false);
+  
   const [formData, setFormData] = useState({
     fullName: "",
     userName: "",
     email: "",
   });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [validationError, setValidationError] = useState("");
 
   const isInitialized = React.useRef(false);
 
@@ -40,20 +51,87 @@ export const Settings = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    if (isPasswordMode) {
+      setPasswordData((prevData) => ({ ...prevData, [name]: value }));
+      // Clear errors when user starts typing
+      if (validationError) setValidationError("");
+      if (passwordError) clearError();
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
   };
 
   const handleSave = async () => {
-    const result = await updateProfile({
-      username: formData.userName,
-      email: formData.email,
-      fullname: formData.fullName,
-    });
+    if (isPasswordMode) {
+      // Handle password change
+      
+      // Basic validation
+      if (!passwordData.currentPassword) {
+        setValidationError("Current password is required");
+        return;
+      }
+      
+      if (!passwordData.newPassword) {
+        setValidationError("New password is required");
+        return;
+      }
+      
+      if (passwordData.newPassword.length < 6) {
+        setValidationError("New password must be at least 6 characters long");
+        return;
+      }
+      
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setValidationError("New passwords do not match");
+        return;
+      }
+      
+      if (passwordData.currentPassword === passwordData.newPassword) {
+        setValidationError("New password must be different from current password");
+        return;
+      }
 
-    if (result.success) {
-      console.log("Profile updated successfully!");
+      const result = await changePassword(passwordData.currentPassword, passwordData.newPassword);
+
+      if (result.success) {
+        console.log("Password changed successfully!");
+        // Reset password form and switch back to profile mode
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+        setValidationError("");
+        setIsPasswordMode(false);
+      }
     } else {
-      console.log("Failed to update profile: " + result.error);
+      // Handle profile update
+      const result = await updateProfile({
+        username: formData.userName,
+        email: formData.email,
+        fullname: formData.fullName,
+      });
+
+      if (result.success) {
+        console.log("Profile updated successfully!");
+      } else {
+        console.log("Failed to update profile: " + result.error);
+      }
+    }
+  };
+
+  const togglePasswordMode = () => {
+    setIsPasswordMode(!isPasswordMode);
+    setValidationError("");
+    if (passwordError) clearError();
+    
+    // Reset password form when switching modes
+    if (!isPasswordMode) {
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
     }
   };
 
@@ -64,7 +142,7 @@ export const Settings = () => {
         {/* Title */}
         <div className="w-full mt-6">
           <h1 className="text-[20px] sm:text-5xl font-medium text-[#262626] mb-8 sm:mb-12 text-start">
-            My Informations
+            {isPasswordMode ? 'Change Password' : 'My Informations'}
           </h1>
         </div>
 
@@ -80,44 +158,87 @@ export const Settings = () => {
 
           {/* Form Section */}
           <div className="flex flex-col gap-6 flex-grow">
-            <FormInput
-              label="Full name :"
-              type="text"
-              placeholder="Enter your full name"
-              value={formData.fullName}
-              onChange={handleInputChange}
-              name="fullName"
-              disabled
-            />
-            <FormInput
-              label="User name :"
-              type="text"
-              placeholder="Enter your user name"
-              value={formData.userName}
-              onChange={handleInputChange}
-              name="userName"
-            />
-            <FormInput
-              label="Email :"
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleInputChange}
-              name="email"
-            />
+            {!isPasswordMode ? (
+              // Profile Update Form
+              <>
+                <FormInput
+                  label="Full name :"
+                  type="text"
+                  placeholder="Enter your full name"
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                  name="fullName"
+                  disabled
+                />
+                <FormInput
+                  label="User name :"
+                  type="text"
+                  placeholder="Enter your user name"
+                  value={formData.userName}
+                  onChange={handleInputChange}
+                  name="userName"
+                />
+                <FormInput
+                  label="Email :"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  name="email"
+                />
+              </>
+            ) : (
+              // Change Password Form
+              <>
+                <FormInput
+                  label="Current Password :"
+                  type="password"
+                  placeholder="Enter current password"
+                  value={passwordData.currentPassword}
+                  onChange={handleInputChange}
+                  name="currentPassword"
+                />
+                <FormInput
+                  label="New Password :"
+                  type="password"
+                  placeholder="Enter new password"
+                  value={passwordData.newPassword}
+                  onChange={handleInputChange}
+                  name="newPassword"
+                />
+                <FormInput
+                  label="Confirm Password :"
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={passwordData.confirmPassword}
+                  onChange={handleInputChange}
+                  name="confirmPassword"
+                />
+              </>
+            )}
+
+            {/* Error Display */}
+            {(validationError || passwordError) && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {validationError || passwordError}
+              </div>
+            )}
 
             {/* Buttons Section */}
             <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
-              <button className="bg-[#2E75AD] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto" disabled>
-                Change Password
+              <button 
+                onClick={togglePasswordMode}
+                className="bg-[#2E75AD] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto hover:bg-[#245a8a] transition-colors"
+              >
+                {isPasswordMode ? 'Update Profile' : 'Change Password'}
               </button>
 
               <button
                 onClick={handleSave}
-                disabled={profileLoading}
+                disabled={isPasswordMode ? passwordLoading : profileLoading}
                 className="bg-[#FF902E] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {profileLoading ? 'Saving...' : 'Save & Go Back'}
+                {(isPasswordMode ? passwordLoading : profileLoading) ? 'Saving...' : 'Save & Go Back'}
               </button>
 
             </div>

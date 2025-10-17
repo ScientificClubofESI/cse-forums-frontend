@@ -245,6 +245,50 @@ export const useLogout = () => {
     clearError: () => setError(""),
   };
 };
+
+export const useChangePassword = () => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const changePassword = async (currentPassword, newPassword) => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await api.post("/auth/change-password", {
+        currentPassword,
+        newPassword,
+      });
+
+      if (response.status === 200) {
+        return { success: true, data: response.data };
+      }
+    } catch (err) {
+      let errorMessage = "Password change failed. Please try again.";
+
+      if (err.response) {
+        errorMessage = err.response.data.message || errorMessage;
+      } else if (err.request) {
+        errorMessage = "No response from the server. Please try again.";
+      } else {
+        errorMessage = "An unexpected error occurred. Please try again.";
+      }
+
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    changePassword,
+    loading,
+    error,
+    clearError: () => setError(""),
+  };
+};
+
 export const useUserProfile = (userId) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);

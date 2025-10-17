@@ -47,7 +47,7 @@ export const LogIn = () => {
           <h1 className="text-primary-900 font-sans font-bold text-2xl sm:text-[56px] mt-16 ">
             Log In
           </h1>
-          <form className="w-full flex flex-col gap-6" onSubmit={handleSubmit}>
+          <form className="w-full flex flex-col gap-10" onSubmit={handleSubmit}>
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                 {error}
@@ -97,7 +97,7 @@ export const LogIn = () => {
               </a> */}
             </div>
 
-            <div className="text-neutral-900 py-2 ">
+            {/* <div className="text-neutral-900 py-2 ">
               <label className="flex items-center text-l font-serif text-primary-900 ">
                 <input
                   type="checkbox"
@@ -105,7 +105,7 @@ export const LogIn = () => {
                 />
                 Remember me next time
               </label>
-            </div>
+            </div> */}
 
             <button
               type="submit"
