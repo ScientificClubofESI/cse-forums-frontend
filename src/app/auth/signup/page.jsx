@@ -7,6 +7,8 @@ import linkedin from "../../../../public/icons/linkedin icone.png";
 import emailIcone from "../../../../public/icons/emailIcone.png";
 import userIcone from "../../../../public/icons/userIcone.png";
 import { useRouter } from "next/navigation";
+import { GoogleLogin } from "@react-oauth/google";
+import authApi from "@/lib/authApi";
 
 
 // the signup hook
@@ -177,23 +179,22 @@ export const SignUp = () => {
             <div className="w-12 h-0.5 bg-neutral-300"></div>
           </div>
 
-          <div className="flex flex-row items-center space-x-4 gap-4">
-            <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
-              <Image
-                src={emailIcone}
-                alt="Google Icon"
-                className="w-5 h-5 mr-3"
-              />
-              Google
-            </button>
-            {/* <button className="flex items-center w-full justify-center bg-white border border-neutral-300 py-2 rounded-md text-neutral-300">
-              <Image
-                src={linkedin}
-                alt="LinkedIn Icon"
-                className="w-5 h-5 mr-3"
-              />
-              LinkedIn
-            </button> */}
+          <div className="flex flex-row items-center justify-center mt-4">
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  await authApi.post(
+                    "/auth/signup",
+                    { provider: "google", token: credentialResponse.credential }
+                  );
+                  window.location.href = "/";
+                } catch (e) {
+                  alert("Google signup failed");
+                }
+              }}
+              onError={() => alert("Google signup failed")}
+              useOneTap
+            />
           </div>
 
           <div className="flex justify-center items-center mt-2">

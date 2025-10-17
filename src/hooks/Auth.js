@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import authApi from "@/lib/authApi";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 
@@ -14,7 +13,7 @@ export const useAuth = () => {
   // Server-verified session: fetch current user via verify endpoint
   const fetchCurrentUser = async () => {
     try {
-      const response = await authApi.get("/auth/verify", { withCredentials: true });
+      const response = await authApi.get("/auth/verify");
       if (response.data?.success) {
         return response.data.data?.user;
       }
@@ -73,6 +72,7 @@ export const useLogin = () => {
 
       if (response.status === 200) {
         // Backend now sets HttpOnly cookies; just navigate
+        console.log('login was successfull')
         router.push("/");
 
         return { success: true, data: response.data };
@@ -120,7 +120,6 @@ export const useSignup = () => {
       });
 
       if (response.status === 201) {
-        // Backend sets cookies; just navigate
         router.push("/");
 
         return { success: true, data: response.data };
@@ -167,14 +166,6 @@ export const useLogout = () => {
         // If backend logout fails, still proceed with frontend cleanup
         console.warn("Backend logout failed, proceeding with frontend cleanup");
       }
-
-      // Clear tokens from cookies
-      Cookies.remove("token", { path: "/" });
-      Cookies.remove("cse_forums_refresh_token", { path: "/" });
-
-      // Clear any other stored data if needed
-      // localStorage.clear(); // Only if you use localStorage
-      // sessionStorage.clear(); // Only if you use sessionStorage
 
       // Redirect to login or home page
       router.push("/auth/login");
