@@ -10,16 +10,24 @@ import Navbar from "@/components/navbar/navbar";
 // Import the hooks
 import useAuth, { useUserProfile, useChangePassword } from "@/hooks/Auth";
 
-
 export const Settings = () => {
-
   // Authentication and profile hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading, error: profileError, updateProfile } = useUserProfile(userId);
-  const { changePassword, loading: passwordLoading, error: passwordError, clearError } = useChangePassword();
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    updateProfile,
+  } = useUserProfile(userId);
+  const {
+    changePassword,
+    loading: passwordLoading,
+    error: passwordError,
+    clearError,
+  } = useChangePassword();
 
   const [isPasswordMode, setIsPasswordMode] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     fullName: "",
     userName: "",
@@ -63,35 +71,48 @@ export const Settings = () => {
 
   const handleSave = async () => {
     if (isPasswordMode) {
+      // Prevent password changes for Google auth users
+      if (profile?.auth_provider === "GOOGLE") {
+        setValidationError(
+          "Password changes are not available for Google authenticated users"
+        );
+        return;
+      }
+
       // Handle password change
-      
+
       // Basic validation
       if (!passwordData.currentPassword) {
         setValidationError("Current password is required");
         return;
       }
-      
+
       if (!passwordData.newPassword) {
         setValidationError("New password is required");
         return;
       }
-      
+
       if (passwordData.newPassword.length < 6) {
         setValidationError("New password must be at least 6 characters long");
         return;
       }
-      
+
       if (passwordData.newPassword !== passwordData.confirmPassword) {
         setValidationError("New passwords do not match");
         return;
       }
-      
+
       if (passwordData.currentPassword === passwordData.newPassword) {
-        setValidationError("New password must be different from current password");
+        setValidationError(
+          "New password must be different from current password"
+        );
         return;
       }
 
-      const result = await changePassword(passwordData.currentPassword, passwordData.newPassword);
+      const result = await changePassword(
+        passwordData.currentPassword,
+        passwordData.newPassword
+      );
 
       if (result.success) {
         console.log("Password changed successfully!");
@@ -106,11 +127,17 @@ export const Settings = () => {
       }
     } else {
       // Handle profile update
-      const result = await updateProfile({
+      const updateData = {
         username: formData.userName,
-        email: formData.email,
         fullname: formData.fullName,
-      });
+      };
+
+      // Only include email in update if user is not using Google auth
+      if (profile?.auth_provider !== "GOOGLE") {
+        updateData.email = formData.email;
+      }
+
+      const result = await updateProfile(updateData);
 
       if (result.success) {
         console.log("Profile updated successfully!");
@@ -124,7 +151,7 @@ export const Settings = () => {
     setIsPasswordMode(!isPasswordMode);
     setValidationError("");
     if (passwordError) clearError();
-    
+
     // Reset password form when switching modes
     if (!isPasswordMode) {
       setPasswordData({
@@ -142,7 +169,7 @@ export const Settings = () => {
         {/* Title */}
         <div className="w-full mt-6">
           <h1 className="text-[20px] sm:text-5xl font-medium text-[#262626] mb-8 sm:mb-12 text-start">
-            {isPasswordMode ? 'Change Password' : 'My Informations'}
+            {isPasswordMode ? "Change Password" : "My Informations"}
           </h1>
         </div>
 
@@ -168,7 +195,6 @@ export const Settings = () => {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   name="fullName"
-                  disabled
                 />
                 <FormInput
                   label="User name :"
@@ -185,6 +211,7 @@ export const Settings = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   name="email"
+                  disabled={profile?.auth_provider === "GOOGLE"}
                 />
               </>
             ) : (
@@ -226,21 +253,25 @@ export const Settings = () => {
 
             {/* Buttons Section */}
             <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6">
-              <button 
-                onClick={togglePasswordMode}
-                className="bg-[#2E75AD] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto hover:bg-[#245a8a] transition-colors"
-              >
-                {isPasswordMode ? 'Update Profile' : 'Change Password'}
-              </button>
+              {/* Only show Change Password button if user is not using Google auth */}
+              {profile?.auth_provider !== "GOOGLE" && (
+                <button
+                  onClick={togglePasswordMode}
+                  className="bg-[#2E75AD] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto hover:bg-[#245a8a] transition-colors"
+                >
+                  {isPasswordMode ? "Update Profile" : "Change Password"}
+                </button>
+              )}
 
               <button
                 onClick={handleSave}
                 disabled={isPasswordMode ? passwordLoading : profileLoading}
                 className="bg-[#FF902E] text-white text-sm sm:text-base font-medium rounded py-3 px-16 w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {(isPasswordMode ? passwordLoading : profileLoading) ? 'Saving...' : 'Save & Go Back'}
+                {(isPasswordMode ? passwordLoading : profileLoading)
+                  ? "Saving..."
+                  : "Save & Go Back"}
               </button>
-
             </div>
           </div>
         </div>
@@ -249,54 +280,63 @@ export const Settings = () => {
   );
 };
 
-
 // Subcomponent: User Picture Section
-  const UserPicture = () => (
-    <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
-      <Image
-        src={userpicture}
-        alt="User Picture"
-        className="md:h-[11rem] md:w-[11rem] w-[113px] h-[113px]  rounded-full"
-      />
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        id="upload-picture"
+const UserPicture = () => (
+  <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
+    <Image
+      src={userpicture}
+      alt="User Picture"
+      className="md:h-[11rem] md:w-[11rem] w-[113px] h-[113px]  rounded-full"
+    />
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      id="upload-picture"
+      disabled
+    />
+    {/* Change Picture Button */}
+    <label
+      htmlFor="upload-picture"
+      className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
+    >
+      Change Picture
+    </label>
+    {/* Space under the button only in mobile version */}
+    <div className="sm:hidden mt-4 w-[20.2rem] mb-[1rem]">
+      <hr className="border-t border-neutral-500" />
+    </div>
+  </div>
+);
+
+// Subcomponent: Form Input
+const FormInput = ({
+  label,
+  type,
+  placeholder,
+  value,
+  onChange,
+  name,
+  disabled,
+}) => (
+  <div className="flex items-center gap-4 w-full">
+    <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold">
+      {label}
+    </label>
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      name={name} // Pass name here
+      className={`placeholder-opacity-100 shadow-sm rounded-[4px] px-4 py-4 text-sm placeholder:text-[#262626] placeholder:font-light sm:placeholder:font-light placeholder:font-serif flex-grow ${
         disabled
-      />
-      {/* Change Picture Button */}
-      <label
-        htmlFor="upload-picture"
-        className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
-      >
-        Change Picture
-      </label>
-      {/* Space under the button only in mobile version */}
-      <div className="sm:hidden mt-4 w-[20.2rem] mb-[1rem]">
-        <hr className="border-t border-neutral-500" />
-      </div>
-    </div>
-  );
-
-  // Subcomponent: Form Input
-  const FormInput = ({ label, type, placeholder, value, onChange, name, disabled }) => (
-    <div className="flex items-center gap-4 w-full">
-      <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold">
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        name={name} // Pass name here
-        className="placeholder-opacity-100 bg-gray-100 shadow-sm rounded-[4px] px-4 py-4 text-sm placeholder:text-[#262626] placeholder:font-light sm:placeholder:font-light placeholder:font-serif  flex-grow "
-        disabled={disabled}
-      />
-    </div>
-  );
-
-
+          ? "bg-gray-200 cursor-not-allowed text-gray-600"
+          : "bg-gray-100"
+      }`}
+      disabled={disabled}
+    />
+  </div>
+);
 
 export default Settings;
