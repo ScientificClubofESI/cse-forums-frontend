@@ -2,14 +2,16 @@ import React from "react";
 import Image from "next/image";
 import trash from "../../../../../public/icons/trash.png";
 import approve from "../../../../../public/icons/approved.png";
-const Card = ({ title, content, approved, onDelete }) => {
+import { useRouter } from "next/navigation";
+const Card = ({ title, content, approved, onDelete, thread_id }) => {
+  const router = useRouter();
   const handleNavigation = () => {
-    //console.log("navigated to...");
+    router.push(`/allquestions/${thread_id}`);
   };
   return (
     <div className="flex flex-col py-[12px] md:py-[16px] px-[18px] md:px-[24px] bg-white rounded-[8px] gap-[8px] shadow-[0px_0px_64px_0px_#D8D8D866]">
       <div onClick={() => handleNavigation()}>
-        <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">
+        <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito cursor-pointer" onClick={handleNavigation}>
           Q: {title}
         </h3>
         <h3 className="text-neutral-900 text-xl md:text-2xl font-nunito">
@@ -21,14 +23,16 @@ const Card = ({ title, content, approved, onDelete }) => {
       />
       </div>
 
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between mt-3">
         {approved ? (
           <div className="px-[16px] py-[4px] text-success-500   bg-[#E9F9E8] flex items-center gap-[8px]">
             Approved
             <Image src={approve} alt="Aprroved icon" width={16} height={16} />
           </div>
         ) : (
-          <div className="px-[16px] py-[4px]"> </div>
+          <div className="py-[4px] text-ellipsis px-[16px] text-gray-500 bg-gray-200">
+            Not Approved
+          </div>
         )}
         <button
           className="px-[16px] py-[4px] text-white bg-warning-500 flex items-center gap-[8px]"

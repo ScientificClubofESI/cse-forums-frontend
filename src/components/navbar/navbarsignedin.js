@@ -58,7 +58,7 @@ export const Navbarsignedin = () => {
         {/* Search Bar */}
         <div className="flex-1 mx-8 hidden md:block">
           <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-            {/* ✅ Search icon as submit button */}
+            {/* Search icon as submit button */}
             <button
               type="submit"
               className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10 hover:opacity-70 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
@@ -100,17 +100,6 @@ export const Navbarsignedin = () => {
             <Image
               src={User}
               alt="User"
-              width={40}
-              height={40}
-              style={{ width: "auto", height: "auto" }}
-              className="hover:opacity-80"
-            />
-          </Link>
-
-          <Link href="/notifications">
-            <Image
-              src={notification}
-              alt="Frame 33603"
               width={40}
               height={40}
               style={{ width: "auto", height: "auto" }}

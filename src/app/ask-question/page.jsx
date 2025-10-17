@@ -32,7 +32,7 @@ import { useRouter } from "next/navigation";
 
 // the custom hooks
 import useAuth from "@/hooks/Auth";
-import { useCreateThread } from "@/hooks/Questions";
+import { useCreateThread, useAddTags } from "@/hooks/Questions";
 
 
 const AskQuestion = () => {
@@ -48,6 +48,8 @@ const AskQuestion = () => {
 
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { createThread, loading: createLoading, error: createError, clearError } = useCreateThread();
+  const { addTags, loading: tagsLoading, error: tagsError } = useAddTags(null);
+
 
   const handleAnswerSubmit = (answerHtml) => {
     //console.log('Answer submitted:', answerHtml);
@@ -256,6 +258,15 @@ const AskQuestion = () => {
       // Success - clear form
       setQuestionTitle("");
       editor.commands.clearContent();
+      // tags creation
+      if (tags.length > 0) {
+        const tagResult = await addTags(tags, result.data.id);
+
+        if (!tagResult.success) {
+          console.error('Failed to add tags:', tagResult.error);
+          setError(`Thread created but failed to add tags: ${tagResult.error}`);
+        }
+      }
       setTags([]);
       setTagInput("");
       router.push('/allquestions'); // Redirect to all questions page
@@ -278,7 +289,7 @@ const AskQuestion = () => {
     return null;
   }
 
-  
+
   return (
     <>
       <Navbarsignedin />
@@ -407,19 +418,6 @@ const AskQuestion = () => {
                 Inserts
               </h3>
               <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
-                <button
-                  onClick={handleFileInputClick}
-                  className="bg-transparent border-0 p-0 cursor-pointer"
-                >
-                  <Document color="#000000" size={iconSize} />
-                  <input
-                    onChange={handleFileSelection}
-                    type="file"
-                    ref={fileInputRef}
-                    accept="image/*"
-                    style={{ display: "none" }}
-                  />
-                </button>
                 <span onClick={addImage} className="cursor-pointer">
                   <GalleryImport color="#000000" size={iconSize} />
                 </span>

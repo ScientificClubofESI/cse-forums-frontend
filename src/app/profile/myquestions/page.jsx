@@ -8,35 +8,19 @@ import { Navbarsignedin } from "@/components/navbar/navbarsignedin";
 
 // import the auth hook
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useDeleteThread } from "@/hooks/Questions";
+import { useGetMyQuestions, useDeleteThread } from "@/hooks/Questions";
 
 export default function Myquestions() {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions, loading: questionsLoading, error: questionsError, refetch } = useQuestions();
+  const { questions: myquestions, loading: questionsLoading, error: questionsError, refetch } = useGetMyQuestions();
   const { deleteThread, loading: deleteLoading, error: deleteError } = useDeleteThread();
-  const [myquestions, setmyquestions] = useState([]);
-
-  // filter the questions based on the userid
-  useEffect(() => {
-
-    // Only filter when we have both questions data and userId, and loading is complete
-    if (questions && questions.length > 0 && userId && !questionsLoading && !authLoading) {
-      console.log(questions)
-      const filtered = questions.filter((q) => q.user_id === userId);
-      console.log(filtered)
-      setmyquestions(filtered);
-    } else if (!questionsLoading && !authLoading && questions && questions.length === 0) {
-      // If loading is complete but no questions exist
-      setmyquestions([]);
-    }
-  }, [questions, userId, questionsLoading, authLoading]);
 
 
   const handleDeleteThread = async (id) => {
     const results = await deleteThread(id);
     if (results.success) {
       console.log("Thread deleted successfully");
-      refetch(); // Refetch questions after deletion
+      refetch();
     } else {
       console.log("Failed to delete thread: " + results.error);
     }
@@ -89,7 +73,6 @@ export default function Myquestions() {
             <div>
               <MyquestionsList
                 myQuestions={myquestions}
-                setmyquestions={setmyquestions}
                 onDelete={(id) => handleDeleteThread(id)}
               />
             </div>

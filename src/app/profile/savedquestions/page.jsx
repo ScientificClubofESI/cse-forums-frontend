@@ -14,10 +14,7 @@ import { useGetUserSavedQuestions } from "@/hooks/Questions";
 import { useRouter } from "next/navigation";
 
 export default function Profil() {
-  const router = useRouter();
-
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { savedQuestions, loading, error, refetch } = useGetUserSavedQuestions();
 
   return (
     <>
@@ -51,10 +48,8 @@ export default function Profil() {
             </div>
 
             <div>
-              <MySavedList  savedQuestions={savedQuestions} 
-                onRefresh={refetch}
-                loading={loading}
-                error={error} />
+              <MySavedList
+              />
             </div>
           </div>
         </div>

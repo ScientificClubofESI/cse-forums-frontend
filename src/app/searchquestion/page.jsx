@@ -6,7 +6,6 @@ import { useState } from "react";
 import filtre from "./../../../public/pages/allQuestion/icons/filtre.svg";
 import left from "./../../../public/pages/allQuestion/icons/left.svg";
 import right from "./../../../public/pages/allQuestion/icons/right.svg";
-import UpDown from "./../../../public/pages/allQuestion/icons/UpDown.svg";
 import plus from "./../../../public/pages/allQuestion/icons/addAnswer.svg";
 import save from "./../../../public/pages/allQuestion/icons/save.svg";
 import share from "./../../../public/pages/allQuestion/icons/share.svg";
@@ -172,6 +171,15 @@ export const SearchQuestions = () => {
     }
   };
 
+  const handleShareQuestion = async (questionId) => {
+  try {
+    const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+    await navigator.clipboard.writeText(questionUrl);
+    alert('Question link copied to clipboard!');
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+};
   return (
     <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
@@ -187,7 +195,6 @@ export const SearchQuestions = () => {
             >
               Ask a Question ?
             </Link>
-            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden" />
           </div>
           {/* this should be removed in the all questions page */}
           {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
@@ -395,7 +402,7 @@ export const SearchQuestions = () => {
                       {/* Share and Save buttons */}
                       <div className="flex flex-row items-end justify-end gap-4">
                         {/* Share button */}
-                        <button className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
+                        <button onClick={() => handleShareQuestion(question.id)} className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
                           <Image
                             src={share}
                             alt="share icon"
