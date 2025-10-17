@@ -11,52 +11,40 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Function to read JWT token and extract user info
-  const getUserFromToken = (token) => {
+  // Server-verified session: fetch current user via verify endpoint
+  const fetchCurrentUser = async () => {
     try {
-      const payloadPart = token.split(".")[1];
-      const decodedPayload = atob(payloadPart);
-      const userInfo = JSON.parse(decodedPayload);
-      return userInfo;
-    } catch (error) {
-      console.log("Could not read token:", error);
+      const response = await authApi.get("/auth/verify", { withCredentials: true });
+      if (response.data?.success) {
+        return response.data.data?.user;
+      }
+      return null;
+    } catch (e) {
       return null;
     }
   };
 
-  const logout = () => {
-    Cookies.remove("token");
+  const logout = async () => {
+    try { await authApi.post("/auth/logout"); } catch {}
     setUser(null);
     setIsAuthenticated(false);
   };
 
   useEffect(() => {
-    const token = Cookies.get("token");
-
-    if (token) {
-      const userInfo = getUserFromToken(token);
-
-      if (userInfo) {
-        // Extract user data from JWT payload
-        setUser({
-          id: userInfo.userId || userInfo.id,
-          username: userInfo.username,
-          email: userInfo.email,
-          fullname: userInfo.fullname,
-          role: userInfo.role,
-        });
+    let mounted = true;
+    (async () => {
+      const me = await fetchCurrentUser();
+      if (!mounted) return;
+      if (me) {
+        setUser(me);
         setIsAuthenticated(true);
       } else {
-        // could not read the token - clear everything
-        logout();
+        setUser(null);
+        setIsAuthenticated(false);
       }
-    } else {
-      // No token
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-
-    setLoading(false);
+      setLoading(false);
+    })();
+    return () => { mounted = false; };
   }, []);
 
   return {
@@ -84,25 +72,7 @@ export const useLogin = () => {
       });
 
       if (response.status === 200) {
-        // Set tokens in cookies
-        const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 120); // 120 minutes for access token
-
-        Cookies.set("token", response.data.token, {
-          expires: expirationDate,
-          path: "/",
-        });
-
-        Cookies.set(
-          "cse_forums_refresh_token",
-          response.data.data.refreshToken,
-          {
-            expires: 1, // 1 day for refresh token
-            path: "/",
-          }
-        );
-
-        // Redirect to home page
+        // Backend now sets HttpOnly cookies; just navigate
         router.push("/");
 
         return { success: true, data: response.data };
@@ -150,25 +120,7 @@ export const useSignup = () => {
       });
 
       if (response.status === 201) {
-        // Set tokens in cookies
-        const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 15); // 15 minutes for access token
-
-        Cookies.set("token", response.data.token, {
-          expires: expirationDate,
-          path: "/",
-        });
-
-        Cookies.set(
-          "cse_forums_refresh_token",
-          response.data.data.refreshToken,
-          {
-            expires: 1, // 1 day for refresh token
-            path: "/",
-          }
-        );
-
-        // Redirect to home page
+        // Backend sets cookies; just navigate
         router.push("/");
 
         return { success: true, data: response.data };
