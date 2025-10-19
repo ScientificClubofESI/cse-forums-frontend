@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 
 // the custom hooks
 import useAuth from "@/hooks/Auth";
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
 import { useCreateThread, useAddTags } from "@/hooks/Questions";
 
 
@@ -49,6 +50,22 @@ const AskQuestion = () => {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { createThread, loading: createLoading, error: createError, clearError } = useCreateThread();
   const { addTags, loading: tagsLoading, error: tagsError } = useAddTags(null);
+
+  const { uploadImage, uploading: imageUploading, error: uploadError } = useCloudinaryUpload();
+
+
+  const handleImageUpload = useCallback(
+    async (file) => {
+      if (!file || !editor) return;
+
+      const imageUrl = await uploadImage(file, 'content');
+
+      if (imageUrl) {
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+      }
+    },
+    [editor, uploadImage]
+  );
 
 
   const handleAnswerSubmit = (answerHtml) => {
@@ -110,20 +127,19 @@ const AskQuestion = () => {
         const files = Array.from(event.dataTransfer?.files || []);
         const imageFiles = files.filter((file) => /image/.test(file.type));
 
-        if (imageFiles.length > 0) {
+        if (imageItems.length > 0) {
           event.preventDefault();
-          imageFiles.forEach((file) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(file);
-            fileReader.onload = () => {
-              // Use view.dispatch instead of editor chain to avoid circular dependency
-              const { schema } = view.state;
-              const node = schema.nodes.image.create({
-                src: fileReader.result,
-              });
-              const transaction = view.state.tr.replaceSelectionWith(node);
-              view.dispatch(transaction);
-            };
+          imageItems.forEach(async (item) => {
+            const file = item.getAsFile();
+            if (file) {
+              const imageUrl = await uploadImage(file, 'content');
+              if (imageUrl) {
+                const { schema } = view.state;
+                const node = schema.nodes.image.create({ src: imageUrl });
+                const transaction = view.state.tr.replaceSelectionWith(node);
+                view.dispatch(transaction);
+              }
+            }
           });
           return true;
         }
@@ -163,20 +179,6 @@ const AskQuestion = () => {
       setIsLoading(false);
     },
   });
-
-  // Custom image handler function
-  const handleImageUpload = useCallback(
-    (file) => {
-      if (!file || !editor) return;
-
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-      fileReader.onload = () => {
-        editor.chain().focus().setImage({ src: fileReader.result }).run();
-      };
-    },
-    [editor]
-  );
 
   const handleKeyEvent = (e) => {
     if (e.key === "Enter" && e.target.value !== "") {
@@ -418,6 +420,19 @@ const AskQuestion = () => {
                 Inserts
               </h3>
               <div className="flex items-center justify-center gap-2 md:gap-3 pb-4">
+                <button
+                  onClick={handleFileInputClick}
+                  className="bg-transparent border-0 p-0 cursor-pointer"
+                >
+                  <Document color="#000000" size={iconSize} />
+                  <input
+                    onChange={handleFileSelection}
+                    type="file"
+                    ref={fileInputRef}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                </button>
                 <span onClick={addImage} className="cursor-pointer">
                   <GalleryImport color="#000000" size={iconSize} />
                 </span>

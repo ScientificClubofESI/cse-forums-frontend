@@ -9,6 +9,7 @@ import Navbar from "@/components/navbar/navbar";
 
 // Import the hooks
 import useAuth, { useUserProfile } from "@/hooks/Auth";
+import { useCloudinaryUpload } from "@/hooks/useClouadinaryUpload";
 
 
 export const Settings = () => {
@@ -17,11 +18,52 @@ export const Settings = () => {
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { profile, loading: profileLoading, error: profileError, updateProfile } = useUserProfile(userId);
 
+  const [profilePicture, setProfilePicture] = useState("");
+  const { uploadImage, loading: uploadLoading, error: uploadError } = useCloudinaryUpload();
   const [formData, setFormData] = useState({
     fullName: "",
     userName: "",
     email: "",
   });
+
+  // Update the useEffect to include profile picture
+  useEffect(() => {
+    if (profile && !isInitialized.current) {
+      console.log(profile);
+      setFormData({
+        fullName: profile.fullname || "",
+        userName: profile.username || "",
+        email: profile.email || "",
+      });
+      setProfilePicture(profile.profile_picture || null); // Add this line
+      isInitialized.current = true;
+    }
+  }, [profile]);
+
+  // Add image upload handler
+  const handleImageUpload = async (file) => {
+    clearError();
+    const imageUrl = await uploadImage(file, 'profile');
+    if (imageUrl) {
+      setProfilePicture(imageUrl);
+    }
+  };
+
+  // Update handleSave to include profile picture
+  const handleSave = async () => {
+    const result = await updateProfile({
+      username: formData.userName,
+      email: formData.email,
+      fullname: formData.fullName,
+      profile_picture: profilePicture, // Add this line
+    });
+
+    if (result.success) {
+      console.log("Profile updated successfully!");
+    } else {
+      console.log("Failed to update profile: " + result.error);
+    }
+  };
 
   const isInitialized = React.useRef(false);
 
@@ -43,19 +85,6 @@ export const Settings = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSave = async () => {
-    const result = await updateProfile({
-      username: formData.userName,
-      email: formData.email,
-      fullname: formData.fullName,
-    });
-
-    if (result.success) {
-      console.log("Profile updated successfully!");
-    } else {
-      console.log("Failed to update profile: " + result.error);
-    }
-  };
 
   return (
     <>
@@ -112,6 +141,13 @@ export const Settings = () => {
                 Change Password
               </button>
 
+              {uploadError && (
+                <div className="w-full mb-4">
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    {uploadError}
+                  </div>
+                </div>
+              )}
               <button
                 onClick={handleSave}
                 disabled={profileLoading}
@@ -130,51 +166,67 @@ export const Settings = () => {
 
 
 // Subcomponent: User Picture Section
-  const UserPicture = () => (
-    <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
+const UserPicture = () => (
+  <div className="flex flex-col items-center sm:items-start sm:mr-10 sm:ml-10 sm:mb-10">
+    <div className="relative">
       <Image
-        src={userpicture}
+        src={profilePicture || userpicture}
         alt="User Picture"
-        className="md:h-[11rem] md:w-[11rem] w-[113px] h-[113px]  rounded-full"
+        width={180}
+        height={180}
+        className="md:h-[11rem] md:w-[11rem] w-[113px] h-[113px] rounded-full object-cover"
       />
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        id="upload-picture"
-        disabled
-      />
-      {/* Change Picture Button */}
-      <label
-        htmlFor="upload-picture"
-        className="text-[#2E75AD] font-medium md:text-xl text-sm	md:ml-[1.1rem] cursor-pointer mt-4 text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold"
-      >
-        Change Picture
-      </label>
-      {/* Space under the button only in mobile version */}
-      <div className="sm:hidden mt-4 w-[20.2rem] mb-[1rem]">
-        <hr className="border-t border-neutral-500" />
-      </div>
+      {imageUploading && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+          <div className="text-white text-sm">Uploading...</div>
+        </div>
+      )}
     </div>
-  );
+    
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      id="upload-picture"
+      onChange={(e) => {
+        const file = e.target.files?.[0];
+        if (file) handleImageUpload(file);
+      }}
+      disabled={imageUploading}
+    />
+    
+    <label
+      htmlFor="upload-picture"
+      className={`text-[#2E75AD] font-medium md:text-xl text-sm md:ml-[1.1rem] mt-4 text-center sm:text-left sm:ml-[2.05rem] sm:mt-3 font-serif md:font-bold ${
+        imageUploading ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:underline'
+      }`}
+    >
+      {imageUploading ? 'Uploading...' : 'Change Picture'}
+    </label>
+    
+    <div className="sm:hidden mt-4 w-[20.2rem] mb-[1rem]">
+      <hr className="border-t border-neutral-500" />
+    </div>
+  </div>
+);
 
-  // Subcomponent: Form Input
-  const FormInput = ({ label, type, placeholder, value, onChange, name, disabled }) => (
-    <div className="flex items-center gap-4 w-full">
-      <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold">
-        {label}
-      </label>
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        name={name} // Pass name here
-        className="placeholder-opacity-100 bg-gray-100 shadow-sm rounded-[4px] px-4 py-4 text-sm placeholder:text-[#262626] placeholder:font-light sm:placeholder:font-light placeholder:font-serif  flex-grow "
-        disabled={disabled}
-      />
-    </div>
-  );
+// Subcomponent: Form Input
+const FormInput = ({ label, type, placeholder, value, onChange, name, disabled }) => (
+  <div className="flex items-center gap-4 w-full">
+    <label className="text-[#262626] md:w-[5.6rem] w-[5.5rem] text-left font-serif font-medium sm:font-bold">
+      {label}
+    </label>
+    <input
+      type={type}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      name={name} // Pass name here
+      className="placeholder-opacity-100 bg-gray-100 shadow-sm rounded-[4px] px-4 py-4 text-sm placeholder:text-[#262626] placeholder:font-light sm:placeholder:font-light placeholder:font-serif  flex-grow "
+      disabled={disabled}
+    />
+  </div>
+);
 
 
 
