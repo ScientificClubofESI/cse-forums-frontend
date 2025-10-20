@@ -37,7 +37,16 @@ import { useCreateThread, useAddTags } from "@/hooks/Questions";
 
 
 const AskQuestion = () => {
+
   const router = useRouter();
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, authLoading, router]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [questionTitle, setQuestionTitle] = useState("");
   const [tags, setTags] = useState([]);
@@ -47,7 +56,6 @@ const AskQuestion = () => {
   const [iconSize, setIconSize] = useState(25);
   const [isAnswerPopupOpen, setIsAnswerPopupOpen] = useState(false);
 
-  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { createThread, loading: createLoading, error: createError, clearError } = useCreateThread();
   const { addTags, loading: tagsLoading, error: tagsError } = useAddTags(null);
 

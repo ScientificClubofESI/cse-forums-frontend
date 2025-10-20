@@ -1,6 +1,5 @@
 import axios from "axios";
-import Cookies from "js-cookie";
-import authApi from "./authApi"; // Import the dedicated auth API
+import authApi from "./authApi"; // dedicated auth API (no token logic)
 
 // Create an Axios instance
 const api = axios.create({
@@ -8,71 +7,33 @@ const api = axios.create({
   withCredentials: true, // Include cookies in requests
 });
 
-// Add a request interceptor
-api.interceptors.request.use(
-  async (config) => {
-    let accessToken = Cookies.get("token");
+// No access token injection; rely on HttpOnly cookies and server to read them
+// Add a response interceptor to auto-refresh on 401 and retry once
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-    // If the token is about to expire, refresh it
-    if (!accessToken || isTokenExpired(accessToken)) {
+    // If unauthorized and not already retried, attempt refresh then retry once
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
       try {
-        const newToken = await refreshToken();
-        //console.log(" newtoken generated : ", newToken);
-        const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 5);
-        Cookies.set("token", newToken, { path: "/", expires: expirationDate });
-        config.headers.Authorization = `Bearer ${newToken}`; // Set the new token in the request
-        accessToken = newToken;
-      } catch (error) {
-        //console.error("Failed to refresh token:", error);
-        // Redirect to login if refresh fails
-        if (typeof window !== "undefined") {
-          window.location.href = "/auth/login";
-        }
-        // Abort the request
-        return Promise.reject(error);
+        await authApi.get("/auth/token/refresh", { withCredentials: true });
+        // After refresh sets new cookies, retry the original request
+        return api(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed; fall through to redirect
       }
-    } else {
-      // Add the access token to the request headers
-      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
-    return config;
-  },
-  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        window.location.href = "/auth/login";
+      }
+    }
     return Promise.reject(error);
   }
 );
-
-// Function to check if the token is expired
-const isTokenExpired = (token) => {
-  try {
-    const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Date.now() / 1000; // Convert to seconds
-    return decodedToken.exp <= currentTime + 60; // Refresh if token expires in less than 1 minute or is expired
-  } catch (error) {
-    //console.error("Error decoding token:", error);
-    return true; // Assume token is expired if decoding fails
-  }
-};
-
-// Function to refresh the token
-const refreshToken = async () => {
-  try {
-    // Use authApi to avoid interceptor circular dependency
-    const response = await authApi.get("/auth/token/refresh");
-
-    if (response.data.token) {
-      //console.log("new token in refreshToken function : ", response.data.token);
-      return response.data.token; // Return the new access token
-    } else {
-      throw new Error("Failed to refresh token");
-    }
-  } catch (error) {
-    //console.error("Error refreshing token:", error);
-    throw error;
-  }
-};
 
 export default api;
 
