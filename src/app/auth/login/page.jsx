@@ -21,6 +21,8 @@ export const LogIn = () => {
   const { login, loading, error, clearError } = useLogin();
 
 
+  console.log("google client id: ", process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
+
   // to replace this with the hook
   const handleSubmit = async (e) => {
     e.preventDefault();

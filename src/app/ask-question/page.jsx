@@ -61,21 +61,6 @@ const AskQuestion = () => {
 
   const { uploadImage, uploading: imageUploading, error: uploadError } = useCloudinaryUpload();
 
-
-  const handleImageUpload = useCallback(
-    async (file) => {
-      if (!file || !editor) return;
-
-      const imageUrl = await uploadImage(file, 'content');
-
-      if (imageUrl) {
-        editor.chain().focus().setImage({ src: imageUrl }).run();
-      }
-    },
-    [editor, uploadImage]
-  );
-
-
   const handleAnswerSubmit = (answerHtml) => {
     //console.log('Answer submitted:', answerHtml);
     // Process the submitted answer
@@ -187,6 +172,23 @@ const AskQuestion = () => {
       setIsLoading(false);
     },
   });
+
+  // Handle image upload - defined after editor initialization
+  const handleImageUpload = useCallback(
+    async (file) => {
+      if (!file) return;
+
+      try {
+        const url = await uploadImage(file, 'content');
+        if (url && editor) {
+          editor.chain().focus().setImage({ src: url }).run();
+        }
+      } catch (error) {
+        console.error('Failed to upload image:', error);
+      }
+    },
+    [editor, uploadImage]
+  );
 
   const handleKeyEvent = (e) => {
     if (e.key === "Enter" && e.target.value !== "") {

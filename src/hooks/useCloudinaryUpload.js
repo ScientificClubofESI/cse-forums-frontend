@@ -30,17 +30,21 @@ export const useCloudinaryUpload = () => {
       formData.append('file', file);
       formData.append('type', type);
 
+      console.log('Sending upload request to /api/upload...');
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('Upload response status:', response.status);
       const result = await response.json();
+      console.log('Upload response data:', result);
 
       if (!response.ok) {
         throw new Error(result.error || 'Upload failed');
       }
 
+      console.log('Upload successful! URL:', result.url);
       return result.url;
     } catch (err) {
       setError(err.message);
