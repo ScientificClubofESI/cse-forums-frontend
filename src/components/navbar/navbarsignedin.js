@@ -89,13 +89,6 @@ export const Navbarsignedin = () => {
 
         {/* User Icon */}
         <div className="flex items-center gap-4 md:gap-6">
-          {/* "All Questions" hidden on small screens */}
-          <Link
-            href="/allquestions"
-            className="text-white hover:text-gray-200 hidden md:block"
-          >
-            All Questions
-          </Link>
           <Link href="/profile/myquestions">
             <Image
               src={User}

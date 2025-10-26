@@ -90,37 +90,11 @@ const Hero = () => {
           </p>
         </div>
 
-        {/* Search bar */}
-        <div className="mb-8">
-          <div className="relative mx-auto max-w-4xl flex items-center rounded-lg border-none py-3 pl-4 bg-white">
-            <SearchNormal1 size="32" color="black" />
-            <input
-              type="text"
-              placeholder="Search CSE Forums ..."
-              value={searchQuery}
-              onChange={(e) => {
-                setsearchQuery(e.target.value);
-              }}
-              className="w-full border-none pl-2 focus:outline-none font-serif text-sm sm:text-2xl font-light"
-            />
-          </div>
-        </div>
-        {showDropdown && searchResults.length > 0 && (
-          <div className="absolute left-0 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg z-10 max-h-60 overflow-y-auto">
-            {searchResults.slice(0, 6).map((thread) => (
-              <div
-                key={thread.id}
-                onClick={() => handleNavigate(thread)}
-                className="block px-4 py-2 hover:bg-gray-200"
-              >
-                {thread.title}
-              </div>
-            ))}
-          </div>
-        )}
+       
 
         {/* CTA Button */}
         {/* if authenticated redirect to the ask question else redirect to login */}
+        <div className="flex items-center justify-center">
         <Link
           href={isAuthenticated ? "/ask-question" : "/auth/login"}
           className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
@@ -129,6 +103,16 @@ const Hero = () => {
             Ask a Question?
           </button>
         </Link>
+           <Link
+          href={ "/allquestions"}
+          className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
+        >
+          <button className="rounded-lg max-w-5xl bg-primary-300 hover:bg-primary-500 px-8 py-3 text-lg font-medium font-sans text-white transition-colors">
+            All Questions
+          </button>
+        </Link>
+        </div>
+        
       </div>
     </div>
   );

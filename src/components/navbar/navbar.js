@@ -70,13 +70,6 @@ const Navbar = () => {
         {/* Navigation Links */}
         <div className="flex items-center gap-4 font-sans">
           <Link
-            // href="/questionPage/asker"
-            href="/allquestions"
-            className="text-white hover:text-gray-200 ml-2 mr-8 sm:mr-14"
-          >
-            All Questions
-          </Link>
-          <Link
             href="/auth/login"
             className="px-4 py-2 bg-primary-300 hover:bg-primary-500 text-white rounded"
           >

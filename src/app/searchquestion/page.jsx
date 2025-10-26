@@ -55,7 +55,6 @@ export const SearchQuestions = () => {
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
-  const { savedThreads, loading: savedThreadsLoading, error: savedThreadsError, refetch: refetchSavedThreads } = useSavedThreads(userId);
   const { voteThread, loading: voteLoading } = useVoteThread();
   const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
 
