@@ -10,12 +10,19 @@ import api from "@/lib/api";
 import { useState, useEffect } from "react";
 
 // the lgout hook
-import useAuth, { useLogout } from "@/hooks/Auth";
+import { useAuth, useLogout } from "@/hooks/Auth";
+import NotificationSidebar from "../notifications/NotificationSidebar";
+import useNotifications from "@/hooks/useNotifications";
 
 export const Navbarsignedin = () => {
   const router = useRouter();
   const [searchQuery, setsearchQuery] = useState("");
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { logout, loading: logoutLoading } = useLogout();
+  const { user } = useAuth();
+  
+  // Get notifications data
+  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications(user?.id);
 
   // Handle logout
   const handleLogout = async () => {
@@ -35,6 +42,10 @@ export const Navbarsignedin = () => {
         `/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`
       );
     }
+  };
+
+  const toggleNotifications = () => {
+    setIsNotificationOpen(!isNotificationOpen);
   };
 
 
@@ -100,6 +111,27 @@ export const Navbarsignedin = () => {
             />
           </Link>
 
+          {/* Notification Button */}
+          <div className="relative">
+            <button
+              onClick={toggleNotifications}
+              className="relative hover:opacity-80 focus:outline-none"
+            >
+              <Image
+                src={notification}
+                alt="Notifications"
+                width={40}
+                height={40}
+                style={{ width: "auto", height: "auto" }}
+              />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
+
           <Link href="/profile/settings">
             <Image
               src={settings}
@@ -117,6 +149,17 @@ export const Navbarsignedin = () => {
             Logout
           </button>
         </div>
+
+        {/* Notification Sidebar */}
+        <NotificationSidebar
+          isOpen={isNotificationOpen}
+          onClose={() => setIsNotificationOpen(false)}
+          notifications={notifications}
+          unreadCount={unreadCount}
+          onMarkAsRead={markAsRead}
+          onMarkAllAsRead={markAllAsRead}
+          onDelete={deleteNotification}
+        />
       </nav>
     </div>
   );
