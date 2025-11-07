@@ -4,7 +4,7 @@ import unsaved from "../../../../../public/icons/save.png";
 import { useSaveThread } from "@/hooks/Questions";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-const Card = ({ id, title, content, answersCount, onDelete }) => {
+const Card = ({ id, title, content, answersCount, onDelete, onError }) => {
   const router = useRouter();
    const { unsaveThread, loading } = useSaveThread();
   const [isUnsaving, setIsUnsaving] = useState(false);
@@ -20,11 +20,11 @@ const Card = ({ id, title, content, answersCount, onDelete }) => {
         // Call onDelete to refresh the parent list
         onDelete && onDelete(id);
       } else {
-        alert('Failed to unsave thread: ' + result.error);
+        onError && onError('Failed to unsave thread: ' + result.error);
       }
     } catch (error) {
       console.error('Error unsaving thread:', error);
-      alert('An error occurred while unsaving the thread.');
+      onError && onError('An error occurred while unsaving the thread.');
     } finally {
       setIsUnsaving(false);
     }

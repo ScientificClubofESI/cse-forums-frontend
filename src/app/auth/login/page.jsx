@@ -17,6 +17,7 @@ export const LogIn = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [googleError, setGoogleError] = useState("");
 
   const { login, loading, error, clearError } = useLogin();
 
@@ -27,6 +28,7 @@ export const LogIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearError();
+    setGoogleError("");
 
     const result = await login(email, password);
 
@@ -52,9 +54,9 @@ export const LogIn = () => {
             Log In
           </h1>
           <form className="w-full flex flex-col gap-10" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {error}
+            {(error || googleError) && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mt-4 rounded">
+                {error || googleError}
               </div>
             )}
             <div className=" relative w-full">
@@ -139,16 +141,18 @@ export const LogIn = () => {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 try {
+                  setGoogleError("");
                   await authApi.post(
                     "/auth/login?provider=google",
                     { provider: "google", token: credentialResponse.credential }
                   );
                   window.location.href = "/";
                 } catch (e) {
-                  alert("Google login failed");
+                  const errorMessage = e.response?.data?.message || "Google login failed. Please try again.";
+                  setGoogleError(errorMessage);
                 }
               }}
-              onError={() => alert("Google login failed")}
+              onError={() => setGoogleError("Google login failed. Please try again.")}
               useOneTap
             />
           </div>

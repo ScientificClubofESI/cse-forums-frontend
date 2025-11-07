@@ -46,6 +46,7 @@ export const Settings = () => {
   });
 
   const [validationError, setValidationError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const isInitialized = React.useRef(false);
 
@@ -70,21 +71,23 @@ export const Settings = () => {
       // Clear errors when user starts typing
       if (validationError) setValidationError("");
       if (passwordError) clearError();
+      if (successMessage) setSuccessMessage("");
     } else {
       setFormData((prevData) => ({ ...prevData, [name]: value }));
+      if (successMessage) setSuccessMessage("");
     }
   };
 
   const handleImageUpload = async (file) => {
-    console.log('Starting image upload...', file);
+    // console.log('Starting image upload...', file);
     clearError();
     const imageUrl = await uploadImage(file, 'profile');
-    console.log('Upload result:', imageUrl);
+    // console.log('Upload result:', imageUrl);
     if (imageUrl) {
       setProfilePicture(imageUrl);
-      console.log('Profile picture URL set:', imageUrl);
+      // console.log('Profile picture URL set:', imageUrl);
     } else {
-      console.log('Upload failed - no URL returned');
+      // console.log('Upload failed - no URL returned');
     }
   };
 
@@ -143,7 +146,10 @@ export const Settings = () => {
           confirmPassword: "",
         });
         setValidationError("");
+        setSuccessMessage("Password changed successfully!");
         setIsPasswordMode(false);
+        // Clear success message after 5 seconds
+        setTimeout(() => setSuccessMessage(""), 5000);
       }
     } else {
       // Handle profile update
@@ -158,13 +164,16 @@ export const Settings = () => {
         updateData.email = formData.email;
       }
 
-      console.log('Updating profile with data:', updateData);
+      // console.log('Updating profile with data:', updateData);
       const result = await updateProfile(updateData);
 
       if (result.success) {
-        console.log('Profile updated successfully!', result);
+        // console.log('Profile updated successfully!', result);
+        setSuccessMessage("Profile updated successfully!");
+        // Clear success message after 5 seconds
+        setTimeout(() => setSuccessMessage(""), 5000);
       } else {
-        console.log('Failed to update profile:', result.error);
+        // console.log('Failed to update profile:', result.error);
       }
     }
   };
@@ -172,6 +181,7 @@ export const Settings = () => {
   const togglePasswordMode = () => {
     setIsPasswordMode(!isPasswordMode);
     setValidationError("");
+    setSuccessMessage("");
     if (passwordError) clearError();
 
     // Reset password form when switching modes
@@ -318,10 +328,17 @@ export const Settings = () => {
               </>
             )}
 
+            {/* Success Message Display */}
+            {successMessage && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                {successMessage}
+              </div>
+            )}
+
             {/* Error Display */}
-            {(validationError || passwordError) && (
+            {(validationError || passwordError || profileError) && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {validationError || passwordError}
+                {validationError || passwordError || profileError}
               </div>
             )}
 

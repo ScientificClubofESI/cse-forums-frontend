@@ -69,6 +69,8 @@ export const SearchQuestions = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [threadId, setthreadId] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Pagination
   const itemsPerPage = 2;
@@ -159,14 +161,17 @@ export const SearchQuestions = () => {
         console.log(`${voteType} vote recorded`);
       }
       if (result.success) {
-        refetch();
+        // Note: search results don't have a refetch function like the main questions page
+        setErrorMessage("");
       } else {
         console.error('Failed to vote:', result.error);
-        alert('Failed to vote: ' + result.error);
+        setErrorMessage('Failed to vote: ' + result.error);
+        setTimeout(() => setErrorMessage(""), 5000);
       }
     } catch (error) {
       console.error('Failed to vote:', error);
-      alert('An error occurred while voting.');
+      setErrorMessage('An error occurred while voting.');
+      setTimeout(() => setErrorMessage(""), 5000);
     }
   };
 
@@ -174,14 +179,34 @@ export const SearchQuestions = () => {
   try {
     const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
     await navigator.clipboard.writeText(questionUrl);
-    alert('Question link copied to clipboard!');
+    setSuccessMessage('Question link copied to clipboard!');
+    setTimeout(() => setSuccessMessage(""), 3000);
   } catch (err) {
     console.error('Failed to copy: ', err);
+    setErrorMessage('Failed to copy link to clipboard.');
+    setTimeout(() => setErrorMessage(""), 5000);
   }
 };
   return (
     <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+      
+      {/* Success/Error Messages */}
+      {successMessage && (
+        <div className="mx-8 lg:mx-32 mt-4">
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            {successMessage}
+          </div>
+        </div>
+      )}
+      {errorMessage && (
+        <div className="mx-8 lg:mx-32 mt-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {errorMessage}
+          </div>
+        </div>
+      )}
+      
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full mt-6">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full relative">

@@ -20,6 +20,7 @@ export const SignUp = () => {
   const [username, setusername] = useState("");
   const [fullName, setfullName] = useState("");
   const [password, setPassword] = useState("");
+  const [googleError, setGoogleError] = useState("");
   const router = useRouter();
 
   const { signup, loading, error, clearError } = useSignup();
@@ -28,6 +29,7 @@ export const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearError(); // Clear any previous errors
+    setGoogleError("");
 
     const userData = {
       username,
@@ -91,6 +93,11 @@ export const SignUp = () => {
             Create New Account
           </h1>
           <form onSubmit={handleSubmit}>
+            {(error || googleError) && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error || googleError}
+              </div>
+            )}
             <div className="mb-4 sm:mb-6">
               <label className="block font-serif text-primary-900 text-l sm:text-xl font-extrabold">
                 Full name
@@ -183,16 +190,18 @@ export const SignUp = () => {
             <GoogleLogin
               onSuccess={async (credentialResponse) => {
                 try {
+                  setGoogleError("");
                   await authApi.post(
                     "/auth/signup",
                     { provider: "google", token: credentialResponse.credential }
                   );
                   window.location.href = "/";
                 } catch (e) {
-                  alert("Google signup failed");
+                  const errorMessage = e.response?.data?.message || "Google signup failed. Please try again.";
+                  setGoogleError(errorMessage);
                 }
               }}
-              onError={() => alert("Google signup failed")}
+              onError={() => setGoogleError("Google signup failed. Please try again.")}
               useOneTap
             />
           </div>

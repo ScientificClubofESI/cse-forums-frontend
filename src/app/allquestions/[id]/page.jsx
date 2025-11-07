@@ -85,6 +85,8 @@ const QuestionPage = () => {
     const [isSaved, setIsSaved] = useState(false);
     const [showAnswerEditor, setShowAnswerEditor] = useState(false);
     const [iconSize, setIconSize] = useState(25);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const fileInputRef = useRef(null);
 
     const [showReplies, setShowReplies] = useState({});
@@ -344,7 +346,8 @@ const QuestionPage = () => {
         }
 
         if (!editor?.getHTML() || editor.getHTML().trim() === '<p></p>') {
-            alert('Please write an answer before submitting.');
+            setErrorMessage('Please write an answer before submitting.');
+            setTimeout(() => setErrorMessage(""), 5000);
             return;
         }
 
@@ -453,13 +456,16 @@ const QuestionPage = () => {
             }
             if (result.success) {
                 refetch();
+                setErrorMessage("");
             } else {
                 console.error('Failed to vote:', result.error);
-                alert('Failed to vote: ' + result.error);
+                setErrorMessage('Failed to vote: ' + result.error);
+                setTimeout(() => setErrorMessage(""), 5000);
             }
         } catch (error) {
             console.error('Failed to vote:', error);
-            alert('An error occurred while voting.');
+            setErrorMessage('An error occurred while voting.');
+            setTimeout(() => setErrorMessage(""), 5000);
         }
     };
 
@@ -467,10 +473,12 @@ const QuestionPage = () => {
         try {
             const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
             await navigator.clipboard.writeText(questionUrl);
-            alert('Question link copied to clipboard!');
+            setSuccessMessage('Question link copied to clipboard!');
+            setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
             console.error('Failed to copy: ', err);
-
+            setErrorMessage('Failed to copy link to clipboard.');
+            setTimeout(() => setErrorMessage(""), 5000);
         }
     };
 
@@ -498,6 +506,23 @@ const QuestionPage = () => {
         <div className="bg-gray-100 min-h-screen">
 
             {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
+            
+            {/* Success/Error Messages */}
+            {successMessage && (
+                <div className="mx-8 lg:mx-32 mt-4">
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                        {successMessage}
+                    </div>
+                </div>
+            )}
+            {errorMessage && (
+                <div className="mx-8 lg:mx-32 mt-4">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                        {errorMessage}
+                    </div>
+                </div>
+            )}
+            
             <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
                 {/* Header */}
                 <div className="font-semibold text-2xl text-neutral-900 self-start pb-8 flex items-center gap-4 md:text-[56px]">
@@ -919,7 +944,8 @@ const AnswerWithReplies = ({
 
     const handleAddAnswerReply = async () => {
         if (!answerReplyContent || answerReplyContent.trim() === '<p></p>' || !answerReplyContent.trim()) {
-            alert('Please write a reply before submitting.');
+            setErrorMessage('Please write a reply before submitting.');
+            setTimeout(() => setErrorMessage(""), 5000);
             return;
         }
 
@@ -932,11 +958,13 @@ const AnswerWithReplies = ({
                 setShowAnswerReplyForm(false);
                 refetchReplies(); // Refresh to show new reply
             } else {
-                alert('Failed to add reply: ' + result.error);
+                setErrorMessage('Failed to add reply: ' + result.error);
+                setTimeout(() => setErrorMessage(""), 5000);
             }
         } catch (error) {
             console.error('Error adding reply:', error);
-            alert('An error occurred while adding the reply.');
+            setErrorMessage('An error occurred while adding the reply.');
+            setTimeout(() => setErrorMessage(""), 5000);
         }
     };
 
@@ -1238,7 +1266,8 @@ const ReplyComponent = ({
 
     const handleAddReply = async () => {
         if (!replyContent || replyContent.trim() === '<p></p>' || !replyContent.trim()) {
-            alert('Please write a reply before submitting.');
+            setErrorMessage('Please write a reply before submitting.');
+            setTimeout(() => setErrorMessage(""), 5000);
             return;
         }
 
@@ -1251,11 +1280,13 @@ const ReplyComponent = ({
                 setShowReplyForm(false);
                 onRefetch(); // Refresh to show new reply
             } else {
-                alert('Failed to add reply: ' + result.error);
+                setErrorMessage('Failed to add reply: ' + result.error);
+                setTimeout(() => setErrorMessage(""), 5000);
             }
         } catch (error) {
             console.error('Error adding reply:', error);
-            alert('An error occurred while adding the reply.');
+            setErrorMessage('An error occurred while adding the reply.');
+            setTimeout(() => setErrorMessage(""), 5000);
         }
     };
 

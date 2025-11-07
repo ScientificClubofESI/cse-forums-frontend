@@ -19,6 +19,7 @@ export const SavedQuestions = ({ onRefresh }) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("Recent"); // Track active tab
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { savedQuestions, error, pagination } = useGetUserSavedQuestions(filterMap[activeTab], currentPage, 6);
 
@@ -38,8 +39,20 @@ export const SavedQuestions = ({ onRefresh }) => {
     setCurrentPage(1); // Reset to first page
   };
 
+  const handleError = (error) => {
+    setErrorMessage(error);
+    setTimeout(() => setErrorMessage(""), 5000);
+  };
+
   return (
     <div className="flex flex-col gap-[48px]">
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          {errorMessage}
+        </div>
+      )}
+      
       {/* Tabs */}
       <div className="flex flex-col md:flex-row justify-between md:justify-normal gap-[7px] md:gap-[14px]">
         {["Recent", "Most Rated", "Most Answered"].map(
@@ -76,6 +89,7 @@ export const SavedQuestions = ({ onRefresh }) => {
               content={card.content}
               answersCount={card.answers_count}
               onDelete={handleDelete}
+              onError={handleError}
             />
           ))}
         </div>
