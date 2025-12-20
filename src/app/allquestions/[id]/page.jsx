@@ -37,8 +37,8 @@ import { Navbarsignedin } from "../../../components/navbar/navbarsignedin";
 import Navbar from "@/components/navbar/navbar";
 // Import icons
 import BackIcon from "../../../../public/pages/questionPage/back.svg";
-import ApprovedIcon from "../../../../public/pages/questionPage/Approved.svg";
-import ApproveIcon from "../../../../public/pages/questionPage/Approve.svg";
+import ApprovedIcon from "../../../../public/pages/questionPage/approved.svg";
+import ApproveIcon from "../../../../public/pages/questionPage/approve.svg";
 import UpIcon from "../../../../public/pages/questionPage/up.svg";
 import DownIcon from "../../../../public/pages/questionPage/down.svg";
 import ShareIcon from "../../../../public/pages/questionPage/share.svg";
