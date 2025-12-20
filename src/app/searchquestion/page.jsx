@@ -1,9 +1,9 @@
 "use client";
-export const dynamic = 'force-dynamic';
+
 import Navbar from "@/components/navbar/navbar";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import filtre from "./../../../public/pages/allQuestion/icons/filtre.svg";
 import left from "./../../../public/pages/allQuestion/icons/left.svg";
 import right from "./../../../public/pages/allQuestion/icons/right.svg";
@@ -17,15 +17,15 @@ import PopUp from "../../components/PopUp/page";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from 'react'
 import { useSearchQuestions } from "@/hooks/Questions";
 
-// import the cusotm hooks
+// import the custom hooks
 import useAuth from "@/hooks/Auth";
 import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
 
 
-export const SearchQuestions = () => {
+// Separate component that uses useSearchParams
+function SearchQuestionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -62,8 +62,6 @@ export const SearchQuestions = () => {
   const questions = searchResults || [];
   const questionsLoading = loading;
   const questionsError = error;
-
-
 
   // Local state
   const [activeFilter, setActiveFilter] = useState("all");
@@ -122,7 +120,8 @@ export const SearchQuestions = () => {
       const result = await toggleSaveThread(threadId, userId, isSaved);
 
       if (result.success) {
-        refetch();
+        // Note: refetch is not available in search context
+        console.log('Thread saved/unsaved successfully');
       } else {
         console.error('Failed to toggle save:', result.error);
       }
@@ -162,7 +161,6 @@ export const SearchQuestions = () => {
         console.log(`${voteType} vote recorded`);
       }
       if (result.success) {
-        // Note: search results don't have a refetch function like the main questions page
         setErrorMessage("");
       } else {
         console.error('Failed to vote:', result.error);
@@ -177,19 +175,20 @@ export const SearchQuestions = () => {
   };
 
   const handleShareQuestion = async (questionId) => {
-  try {
-    const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
-    await navigator.clipboard.writeText(questionUrl);
-    setSuccessMessage('Question link copied to clipboard!');
-    setTimeout(() => setSuccessMessage(""), 3000);
-  } catch (err) {
-    console.error('Failed to copy: ', err);
-    setErrorMessage('Failed to copy link to clipboard.');
-    setTimeout(() => setErrorMessage(""), 5000);
-  }
-};
+    try {
+      const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+      await navigator.clipboard.writeText(questionUrl);
+      setSuccessMessage('Question link copied to clipboard!');
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      setErrorMessage('Failed to copy link to clipboard.');
+      setTimeout(() => setErrorMessage(""), 5000);
+    }
+  };
+
   return (
-    <div className=" bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
       
       {/* Success/Error Messages */}
@@ -221,8 +220,6 @@ export const SearchQuestions = () => {
               Ask a Question ?
             </Link>
           </div>
-          {/* this should be removed in the all questions page */}
-          {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
 
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full mt-14">
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
@@ -291,15 +288,8 @@ export const SearchQuestions = () => {
           {questionsError && (
             <div className="text-center py-8 text-red-600">
               <div>Error: {questionsError}</div>
-              <button
-                onClick={refetch}
-                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Retry
-              </button>
             </div>
           )}
-
 
           {/* Questions list */}
           {!questionsLoading && !questionsError && (
@@ -511,6 +501,19 @@ export const SearchQuestions = () => {
       </div>
     </div>
   );
-};
+}
 
-export default SearchQuestions;
+// Main component with Suspense wrapper
+export default function SearchQuestions() {
+  return (
+    <Suspense fallback={
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-2xl font-sans text-neutral-900">Loading search results...</div>
+        </div>
+      </div>
+    }>
+      <SearchQuestionsContent />
+    </Suspense>
+  );
+}
