@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 import Navbar from "@/components/navbar/navbar";
 import Link from "next/link";
 import Image from "next/image";
