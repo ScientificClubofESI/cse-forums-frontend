@@ -12,6 +12,11 @@ const nextConfig = {
     // Disable ESLint during production builds
     ignoreDuringBuilds: true,
   },
+    // Force dynamic rendering for all pages
+  experimental: {
+    dynamicIO: true,
+  },
+  output: 'standalone',
 };
 
 export default nextConfig;
