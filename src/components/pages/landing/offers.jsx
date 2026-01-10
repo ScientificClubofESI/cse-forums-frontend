@@ -62,9 +62,7 @@ export const Offers = () => {
               </div>
             </h3>
             <p className="font-serif text-neutral-900 text-[7px]  sm:text-base  md:text-lg sm:mb-10 leading-[9px] sm:leading[24px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam
+              We provide a centralized platform that allows tech enthusiasts to ask questions, share solutions, and collaborate on real-world problems in a structured and user-friendly environment.
             </p>
           </div>
           {/* Card 2 */}
@@ -80,9 +78,7 @@ export const Offers = () => {
               </span>
             </h3>
             <p className="font-serif text-neutral-900 text-[7px]  sm:text-base  md:text-lg sm:mb-10 leading-[9px] sm:leading[24px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam
+              We bring together students, developers, and technology enthusiasts in a collaborative space that promotes mutual help, discussion, and strong connections within the Algerian tech community.
             </p>
           </div>
           {/* Card 3 */}
@@ -99,9 +95,7 @@ export const Offers = () => {
               </div>
             </h3>
             <p className="font-serif text-neutral-900 text-[7px]  sm:text-base  md:text-lg sm:mb-10 leading-[9px] sm:leading[24px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam
+              CSE Forum makes knowledge more accessible through well-organized discussions by topic, encouraging continuous learning, experience sharing, and skill development within the tech community.
             </p>
           </div>
         </div>

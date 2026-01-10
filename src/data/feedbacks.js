@@ -1,29 +1,29 @@
-import guest from "../../public/images/avatars/guest.jpg";
-
+import raid from "https://res.cloudinary.com/cse-cse/image/upload/v1744405021/website-member/photo%20profil%20-%20DJEMAI%20MOHAMEDERRAID.jpg";
+import anes from "https://res.cloudinary.com/cse-cse/image/upload/v1755714753/cseclub/kite6rwckugrxfbf8epd.jpg"
+import ayoub from "https://res.cloudinary.com/cse-cse/image/upload/v1755714738/cseclub/ziwezxkb4azha89jf6am.jpg"
+import hiba from "https://res.cloudinary.com/cse-cse/image/upload/v1755714794/cseclub/fgmyufrleeujc2t9eizk.jpg"
 export const feedbacks = [
     {
-      photo:guest,  
-      username: "Amal MESSAOUAD",
+      photo:raid,  
+      username: "DJEMAI Mohamed Erraid",
       feedback:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna aenean consequat pretium, tempus ullamcorper placerat vitae.",
+        "A very intuitive platform that truly facilitates interaction between students and developers.",
     },
     {
-      photo:guest, 
-      username: "Amine KADOUM",
+      photo:anes, 
+      username: "Hannachi Anes",
       feedback:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna aenean consequat pretium, tempus ullamcorper placerat vitae.",
+        "CSE Forum helped me quickly find solutions to complex technical problems.",
     },
     {
-      photo:guest,   
-      username: "Issam BOUSSEBATA",
-      feedback:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna aenean consequat pretium, tempus ullamcorper placerat vitae.",
-    },
+      photo:ayoub,   
+      username: "KIHAL AYOUB",
+      feedback:"An excellent space to learn, share, and grow in the field of computer science."    },
     {
-      photo:guest,  
-      username: "Nour ELBAR",
+      photo:hiba,  
+      username: "Lammari Hiba",
       feedback:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Urna aenean consequat pretium, tempus ullamcorper placerat vitae.",
+"A project that perfectly reflects the CSE Club’s values: sharing and excellence."
     },
   ];
   

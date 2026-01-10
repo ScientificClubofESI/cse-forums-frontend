@@ -23,9 +23,7 @@ const About = () => {
             </div>
             <div className="flex flex-col lg:gap-y-6 justify-between">
               <h1 className="font-sans font-semibold text-2xl lg:text-5xl leading-10 text-secondary-300 lg:text-center">CSE Club</h1>
-              <p className="font-serif text-xs lg:text-3xl font-normal text-neutral-50 lg:text-center">Lorem ipsum dolor sit amet, 
-                consectetur adipiscing elit.Urna aenean consequat pretium, tempus ullamcorper placerat vitae.
-                Proin urna ac nunc, vulputate cras velit lacus. </p>
+              <p className="font-serif text-xs lg:text-3xl font-normal text-neutral-50 lg:text-center">The CSE Scientific Club of ESI is one of the leading student clubs in Algeria. Since 2008, it has been organizing major tech events and initiatives aimed at energizing student life while promoting innovation, learning, and collaboration. </p>
             </div>
             <div className="flex lg:hidden h-full"> 
               <Image src={image1S} alt="HackIn2023-image1" width={800} />
@@ -39,8 +37,7 @@ const About = () => {
             </div>
             <div className="flex flex-col lg:gap-y-6 justify-between ">
               <h1 className="font-sans font-semibold text-2xl lg:text-5xl leading-10 text-secondary-300 lg:text-center">CSE Forums</h1>
-              <p className="font-serif text-xs lg:text-3xl font-normal text-neutral-50 lg:text-center">Lorem ipsum dolor sit amet, consectetur 
-                adipiscing elit. Urna aenean consequat pretium, tempus ullamcorper placerat vitae. Proin urna ac nunc, vulputate cras velit lacus. 
+              <p className="font-serif text-xs lg:text-3xl font-normal text-neutral-50 lg:text-center">CSE Forums is a discussion platform dedicated to the Algerian tech community. It enables users to exchange ideas across various technology fields, ask questions, provide answers, and actively contribute to knowledge sharing. 
               </p>
             </div>
             <div className="-z-10 hidden lg:block"> 
