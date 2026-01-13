@@ -20,9 +20,15 @@ export const Navbarsignedin = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const { logout, loading: logoutLoading } = useLogout();
   const { user } = useAuth();
-  
+
   // Get notifications data
-  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotifications(user?.id);
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+  } = useNotifications(user?.id);
 
   // Handle logout
   const handleLogout = async () => {
@@ -47,7 +53,6 @@ export const Navbarsignedin = () => {
   const toggleNotifications = () => {
     setIsNotificationOpen(!isNotificationOpen);
   };
-
 
   return (
     <div className="bg-gray-100">
@@ -98,17 +103,18 @@ export const Navbarsignedin = () => {
           </form>
         </div>
 
-        {/* User Icon */}
+        {/* User Profile Picture */}
         <div className="flex items-center gap-4 md:gap-6">
           <Link href="/profile/myquestions">
-            <Image
-              src={User}
-              alt="User"
-              width={40}
-              height={40}
-              style={{ width: "auto", height: "auto" }}
-              className="hover:opacity-80"
-            />
+            <div className="rounded-full w-10 h-10 overflow-hidden flex items-center justify-center">
+              <Image
+                src={user?.profile_picture || User}
+                alt="User"
+                width={40}
+                height={40}
+                className="object-cover w-full h-full hover:opacity-80"
+              />
+            </div>
           </Link>
 
           {/* Notification Button */}
@@ -126,7 +132,7 @@ export const Navbarsignedin = () => {
               />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {unreadCount > 9 ? '9+' : unreadCount}
+                  {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
             </button>

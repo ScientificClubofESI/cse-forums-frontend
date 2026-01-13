@@ -9,16 +9,25 @@ import { useEffect, useState, useCallback } from "react";
 import useAuth, { useUserProfile } from "@/hooks/Auth";
 
 export default function Sidebar() {
-
   // Authentication and profile hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading, error: profileError, updateProfile } = useUserProfile(userId);
-
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    updateProfile,
+  } = useUserProfile(userId);
 
   return (
     <div className="basis-1/4 flex flex-col items-center text-center bg-white p-[32px] rounded-[4px]">
       <div className="flex justify-center items-center rounded-full bg-neutral-900 w-[100px] h-[100px] overflow-hidden">
-        <Image src={User} alt="User profile image" width={100} height={100} />
+        <Image
+          src={profile?.profile_picture || User}
+          alt="User profile image"
+          width={100}
+          height={100}
+          className="object-cover w-full h-full"
+        />
       </div>
       <div className="mt-4">
         <p className="text-2xl font-normal font-sans">{profile?.fullname}</p>

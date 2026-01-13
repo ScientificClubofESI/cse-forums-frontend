@@ -17,6 +17,7 @@ export const useGetAllReplies = (threadId, answerId) => {
     setError(null);
     try {
       const response = await api.get(`/threads/${threadId}/answers/${answerId}/replies/all`);
+      console.log("Fetched replies:", response.data);
       setReplies(response.data.data);
     } catch (err) {
       setError(
