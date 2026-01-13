@@ -11,7 +11,7 @@ const useNotifications = (userId) => {
   useEffect(() => {
     if (!userId) return;
 
-    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5321', {
+    const newSocket = io(process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5321', {
       transports: ['websocket', 'polling']
     });
 
