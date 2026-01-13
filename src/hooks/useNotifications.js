@@ -55,7 +55,7 @@ const useNotifications = (userId) => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5321'}/api/notifications/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5321'}/api/notifications/${userId}`, {
         credentials: 'include',
       });
 
@@ -74,7 +74,7 @@ const useNotifications = (userId) => {
   // Mark notification as read
   const markAsRead = useCallback(async (notificationId) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5321'}/api/notifications/${notificationId}/read`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5321'}/api/notifications/${notificationId}/read`, {
         method: 'PATCH',
         credentials: 'include',
       });
@@ -99,7 +99,7 @@ const useNotifications = (userId) => {
     if (!userId) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5321'}/api/notifications/${userId}/read-all`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5321'}/api/notifications/${userId}/read-all`, {
         method: 'PATCH',
         credentials: 'include',
       });
@@ -118,7 +118,7 @@ const useNotifications = (userId) => {
   // Delete notification
   const deleteNotification = useCallback(async (notificationId) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5321'}/api/notifications/${notificationId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5321'}/api/notifications/${notificationId}`, {
         method: 'DELETE',
         credentials: 'include',
       });
