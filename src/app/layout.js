@@ -28,7 +28,7 @@ export const metadata = {
   openGraph: {
     images: [
       {
-        url: "https://cse-forum.cse.club/images/illustrations/Code%20typing-sis.png",
+        url: "https://cse-forums.cse.club/images/illustrations/Code%20typing-sis.png",
         width: 1200,
         height: 630,
       },
@@ -37,7 +37,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [
-      "https://cse-forum.cse.club/images/illustrations/Code%20typing-sis.png",
+      "https://cse-forums.cse.club/images/illustrations/Code%20typing-sis.png",
     ],
   },
 };
