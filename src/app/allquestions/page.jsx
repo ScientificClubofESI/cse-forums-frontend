@@ -234,7 +234,7 @@ export const AllQuestions = () => {
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most-Answered"
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "most-answered"
                   ? "bg-primary-500 text-white"
                   : "bg-neutral-100"
                   }`}
