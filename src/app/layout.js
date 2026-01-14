@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
         />
         <meta
           property="og:image"
-          content="https://cse-forum.cse.club/images/og-image.png"
+          content="https://cse-forum.cse.club/images/landing/about_image1.png"
         />
 
         {/* Twitter */}
@@ -41,7 +41,7 @@ export default function RootLayout({ children }) {
         />
         <meta
           property="twitter:image"
-          content="https://cse-forum.cse.club/images/og-image.png"
+          content="https://cse-forum.cse.club/images/landing/about_image1.png"
         />
 
         {/* Fonts */}
