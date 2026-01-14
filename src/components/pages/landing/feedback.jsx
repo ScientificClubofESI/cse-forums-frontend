@@ -73,7 +73,7 @@ export const Feedback = () => {
                 alt="guest"
                 width={170}
                 height={170}
-                className="object-cover w-full h-full"
+                className="object-cover object-top w-full h-full"
               />
             </div>
 
