@@ -20,38 +20,57 @@ import { useAuthenticatedQuestions } from "@/hooks/Questions";
 
 // import the cusotm hooks
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useSaveThread, useGetUserSavedQuestions, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
-
+import {
+  useQuestions,
+  useSaveThread,
+  useGetUserSavedQuestions,
+  useVoteThread,
+  useUnvoteThread,
+} from "@/hooks/Questions";
 
 export const AllQuestions = () => {
   // Local state
-  const [activeFilter, setActiveFilter] = useState("recent");
+  const [activeFilter, setActiveFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [threadId, setthreadId] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Map UI filter to API filter (backend doesn't accept "all")
+  const apiFilter = activeFilter === "all" ? "recent" : activeFilter;
+
   // Hooks
   const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { questions: publicQuestions, loading: publicLoading, error: publicError, refetch: refetchPublic, pagination: publicPagination } = useQuestions(activeFilter, currentPage, 10);
-  const { questions: authQuestions, loading: questionsAuthLoading, error: authError, refetch: refetchAuth, pagination: authPagination } = useAuthenticatedQuestions(isAuthenticated, activeFilter, currentPage, 10);
+  const {
+    questions: publicQuestions,
+    loading: publicLoading,
+    error: publicError,
+    refetch: refetchPublic,
+    pagination: publicPagination,
+  } = useQuestions(apiFilter, currentPage, 10);
+  const {
+    questions: authQuestions,
+    loading: questionsAuthLoading,
+    error: authError,
+    refetch: refetchAuth,
+    pagination: authPagination,
+  } = useAuthenticatedQuestions(isAuthenticated, apiFilter, currentPage, 10);
   const { toggleSaveThread, loading: saveLoading } = useSaveThread();
   const { voteThread, loading: voteLoading } = useVoteThread();
   const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
 
   const questions = isAuthenticated ? authQuestions : publicQuestions;
-  const questionsLoading = isAuthenticated ? questionsAuthLoading : publicLoading;
+  const questionsLoading = isAuthenticated
+    ? questionsAuthLoading
+    : publicLoading;
   const questionsError = isAuthenticated ? authError : publicError;
   const refetch = isAuthenticated ? refetchAuth : refetchPublic;
 
   const pagination = isAuthenticated ? authPagination : publicPagination;
   const totalPages = pagination?.totalPages || 1;
 
-
   const router = useRouter();
-
-
 
   // Popup handlers
   const openPopup = () => setIsPopupOpen(true);
@@ -87,7 +106,7 @@ export const AllQuestions = () => {
 
   const handleSaveThread = async (threadId, isSaved) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
 
@@ -97,16 +116,16 @@ export const AllQuestions = () => {
       if (result.success) {
         refetch();
       } else {
-        console.error('Failed to toggle save:', result.error);
+        console.error("Failed to toggle save:", result.error);
       }
     } catch (error) {
-      console.error('Failed to save thread:', error);
+      console.error("Failed to save thread:", error);
     }
   };
 
   const handleAddAnswer = (questionId) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
     openPopup();
@@ -115,7 +134,7 @@ export const AllQuestions = () => {
 
   const handleVote = async (threadId, voteType, currentUserVote) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
 
@@ -125,7 +144,7 @@ export const AllQuestions = () => {
       // If user already voted with the same type, remove the vote
       if (currentUserVote === voteType) {
         result = await unvoteThread(threadId);
-        console.log('Vote removed');
+        console.log("Vote removed");
       } else {
         // delete the old vote if exists and add the new vote
         if (currentUserVote) {
@@ -138,35 +157,34 @@ export const AllQuestions = () => {
         refetch();
         setErrorMessage("");
       } else {
-        console.error('Failed to vote:', result.error);
-        setErrorMessage('Failed to vote: ' + result.error);
+        console.error("Failed to vote:", result.error);
+        setErrorMessage("Failed to vote: " + result.error);
         setTimeout(() => setErrorMessage(""), 5000);
       }
     } catch (error) {
-      console.error('Failed to vote:', error);
-      setErrorMessage('An error occurred while voting.');
+      console.error("Failed to vote:", error);
+      setErrorMessage("An error occurred while voting.");
       setTimeout(() => setErrorMessage(""), 5000);
     }
   };
 
-
   const handleShareQuestion = async (questionId) => {
-  try {
-    const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
-    await navigator.clipboard.writeText(questionUrl);
-    setSuccessMessage('Question link copied to clipboard!');
-    setTimeout(() => setSuccessMessage(""), 3000);
-  } catch (err) {
-    console.error('Failed to copy: ', err);
-    setErrorMessage('Failed to copy link to clipboard.');
-    setTimeout(() => setErrorMessage(""), 5000);
-  }
-};
+    try {
+      const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
+      await navigator.clipboard.writeText(questionUrl);
+      setSuccessMessage("Question link copied to clipboard!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+      setErrorMessage("Failed to copy link to clipboard.");
+      setTimeout(() => setErrorMessage(""), 5000);
+    }
+  };
 
   return (
     <div className=" bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-      
+
       {/* Success/Error Messages */}
       {successMessage && (
         <div className="mx-8 lg:mx-32 mt-4">
@@ -182,7 +200,7 @@ export const AllQuestions = () => {
           </div>
         </div>
       )}
-      
+
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full mt-6">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full relative">
@@ -195,7 +213,13 @@ export const AllQuestions = () => {
             >
               Ask a Question ?
             </Link>
-            <Image src={loop} alt="all-questions" width={220} height={220} className="absolute left-14 md:block hidden" />
+            <Image
+              src={loop}
+              alt="all-questions"
+              width={220}
+              height={220}
+              className="absolute left-14 md:block hidden"
+            />
           </div>
           {/* this should be removed in the all questions page */}
           {/* <Search setthreads={setthreads} setCurrentPage={setCurrentPage} /> */}
@@ -204,40 +228,44 @@ export const AllQuestions = () => {
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
-                onClick={() => handleFilterChange("recent")}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "all"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
+                onClick={() => handleFilterChange("all")}
               >
                 All
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "most-rated"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "most-rated"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("most-rated")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "recent"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "recent"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("recent")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "most-answered"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${
+                  activeFilter === "most-answered"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("most-answered")}
               >
                 Most Answered
@@ -276,7 +304,6 @@ export const AllQuestions = () => {
             </div>
           )}
 
-
           {/* Questions list */}
           {!questionsLoading && !questionsError && (
             <>
@@ -296,15 +323,24 @@ export const AllQuestions = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleVote(question.id, 'upvote', question.userVote);
+                              handleVote(
+                                question.id,
+                                "upvote",
+                                question.userVote
+                              );
                             }}
                             disabled={voteLoading || unvoteLoading}
-                            className={`p-1 rounded transition-colors ${question.hasUpvoted
-                              ? 'text-green-600 bg-green-100 hover:bg-green-200'
-                              : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
-                              } disabled:opacity-50`}
+                            className={`p-1 rounded transition-colors ${
+                              question.hasUpvoted
+                                ? "text-green-600 bg-green-100 hover:bg-green-200"
+                                : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                            } disabled:opacity-50`}
                           >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <svg
+                              className="w-6 h-6 lg:w-8 lg:h-8"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
                             </svg>
                           </button>
@@ -312,11 +348,15 @@ export const AllQuestions = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push('/auth/login');
+                              router.push("/auth/login");
                             }}
                             className="p-1 rounded text-gray-600 hover:text-green-600"
                           >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <svg
+                              className="w-6 h-6 lg:w-8 lg:h-8"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
                             </svg>
                           </button>
@@ -332,15 +372,24 @@ export const AllQuestions = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleVote(question.id, 'downvote', question.userVote);
+                              handleVote(
+                                question.id,
+                                "downvote",
+                                question.userVote
+                              );
                             }}
                             disabled={voteLoading || unvoteLoading}
-                            className={`p-1 rounded transition-colors ${question.hasDownvoted
-                              ? 'text-red-600 bg-red-100 hover:bg-red-200'
-                              : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
-                              } disabled:opacity-50`}
+                            className={`p-1 rounded transition-colors ${
+                              question.hasDownvoted
+                                ? "text-red-600 bg-red-100 hover:bg-red-200"
+                                : "text-gray-600 hover:text-red-600 hover:bg-red-50"
+                            } disabled:opacity-50`}
                           >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <svg
+                              className="w-6 h-6 lg:w-8 lg:h-8"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                             </svg>
                           </button>
@@ -348,11 +397,15 @@ export const AllQuestions = () => {
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push('/auth/login');
+                              router.push("/auth/login");
                             }}
                             className="p-1 rounded text-gray-600 hover:text-red-600"
                           >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
+                            <svg
+                              className="w-6 h-6 lg:w-8 lg:h-8"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
                               <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
                             </svg>
                           </button>
@@ -390,21 +443,28 @@ export const AllQuestions = () => {
                             alt="Add answer"
                             className="w-4 sm:w-5 lg:p-1 lg:w-6"
                           />
-                          <span className="hidden sm:inline">Drop an Answer</span>
+                          <span className="hidden sm:inline">
+                            Drop an Answer
+                          </span>
                           <span className="sm:hidden">Answer</span>
                         </button>
 
-                        <div
-                          className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-xs sm:text-sm lg:text-xl whitespace-nowrap"
-                        >
-                          {question.answers_count === 0 ? '0 answer' : question.answers_count === 1 ? '1 answer' : `${question.answers_count} answers`}
+                        <div className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-xs sm:text-sm lg:text-xl whitespace-nowrap">
+                          {question.answers_count === 0
+                            ? "0 answer"
+                            : question.answers_count === 1
+                            ? "1 answer"
+                            : `${question.answers_count} answers`}
                         </div>
                       </div>
 
                       {/* Share and Save buttons */}
                       <div className="flex flex-row items-end justify-end gap-4">
                         {/* Share button */}
-                        <button  onClick={() => handleShareQuestion(question.id)} className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
+                        <button
+                          onClick={() => handleShareQuestion(question.id)}
+                          className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
+                        >
                           <Image
                             src={share}
                             alt="share icon"
@@ -416,7 +476,9 @@ export const AllQuestions = () => {
                         {/* Save button */}
                         <button
                           className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                          onClick={() => handleSaveThread(question.id, question.isSaved)}
+                          onClick={() =>
+                            handleSaveThread(question.id, question.isSaved)
+                          }
                           disabled={saveLoading}
                         >
                           <Image
@@ -424,7 +486,11 @@ export const AllQuestions = () => {
                             alt="save icon"
                             className="w-[13px] lg:w-[24px]"
                           />
-                          {saveLoading ? 'Processing...' : (question.isSaved ? 'Unsave' : 'Save')}
+                          {saveLoading
+                            ? "Processing..."
+                            : question.isSaved
+                            ? "Unsave"
+                            : "Save"}
                         </button>
                       </div>
                     </div>
@@ -465,10 +531,11 @@ export const AllQuestions = () => {
                 {[...Array(totalPages)].map((_, index) => (
                   <button
                     key={index}
-                    className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                      ? "bg-secondary-500 text-white"
-                      : "bg-neutral-200 text-neutral-900"
-                      }`}
+                    className={`py-2 px-4 rounded-md ${
+                      currentPage === index + 1
+                        ? "bg-secondary-500 text-white"
+                        : "bg-neutral-200 text-neutral-900"
+                    }`}
                     onClick={() => handlePageChange(index + 1)}
                   >
                     {index + 1}
