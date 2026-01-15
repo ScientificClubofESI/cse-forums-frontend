@@ -1469,7 +1469,7 @@ const ReplyComponent = ({
       />
 
       {isAuthenticated &&
-        depth < 3 && ( // Limit nesting to 3 levels
+        depth < 1 && ( // Limit nesting to 2 levels: reply to answer (depth 0) and reply to reply (depth 1), then stop
           <div className="flex items-center gap-3 mt-2 mb-3">
             <button
               onClick={() => setShowReplyForm(!showReplyForm)}
