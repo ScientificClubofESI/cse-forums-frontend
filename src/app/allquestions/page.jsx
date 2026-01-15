@@ -286,7 +286,7 @@ export const AllQuestions = () => {
                 questions?.map((question, index) => (
                   <div
                     key={question.id || index}
-                    className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+                    className="flex flex-col justify-between items-start gap-3 sm:gap-4 bg-[#FFF] px-4 sm:px-6 md:px-8 py-3 sm:py-4 rounded-lg w-full"
                   >
                     <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8">
                       {/* Enhanced voting section with separate up/down buttons */}
@@ -383,20 +383,21 @@ export const AllQuestions = () => {
                       <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
                         <button
                           onClick={() => handleAddAnswer(question.id)}
-                          className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                          className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg py-1 px-2 sm:px-3 lg:py-2 lg:px-4 text-[#FFF] font-sans text-xs sm:text-sm lg:text-xl whitespace-nowrap"
                         >
                           <Image
                             src={plus}
                             alt="Add answer"
-                            className="lg:p-1 w-5"
+                            className="w-4 sm:w-5 lg:p-1 lg:w-6"
                           />
-                          <span>Drop an Answer</span>
+                          <span className="hidden sm:inline">Drop an Answer</span>
+                          <span className="sm:hidden">Answer</span>
                         </button>
 
                         <div
-                          className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                          className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-xs sm:text-sm lg:text-xl whitespace-nowrap"
                         >
-                          {question.answers_count || 0} answer
+                          {question.answers_count === 0 ? '0 answer' : question.answers_count === 1 ? '1 answer' : `${question.answers_count} answers`}
                         </div>
                       </div>
 

@@ -702,7 +702,7 @@ const QuestionPage = () => {
           {/* Actions */}
           <div className="flex justify-between w-full items-center md:px-6">
             <div className="bg-primary-300 font-normal text-xs text-white rounded-lg md:text-xl md:w-[10rem] w-[5.625rem] h-[2rem] md:h-[3rem] flex items-center justify-center">
-              {question?.answers_count || 0} Answers
+              {question?.answers_count === 0 ? '0 answer' : question?.answers_count === 1 ? '1 answer' : `${question?.answers_count} answers`}
             </div>
             <div className="flex space-x-4">
               <button
