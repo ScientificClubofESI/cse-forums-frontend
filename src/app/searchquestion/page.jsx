@@ -17,12 +17,20 @@ import PopUp from "../../components/PopUp/page";
 import EmptySearchPage from "../searchquestion/emptysearchresult/page";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { useSearchQuestions } from "@/hooks/Questions";
+import {
+  useSearchQuestions,
+  useAuthenticatedSearchQuestions,
+} from "@/hooks/Questions";
 
 // import the custom hooks
 import useAuth from "@/hooks/Auth";
-import { useQuestions, useSaveThread, useSavedThreads, useVoteThread, useUnvoteThread } from "@/hooks/Questions";
-
+import {
+  useQuestions,
+  useSaveThread,
+  useSavedThreads,
+  useVoteThread,
+  useUnvoteThread,
+} from "@/hooks/Questions";
 
 // Separate component that uses useSearchParams
 function SearchQuestionsContent() {
@@ -30,11 +38,37 @@ function SearchQuestionsContent() {
   const searchParams = useSearchParams();
 
   // Get search query from URL
-  const urlQuery = searchParams.get('q') || '';
+  const urlQuery = searchParams.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(urlQuery);
 
-  // Use the search hook
-  const { searchResults, loading, error } = useSearchQuestions(searchQuery);
+  // Hooks
+  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
+
+  // Use both search hooks like all questions page
+  const {
+    searchResults: publicResults,
+    loading: publicLoading,
+    error: publicError,
+    refetch: refetchPublic,
+  } = useSearchQuestions(searchQuery);
+
+  const {
+    searchResults: authResults,
+    loading: authLoading2,
+    error: authError,
+    refetch: refetchAuth,
+  } = useAuthenticatedSearchQuestions(isAuthenticated, searchQuery);
+
+  const { toggleSaveThread, loading: saveLoading } = useSaveThread();
+  const { voteThread, loading: voteLoading } = useVoteThread();
+  const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
+
+  // Use authenticated results if logged in, otherwise public
+  const searchResults = isAuthenticated ? authResults : publicResults;
+  const questions = searchResults || [];
+  const questionsLoading = isAuthenticated ? authLoading2 : publicLoading;
+  const questionsError = isAuthenticated ? authError : publicError;
+  const refetch = isAuthenticated ? refetchAuth : refetchPublic;
 
   // Update search query when URL changes
   useEffect(() => {
@@ -45,23 +79,15 @@ function SearchQuestionsContent() {
     e.preventDefault();
     if (searchQuery.trim()) {
       // Update URL with new search query
-      router.push(`/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(
+        `/searchquestion?q=${encodeURIComponent(searchQuery.trim())}`
+      );
     }
   };
 
   const handleBackToQuestions = () => {
-    router.push('/allquestions');
+    router.push("/allquestions");
   };
-
-  // Hooks
-  const { user, userId, isAuthenticated, loading: authLoading } = useAuth();
-  const { toggleSaveThread, loading: saveLoading } = useSaveThread();
-  const { voteThread, loading: voteLoading } = useVoteThread();
-  const { unvoteThread, loading: unvoteLoading } = useUnvoteThread();
-
-  const questions = searchResults || [];
-  const questionsLoading = loading;
-  const questionsError = error;
 
   // Local state
   const [activeFilter, setActiveFilter] = useState("all");
@@ -112,7 +138,7 @@ function SearchQuestionsContent() {
 
   const handleSaveThread = async (threadId, isSaved) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
 
@@ -121,18 +147,18 @@ function SearchQuestionsContent() {
 
       if (result.success) {
         // Note: refetch is not available in search context
-        console.log('Thread saved/unsaved successfully');
+        console.log("Thread saved/unsaved successfully");
       } else {
-        console.error('Failed to toggle save:', result.error);
+        console.error("Failed to toggle save:", result.error);
       }
     } catch (error) {
-      console.error('Failed to save thread:', error);
+      console.error("Failed to save thread:", error);
     }
   };
 
   const handleAddAnswer = (questionId) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
     openPopup();
@@ -141,7 +167,7 @@ function SearchQuestionsContent() {
 
   const handleVote = async (threadId, voteType, currentUserVote) => {
     if (!isAuthenticated) {
-      router.push('/auth/login');
+      router.push("/auth/login");
       return;
     }
 
@@ -151,7 +177,7 @@ function SearchQuestionsContent() {
       // If user already voted with the same type, remove the vote
       if (currentUserVote === voteType) {
         result = await unvoteThread(threadId);
-        console.log('Vote removed');
+        console.log("Vote removed");
       } else {
         // delete the old vote if exists and add the new vote
         if (currentUserVote) {
@@ -161,15 +187,16 @@ function SearchQuestionsContent() {
         console.log(`${voteType} vote recorded`);
       }
       if (result.success) {
+        refetch();
         setErrorMessage("");
       } else {
-        console.error('Failed to vote:', result.error);
-        setErrorMessage('Failed to vote: ' + result.error);
+        console.error("Failed to vote:", result.error);
+        setErrorMessage("Failed to vote: " + result.error);
         setTimeout(() => setErrorMessage(""), 5000);
       }
     } catch (error) {
-      console.error('Failed to vote:', error);
-      setErrorMessage('An error occurred while voting.');
+      console.error("Failed to vote:", error);
+      setErrorMessage("An error occurred while voting.");
       setTimeout(() => setErrorMessage(""), 5000);
     }
   };
@@ -178,11 +205,11 @@ function SearchQuestionsContent() {
     try {
       const questionUrl = `${window.location.origin}/allquestions/${questionId}`;
       await navigator.clipboard.writeText(questionUrl);
-      setSuccessMessage('Question link copied to clipboard!');
+      setSuccessMessage("Question link copied to clipboard!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
-      setErrorMessage('Failed to copy link to clipboard.');
+      console.error("Failed to copy: ", err);
+      setErrorMessage("Failed to copy link to clipboard.");
       setTimeout(() => setErrorMessage(""), 5000);
     }
   };
@@ -190,7 +217,7 @@ function SearchQuestionsContent() {
   return (
     <div className="bg-gray-100 min-h-screen">
       {isAuthenticated ? <Navbarsignedin /> : <Navbar />}
-      
+
       {/* Success/Error Messages */}
       {successMessage && (
         <div className="mx-8 lg:mx-32 mt-4">
@@ -206,7 +233,7 @@ function SearchQuestionsContent() {
           </div>
         </div>
       )}
-      
+
       <div className="flex flex-col justify-between items-center gap-8 py-10 px-8 lg:px-32">
         <div className="flex flex-col justify-between items-center gap-8 w-full mt-6">
           <div className="flex flex-row justify-between items-center gap-4 lg:gap-8 w-full relative">
@@ -225,40 +252,44 @@ function SearchQuestionsContent() {
             <div className="flex flex-row justify-between items-start gap-2 lg:gap-4 font-sans text-xs lg:text-xl text-neutral-900 ">
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "all"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "all"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("all")}
               >
                 All
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Popular"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "Popular"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("Popular")}
               >
                 Popular
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${activeFilter === "Newest"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4 font-medium ${
+                  activeFilter === "Newest"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("Newest")}
               >
                 Newest
               </Link>
               <Link
                 href="#"
-                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${activeFilter === "Most Answered"
-                  ? "bg-primary-500 text-white"
-                  : "bg-neutral-100"
-                  }`}
+                className={`rounded-md py-1 px-2 lg:px-4  font-medium ${
+                  activeFilter === "Most Answered"
+                    ? "bg-primary-500 text-white"
+                    : "bg-neutral-100"
+                }`}
                 onClick={() => handleFilterChange("Most Answered")}
               >
                 Most Answered
@@ -297,152 +328,192 @@ function SearchQuestionsContent() {
               {questions.length === 0 ? (
                 <EmptySearchPage search={searchQuery} />
               ) : (
-                currentThreads?.map((question, index) => (
-                  <div
-                    key={question.id || index}
-                    className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
-                  >
-                    <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8">
-                      {/* Enhanced voting section with separate up/down buttons */}
-                      <div className="flex flex-col items-center gap-2">
-                        {/* Upvote button */}
-                        {isAuthenticated ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleVote(question.id, 'upvote', question.userVote);
-                            }}
-                            disabled={voteLoading || unvoteLoading}
-                            className={`p-1 rounded transition-colors ${question.hasUpvoted
-                              ? 'text-green-600 bg-green-100 hover:bg-green-200'
-                              : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
-                              } disabled:opacity-50`}
-                          >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
-                            </svg>
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push('/auth/login');
-                            }}
-                            className="p-1 rounded text-gray-600 hover:text-green-600"
-                          >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                          </button>
-                        )}
+                currentThreads?.map((question, index) => {
+                  // Derive boolean flags from userVote property
+                  const hasUpvoted = question.userVote === "upvote";
+                  const hasDownvoted = question.userVote === "downvote";
 
-                        {/* Vote count */}
-                        <div className="font-sans text-sm lg:text-2xl text-neutral-900 font-semibold">
-                          {(question.upvotes || 0) - (question.downvotes || 0)}
-                        </div>
-
-                        {/* Downvote button */}
-                        {isAuthenticated ? (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleVote(question.id, 'downvote', question.userVote);
-                            }}
-                            disabled={voteLoading || unvoteLoading}
-                            className={`p-1 rounded transition-colors ${question.hasDownvoted
-                              ? 'text-red-600 bg-red-100 hover:bg-red-200'
-                              : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
-                              } disabled:opacity-50`}
-                          >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
-                            </svg>
-                          </button>
-                        ) : (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push('/auth/login');
-                            }}
-                            className="p-1 rounded text-gray-600 hover:text-red-600"
-                          >
-                            <svg className="w-6 h-6 lg:w-8 lg:h-8 rotate-180" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-
-                      <div onClick={() => handleNavigation(question)}>
-                        <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
-                          {question.title}
-                        </h1>
-                      </div>
-                    </div>
-
-                    <div className="w-full flex flex-row justify-between items-center gap-2">
-                      <div className="flex-1 w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
-                      <div className="flex-shrink-0 w-fit font-serif lg:text-lg text-xs text-neutral-300">
-                        {moment(question.date).format("MMMM D, YYYY")}
-                      </div>
-                    </div>
-
+                  return (
                     <div
-                      className="text-neutral-600 font-light text-lg md:text-xl font-nunito prose prose-lg max-w-none"
-                      dangerouslySetInnerHTML={{ __html: question.content }}
-                    />
+                      key={question.id || index}
+                      className="flex flex-col justify-between items-start gap-4 bg-[#FFF] px-8 py-4 rounded-lg w-full"
+                    >
+                      <div className="cursor-pointer flex flex-row items-center justify-start gap-4 lg:gap-8">
+                        {/* Enhanced voting section with separate up/down buttons */}
+                        <div className="flex flex-col items-center gap-2">
+                          {/* Upvote button */}
+                          {isAuthenticated ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleVote(
+                                  question.id,
+                                  "upvote",
+                                  question.userVote
+                                );
+                              }}
+                              disabled={voteLoading || unvoteLoading}
+                              className={`p-1 rounded transition-colors ${
+                                hasUpvoted
+                                  ? "text-green-600 bg-green-100 hover:bg-green-200"
+                                  : "text-gray-600 hover:text-green-600 hover:bg-green-50"
+                              } disabled:opacity-50`}
+                            >
+                              <svg
+                                className="w-6 h-6 lg:w-8 lg:h-8"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push("/auth/login");
+                              }}
+                              className="p-1 rounded text-gray-600 hover:text-green-600"
+                            >
+                              <svg
+                                className="w-6 h-6 lg:w-8 lg:h-8"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z" />
+                              </svg>
+                            </button>
+                          )}
 
-                    <div className="w-full flex flex-row justify-between items-center gap-6">
-                      {/* Drop answer + number of answer buttons */}
-                      <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
-                        <button
-                          onClick={() => handleAddAnswer(question.id)}
-                          className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                        >
-                          <Image
-                            src={plus}
-                            alt="Add answer"
-                            className="lg:p-1 w-5"
-                          />
-                          <span>Drop an Answer</span>
-                        </button>
+                          {/* Vote count */}
+                          <div className="font-sans text-sm lg:text-2xl text-neutral-900 font-semibold">
+                            {(question.upvotes || 0) -
+                              (question.downvotes || 0)}
+                          </div>
 
-                        <div
-                          className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
-                        >
-                          {question.answers_count || 0} answer
+                          {/* Downvote button */}
+                          {isAuthenticated ? (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleVote(
+                                  question.id,
+                                  "downvote",
+                                  question.userVote
+                                );
+                              }}
+                              disabled={voteLoading || unvoteLoading}
+                              className={`p-1 rounded transition-colors ${
+                                hasDownvoted
+                                  ? "text-red-600 bg-red-100 hover:bg-red-200"
+                                  : "text-gray-600 hover:text-red-600 hover:bg-red-50"
+                              } disabled:opacity-50`}
+                            >
+                              <svg
+                                className="w-6 h-6 lg:w-8 lg:h-8"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push("/auth/login");
+                              }}
+                              className="p-1 rounded text-gray-600 hover:text-red-600"
+                            >
+                              <svg
+                                className="w-6 h-6 lg:w-8 lg:h-8"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+
+                        <div onClick={() => handleNavigation(question)}>
+                          <h1 className="text-sm lg:text-5xl font-sans text-neutral-900">
+                            {question.title}
+                          </h1>
                         </div>
                       </div>
 
-                      {/* Share and Save buttons */}
-                      <div className="flex flex-row items-end justify-end gap-4">
-                        {/* Share button */}
-                        <button onClick={() => handleShareQuestion(question.id)} className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2">
-                          <Image
-                            src={share}
-                            alt="share icon"
-                            className="w-[13px] lg:w-[24px]"
-                          />
-                          Share
-                        </button>
+                      <div className="w-full flex flex-row justify-between items-center gap-2">
+                        <div className="flex-1 w-full h-[0.1px] bg-neutral-300 rounded-full"></div>
+                        <div className="flex-shrink-0 w-fit font-serif lg:text-lg text-xs text-neutral-300">
+                          {moment(question.date).format("MMMM D, YYYY")}
+                        </div>
+                      </div>
 
-                        {/* Save button */}
-                        <button
-                          className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
-                          onClick={() => handleSaveThread(question.id, question.isSaved)}
-                          disabled={saveLoading}
-                        >
-                          <Image
-                            src={save}
-                            alt="save icon"
-                            className="w-[13px] lg:w-[24px]"
-                          />
-                          {saveLoading ? 'Processing...' : (question.isSaved ? 'Unsave' : 'Save')}
-                        </button>
+                      <div
+                        className="text-neutral-600 font-light text-lg md:text-xl font-nunito prose prose-lg max-w-none"
+                        dangerouslySetInnerHTML={{ __html: question.content }}
+                      />
+
+                      <div className="w-full flex flex-row justify-between items-center gap-6">
+                        {/* Drop answer + number of answer buttons */}
+                        <div className="flex flex-row justify-between items-center gap-3 lg:gap-4">
+                          <button
+                            onClick={() => handleAddAnswer(question.id)}
+                            className="flex items-center bg-secondary-500 rounded-md lg:rounded-lg p-1 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl"
+                          >
+                            <Image
+                              src={plus}
+                              alt="Add answer"
+                              className="lg:p-1 w-5"
+                            />
+                            <span>Drop an Answer</span>
+                          </button>
+
+                          <div className="bg-primary-300 rounded-md lg:rounded-lg py-1 px-2 lg:py-2 lg:px-4 text-[#FFF] font-sans text-sm lg:text-xl">
+                            {question.answers_count || 0} answer
+                          </div>
+                        </div>
+
+                        {/* Share and Save buttons */}
+                        <div className="flex flex-row items-end justify-end gap-4">
+                          {/* Share button */}
+                          <button
+                            onClick={() => handleShareQuestion(question.id)}
+                            className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
+                          >
+                            <Image
+                              src={share}
+                              alt="share icon"
+                              className="w-[13px] lg:w-[24px]"
+                            />
+                            Share
+                          </button>
+
+                          {/* Save button */}
+                          <button
+                            className="text-xs lg:text-lg text-neutral-500 font-serif flex items-center gap-1 lg:gap-2"
+                            onClick={() =>
+                              handleSaveThread(question.id, question.isSaved)
+                            }
+                            disabled={saveLoading}
+                          >
+                            <Image
+                              src={save}
+                              alt="save icon"
+                              className="w-[13px] lg:w-[24px]"
+                            />
+                            {saveLoading
+                              ? "Processing..."
+                              : question.isSaved
+                              ? "Unsave"
+                              : "Save"}
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </>
           )}
@@ -478,10 +549,11 @@ function SearchQuestionsContent() {
                 {[...Array(totalPages)].map((_, index) => (
                   <button
                     key={index}
-                    className={`py-2 px-4 rounded-md ${currentPage === index + 1
-                      ? "bg-secondary-500 text-white"
-                      : "bg-neutral-200 text-neutral-900"
-                      }`}
+                    className={`py-2 px-4 rounded-md ${
+                      currentPage === index + 1
+                        ? "bg-secondary-500 text-white"
+                        : "bg-neutral-200 text-neutral-900"
+                    }`}
                     onClick={() => handlePageChange(index + 1)}
                   >
                     {index + 1}
@@ -506,13 +578,17 @@ function SearchQuestionsContent() {
 // Main component with Suspense wrapper
 export default function SearchQuestions() {
   return (
-    <Suspense fallback={
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-2xl font-sans text-neutral-900">Loading search results...</div>
+    <Suspense
+      fallback={
+        <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-2xl font-sans text-neutral-900">
+              Loading search results...
+            </div>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <SearchQuestionsContent />
     </Suspense>
   );

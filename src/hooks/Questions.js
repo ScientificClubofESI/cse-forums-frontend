@@ -463,33 +463,35 @@ export const useSearchQuestions = (
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  useEffect(() => {
-    const fetchSearchThreads = async () => {
-      if (!query || !query.trim()) {
-        setSearchResults([]);
-        return;
-      }
-      setLoading(true);
-      setError(null);
-      try {
-        // Using authApi since this is a public endpoint (no authentication required)
-        const response = await authApi.get(
-          `/threads/search?searchQuery=${query}&orderBy=${filter}&page=${page}&limit=${limit}`
-        );
+  
+  const fetchSearchThreads = async () => {
+    if (!query || !query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      // Using authApi since this is a public endpoint (no authentication required)
+      const response = await authApi.get(
+        `/threads/search?searchQuery=${query}&orderBy=${filter}&page=${page}&limit=${limit}`
+      );
 
-        setSearchResults(response.data.data.threads || response.data.data);
-        setPagination(response.data.data.pagination);
-      } catch (err) {
-        setError(
-          err.response?.data?.message ||
-            err.message ||
-            "Failed to fetch search results"
-        );
-        console.error("Failed to fetch search results:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setSearchResults(response.data.data.threads || response.data.data);
+      setPagination(response.data.data.pagination);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch search results"
+      );
+      console.error("Failed to fetch search results:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
     fetchSearchThreads();
   }, [query, filter, page, limit]);
 
@@ -498,6 +500,59 @@ export const useSearchQuestions = (
     loading,
     pagination,
     error,
+    refetch: fetchSearchThreads,
+  };
+};
+
+export const useAuthenticatedSearchQuestions = (
+  isAuthenticated,
+  query,
+  filter = "recent",
+  page = 1,
+  limit = 10
+) => {
+  const [searchResults, setSearchResults] = useState([]);
+  const [pagination, setPagination] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const fetchSearchThreads = async () => {
+    if (!isAuthenticated || !query || !query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      // Using api for authenticated endpoint
+      const response = await api.get(
+        `/threads/search_authenticated?searchQuery=${query}&orderBy=${filter}&page=${page}&limit=${limit}`
+      );
+
+      setSearchResults(response.data.data.threads || response.data.data);
+      setPagination(response.data.data.pagination);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to fetch search results"
+      );
+      console.error("Failed to fetch search results:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchSearchThreads();
+  }, [isAuthenticated, query, filter, page, limit]);
+
+  return {
+    searchResults,
+    loading,
+    pagination,
+    error,
+    refetch: fetchSearchThreads,
   };
 };
 
