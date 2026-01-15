@@ -702,7 +702,11 @@ const QuestionPage = () => {
           {/* Actions */}
           <div className="flex justify-between w-full items-center md:px-6">
             <div className="bg-primary-300 font-normal text-xs text-white rounded-lg md:text-xl md:w-[10rem] w-[5.625rem] h-[2rem] md:h-[3rem] flex items-center justify-center">
-              {question?.answers_count === 0 ? '0 answer' : question?.answers_count === 1 ? '1 answer' : `${question?.answers_count} answers`}
+              {question?.answers_count === 0
+                ? "0 answer"
+                : question?.answers_count === 1
+                ? "1 answer"
+                : `${question?.answers_count} answers`}
             </div>
             <div className="flex space-x-4">
               <button
@@ -737,7 +741,7 @@ const QuestionPage = () => {
         {/* Owner Actions */}
         {isOwner && (
           <div className=" w-[23rem] md:w-[77rem] flex justify-center items-center p-6 gap-6 ">
-            <div className="w-full flex items-center justify-end gap-6">
+            <div className="w-full flex items-center justify-center gap-6">
               <button
                 onClick={handleEdit}
                 className="mt-[2rem] bg-primary-500 rounded-lg flex items-center justify-center text-white text-sm md:text-3xl font-semibold md:font-medium h-[2.375rem] md:h-[4rem] w-[9.063rem] md:w-[30.688rem]"
@@ -763,7 +767,7 @@ const QuestionPage = () => {
 
         {/* Answer Form for authenticated users */}
         {isAuthenticated && !isOwner && (
-          <div className="md:w-[70rem] w-[18.875rem] mt-[2rem] ml-[4rem] md:ml-[7rem]">
+          <div className="w-full max-w-[70rem] mt-8 px-4 sm:px-6 md:px-8">
             <div className="">
               {!showAnswerEditor ? (
                 <button
@@ -937,7 +941,7 @@ const QuestionPage = () => {
         )}
 
         {/* Answers Section */}
-        <div className="md:w-[70rem] w-[18.875rem] mt-[2rem] ml-[4rem] md:ml-[7rem]">
+        <div className="w-full max-w-[70rem] mt-8 px-4 sm:px-6 md:px-8">
           <div className="">
             {answers.length > 0 ? (
               <div className="flex flex-col gap-10">
@@ -1056,8 +1060,9 @@ const AnswerWithReplies = ({
   };
 
   return (
-    <div className="py-8 px-12 bg-white rounded-lg">
-      <div className="flex justify-between items-center mb-4">
+    <div className="py-4 px-4 sm:py-6 sm:px-8 md:py-8 md:px-12 bg-white rounded-lg">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3">
+        {/* User info */}
         <div className="text-secondary-500 md:text-xl text-base font-medium flex items-center gap-2">
           <ImageComponent
             src={answer.User?.profile_picture || UserpicIcon.src}
@@ -1067,17 +1072,18 @@ const AnswerWithReplies = ({
             className="w-[27px] h-[27px] md:w-[40px] md:h-[40px] rounded-full object-cover"
           />
           {answer.User?.username || "User"}
-          <span className="text-sm text-gray-500 ml-2">
+          <span className="text-xs sm:text-sm text-gray-500 ml-2">
             {new Date(answer.date).toLocaleDateString()}
           </span>
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Action buttons - same line on larger screens, below on small screens */}
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {/* Approval button */}
           {isOwner && (
             <button
               onClick={() => onApproveAnswer(answer.id, answer.isApproved)}
-              className={`flex items-center gap-2 px-3 py-1 rounded-lg transition-colors ${
+              className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-lg transition-colors text-xs sm:text-sm ${
                 answer.isApproved
                   ? "bg-green-100 text-green-700 hover:bg-green-200"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -1088,7 +1094,7 @@ const AnswerWithReplies = ({
                 alt={answer.isApproved ? "approved" : "approve"}
                 width={16}
                 height={16}
-                className="w-4 h-4"
+                className="w-3 h-3 sm:w-4 sm:h-4"
               />
               {answer.isApproved ? "Approved" : "Approve"}
             </button>
@@ -1096,13 +1102,13 @@ const AnswerWithReplies = ({
 
           {/* Show approved status for non-owners */}
           {!isOwner && answer.isApproved && (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-100 text-green-700">
+            <div className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 rounded-lg bg-green-100 text-green-700 text-xs sm:text-sm">
               <ImageComponent
                 src={ApprovedIcon.src}
                 alt="approved"
                 width={16}
                 height={16}
-                className="w-4 h-4"
+                className="w-3 h-3 sm:w-4 sm:h-4"
               />
               Approved
             </div>
@@ -1118,7 +1124,7 @@ const AnswerWithReplies = ({
                 onLikeAnswer(threadId, answer.id);
               }
             }}
-            className={`flex items-center gap-1 transition-colors ${
+            className={`flex items-center gap-1 transition-colors text-xs sm:text-sm ${
               answerLikes[answer.id]
                 ? "text-blue-600"
                 : "text-gray-600 hover:text-blue-600"
@@ -1130,9 +1136,9 @@ const AnswerWithReplies = ({
               alt="like"
               width={16}
               height={16}
-              className="w-4 h-4"
+              className="w-3 h-3 sm:w-4 sm:h-4"
             />
-            <span className="text-sm">{answer.likes_count || 0}</span>
+            <span>{answer.likes_count || 0}</span>
           </button>
 
           {/* Delete button */}
@@ -1146,7 +1152,7 @@ const AnswerWithReplies = ({
                 alt="delete"
                 width={16}
                 height={16}
-                className="w-4 h-4"
+                className="w-3 h-3 sm:w-4 sm:h-4"
               />
             </button>
           )}
