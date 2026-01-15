@@ -472,11 +472,12 @@ export const useSearchQuestions = (
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(
-          `/threads/search?searchQuery=${query}&filter=${filter}&page=${page}&limit=${limit}`
+        // Using authApi since this is a public endpoint (no authentication required)
+        const response = await authApi.get(
+          `/threads/search?searchQuery=${query}&orderBy=${filter}&page=${page}&limit=${limit}`
         );
 
-        setSearchResults(response.data.data);
+        setSearchResults(response.data.data.threads || response.data.data);
         setPagination(response.data.data.pagination);
       } catch (err) {
         setError(
